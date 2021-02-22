@@ -1,0 +1,40 @@
+namespace Nowcfo.Domain.Models
+{
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
+
+    [Table("EmployeeInfo")]
+    public class EmployeeInfo
+    {
+        public EmployeeInfo()
+        {
+            EmployeeInfos = new HashSet<EmployeeInfo>();
+        }
+
+        [Key] 
+        public int EmployeeId { get; set; }
+
+        [Required] 
+        [StringLength(100)] 
+        public string EmployeeName { get; set; }
+
+        public int? OrganizationId { get; set; }
+
+        public int? DesignationId { get; set; }
+
+        public bool? IsSupervisor { get; set; }
+
+        public int? SupervisorId { get; set; }
+
+        public Designation Designation { get; set; }
+
+        public Organization Organization { get; set; }
+
+
+        public ICollection<EmployeeInfo> EmployeeInfos { get; set; }
+
+        public EmployeeInfo Employee { get; set; }
+    }
+}
