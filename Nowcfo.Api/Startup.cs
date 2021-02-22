@@ -14,16 +14,16 @@ using Nowcfo.Application.IRepository;
 using Nowcfo.Application.MappingProfile;
 using Nowcfo.Application.Repository;
 using Nowcfo.Application.Services.CurrentUserService;
-using Nowcfo.Domain.Models;
-using Nowcfo.Domain.Models.AppUserModels;
-using Nowcfo.Infrastructure.Data;
-using Nowcfo.Infrastructure.Repository;
-using System.Text;
 using Nowcfo.Application.Services.EmailService;
 using Nowcfo.Application.Services.JwtService;
 using Nowcfo.Application.Services.RoleService;
 using Nowcfo.Application.Services.UserAuthService;
 using Nowcfo.Application.Services.UserService;
+using Nowcfo.Domain.Models;
+using Nowcfo.Domain.Models.AppUserModels;
+using Nowcfo.Infrastructure.Data;
+using Nowcfo.Infrastructure.Repository;
+using System.Text;
 
 namespace Nowcfo.API
 {
@@ -98,6 +98,15 @@ namespace Nowcfo.API
                 };
                 options.SaveToken = true;
             });
+            services.Configure<IdentityOptions>(options =>
+            {
+                // Password settings
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            });
             services.AddAuthorization();
 
             // Auto Mapper Configurations
@@ -113,10 +122,10 @@ namespace Nowcfo.API
             services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
 
             services.AddTransient<ICurrentUserService, CurrentUserService>();
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddTransient<IUserAuthService, UserAuthService>();
             
-            services.AddTransient<IRoleServices, RoleService>();
+            services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IJwtService, JwtService>();
            
             services.AddTransient<IMailService, SendGridMailService>();

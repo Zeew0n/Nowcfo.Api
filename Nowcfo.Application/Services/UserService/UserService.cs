@@ -234,6 +234,7 @@ namespace Nowcfo.Application.Services.UserService
                 //  throw new Exception($"DuplicateUsername: Username {username} is already taken.");
                 // _mapper.Map<AppUser,UserRegisterDTO>(userRegiterDTO)
                 var appUser = _mapper.Map<AppUser>(userRegiterDTO);
+                appUser.SecurityStamp = Guid.NewGuid().ToString();
                 var userResult = await _userManager.UpdateAsync(appUser);
                 return userResult;
 
@@ -342,9 +343,8 @@ namespace Nowcfo.Application.Services.UserService
         /// <returns></returns>
         public async Task<AppUser> FindByIdAsync(Guid id) => await _userManager.FindByIdAsync(id.ToString());
 
-        public async Task<IReadOnlyCollection<UserListDto>> GetAllUsers(string tenantId)
+        public async Task<IReadOnlyCollection<UserListDto>> GetAllUsers()
         {
-            Guid tenantID = Guid.Parse(tenantId);
             var result = await (from user in _dbContext.AppUsers
                                 join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
                                 join role in _dbContext.AppRoles on userRole.RoleId equals role.Id

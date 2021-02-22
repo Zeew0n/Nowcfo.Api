@@ -25,7 +25,8 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var organization= await _dbContext.Organizations.AsNoTracking().SingleOrDefaultAsync(x=>x.OrganizationId==id);
+               
+                var organization = await _dbContext.Organizations.AsNoTracking().SingleOrDefaultAsync(x=>x.OrganizationId==id);
                 return _mapper.Map<OrganizationDto>(organization);
             }
             catch (Exception ex)

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Nowcfo.Application.Services.RoleService
 {
-    public interface IRoleServices
+    public interface IRoleService
     {
         Task CreateAsync(AppRole role);
 

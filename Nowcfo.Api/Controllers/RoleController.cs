@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.Application.Dtos.Role;
 using Nowcfo.Application.IRepository;
+using Nowcfo.Application.Services.RoleService;
+using Nowcfo.Domain.Models.AppUserModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace Nowcfo.API.Controllers
 {
@@ -12,19 +16,36 @@ namespace Nowcfo.API.Controllers
     {
       
         private readonly IUnitOfWork _unitOfWork;
-        public RoleController(IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        private readonly IRoleService _roleService;
+        public RoleController(IUnitOfWork unitOfWork, IRoleService roleService, IMapper mapper)
         {
 
             _unitOfWork = unitOfWork;
+            _roleService = roleService;
+            _mapper = mapper;
         }
 
         [HttpPost("Create")]
         //[AllowAnonymous]
        // [Permission(Permission.AddRole)]
-        public async Task<IActionResult> Create([FromBody] RoleDto role)
+        public async Task<IActionResult> Create([FromBody] RoleDto dto)
         {
-            var query = await _unitOfWork.RoleRepository.CreateAsync(role);
-            return Ok(query);
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                var role = _mapper.Map<AppRole>(dto);
+                await _roleService.CreateAsync(role);
+
+                if (await _unitOfWork.SaveChangesAsync())
+                    return CreatedAtAction("Read", new { id = role.Id }, dto);
+                return BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return ExceptionResponse(ex.Message);
+            }
         }
 
         [HttpGet("Listrole")]
@@ -33,17 +54,17 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-                var result = await _unitOfWork.RoleRepository.GetAllAsync();
+                var result = await _roleService.GetAllAsync();
                 
                 if (!result.Any())
                 {
-                    return NotFound(HandleActionResult("No data available", StatusCodes.Status404NotFound));
+                    return NotFound("No data available");
                 }
                 return Ok(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+                return ExceptionResponse(ex.Message);
             }
         }
 
@@ -53,7 +74,7 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-                var result = await _unitOfWork.RoleRepository.GetByIdAsync(Id);
+                var result = await _roleService.GetByIdAsync(Id);
                 if (result == null)
                 {
                     return NotFound(HandleActionResult("No data available", StatusCodes.Status404NotFound));
@@ -75,7 +96,7 @@ namespace Nowcfo.API.Controllers
             {
 
                
-                var result = await _unitOfWork.RoleRepository.UpdateAsync(actionType);
+                var result = await _roleService.UpdateAsync(actionType);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -93,7 +114,7 @@ namespace Nowcfo.API.Controllers
             {
                 if (Id != null)
                 {
-                    await _unitOfWork.RoleRepository.DeleteAsync(Id);
+                    await _roleService.DeleteAsync(Id);
                     return Ok();
                 }
                 else

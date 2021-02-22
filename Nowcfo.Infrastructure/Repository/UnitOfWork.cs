@@ -1,10 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Repository;
 using Nowcfo.Infrastructure.Data;
+using System;
+using System.Threading.Tasks;
 
 namespace Nowcfo.Infrastructure.Repository
 {
@@ -27,6 +27,8 @@ namespace Nowcfo.Infrastructure.Repository
         {
             _dbContext = context;
             OrganizationRepository = new OrganizationRepository(context,mapper);
+            UserRepository = new UserRepository(context,mapper);
+            
         }
 
 

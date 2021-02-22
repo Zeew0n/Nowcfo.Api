@@ -23,7 +23,7 @@ namespace Nowcfo.Application.Services.UserService
 
         Task<bool> DeleteUserAsync(AppUser userDetail, Guid id);
 
-        Task<IReadOnlyCollection<UserListDto>> GetAllUsers(string tenantId);
+        Task<IReadOnlyCollection<UserListDto>> GetAllUsers();
 
         Task<IReadOnlyCollection<UserListDto>> GetAllAdmins();
 

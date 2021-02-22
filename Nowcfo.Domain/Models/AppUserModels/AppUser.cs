@@ -27,9 +27,5 @@ namespace Nowcfo.Domain.Models.AppUserModels
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public bool IsAdmin { get; set; }
         public bool IsSuperAdmin { get; set; }
-        public string? OrganizationName { get; set; }
-        public string ContactName { get; set; }
-        public string ContactEmail { get; set; }
-        public string ContactPhone { get; set; }
     }
 }

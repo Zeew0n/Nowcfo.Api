@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Nowcfo.Application.Dtos.Email;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Extensions;
+using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.EmailService;
 using Nowcfo.Application.Services.RoleService;
 using Nowcfo.Application.Services.UserAuthService;
 using Nowcfo.Application.Services.UserService;
 using Nowcfo.Domain.Models.AppUserModels;
+using Nowcfo.Infrastructure.Data;
 using System;
 using System.Threading.Tasks;
 
@@ -21,19 +23,22 @@ namespace Nowcfo.API.Controllers
     {
         private readonly IUserAuthService _authService;
         private readonly IUserService _userService;
-        private readonly IRoleServices _roleServices;
+        private readonly IRoleService _roleServices;
         private readonly IMailService _emailService;
         private readonly IMapper _mapper;
-        //private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UserController(IUserAuthService authService, IUserService userService,
-             IRoleServices roleServices, IMapper mapper,IMailService emailService)
+             IRoleService roleServices, IMapper mapper,IMailService emailService, ApplicationDbContext context, IUnitOfWork unitOfWork)
         {
             _authService = authService;
             _userService = userService;
             _mapper = mapper;
             _roleServices = roleServices;
             _emailService = emailService;
+            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         #region Registration
@@ -170,7 +175,7 @@ namespace Nowcfo.API.Controllers
 
 
         [HttpPost("create")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userRegisterDTO)
         {
@@ -231,7 +236,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPut("update")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userRegisterDTO)
         {
@@ -241,14 +246,21 @@ namespace Nowcfo.API.Controllers
                 Guard.Against.NullOrEmpty(userRegisterDTO.FirstName, nameof(userRegisterDTO.FirstName));
                 Guard.Against.NullOrEmpty(userRegisterDTO.LastName, nameof(userRegisterDTO.LastName));
                 //Guard.Against.InvalidPasswordCompare(userRegisterDTO.Password, userRegisterDTO.ConfirmPassword, nameof(userRegisterDTO.Password), nameof(userRegisterDTO.ConfirmPassword));
-                AppUser oldUser = await _userService.FindByIdAsync(userRegisterDTO.Id);
-                var result = await _userService.UpdateUserAsync(oldUser, userRegisterDTO);
-                if (result.Succeeded)
-                {
+               // AppUser oldUser = await _userService.FindByIdAsync(userRegisterDTO.Id);
+                AppUser oldUser = await _unitOfWork.UserRepository.GetUserById(userRegisterDTO.Id);
+
+                _unitOfWork.UserRepository.Update(_mapper.Map(userRegisterDTO, oldUser));
+                if(await _unitOfWork.SaveChangesAsync())
                     return Ok();
+                //_context.Entry(oldUser).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+
+                //var result = await _userService.UpdateUserAsync(oldUser, userRegisterDTO);
+                //if (result.Succeeded)
+                //{
+                //    return Ok();
 
 
-                }
+                //}
                 return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));
             }
             catch (Exception ex)
@@ -331,12 +343,12 @@ namespace Nowcfo.API.Controllers
 
         [HttpGet("listallusers")]
         //[Authorize]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> GetAllUsers(string tenantId)
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> GetAllUsers()
         {
             try
             {
-                var result = await _userService.GetAllUsers(tenantId);
+                var result = await _userService.GetAllUsers();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -396,7 +408,7 @@ namespace Nowcfo.API.Controllers
 
 
         [HttpGet("get/{userId}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetUserDetailById(Guid userId)
         {
             try

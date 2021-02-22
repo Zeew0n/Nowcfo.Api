@@ -21,12 +21,12 @@ namespace Nowcfo.Application.Services.JwtService
     {
         private readonly JwtIssuerOptions _jwtOptions;
 
-        private readonly IRoleServices _roleServices;
+        private readonly IRoleService _roleServices;
         private readonly IUserService _userService;
         private readonly UserManager<AppUser> _userManager;
 
 
-        public JwtService(UserManager<AppUser> userManager,IOptions<JwtIssuerOptions> jwtOptions, IRoleServices roleServices, IUserService userService)
+        public JwtService(UserManager<AppUser> userManager,IOptions<JwtIssuerOptions> jwtOptions, IRoleService roleServices, IUserService userService)
         {
             _jwtOptions = jwtOptions.Value;
             _roleServices = roleServices;

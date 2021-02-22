@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Nowcfo.Application.Services.RoleService
 {
-    public class RoleService : IRoleServices
+    public class RoleService : IRoleService
     {
         private readonly RoleManager<AppRole> _roleManager;
         

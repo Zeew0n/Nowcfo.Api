@@ -15,6 +15,7 @@ namespace Nowcfo.Application.MappingProfile
                 .ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Name)).ReverseMap();
             CreateMap<AppUser,CreateUserDto>().ReverseMap();
+            CreateMap<AppUser,UpdateUserDto>().ReverseMap();
             CreateMap<Organization,OrganizationDto>().ReverseMap();
             CreateMap<EmployeeInfo,EmployeeInfoDto>().ReverseMap();
             CreateMap<Designation,DesignationDto>().ReverseMap();
