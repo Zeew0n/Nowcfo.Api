@@ -182,13 +182,12 @@ namespace Nowcfo.API.Controllers
             try
             {
                 Guid roleId = userRegisterDTO.RoleId;
-                Guard.Against.NullOrEmpty(userRegisterDTO.FirstName, nameof(userRegisterDTO.FirstName));
-                Guard.Against.NullOrEmpty(userRegisterDTO.LastName, nameof(userRegisterDTO.LastName));
+                //Guard.Against.NullOrEmpty(userRegisterDTO.FirstName, nameof(userRegisterDTO.FirstName));
+                //Guard.Against.NullOrEmpty(userRegisterDTO.LastName, nameof(userRegisterDTO.LastName));
                 Guard.Against.InvalidEmail(userRegisterDTO.Email, nameof(userRegisterDTO.Email));
-                Guard.Against.InvalidEmail(userRegisterDTO.ConfirmEmail, nameof(userRegisterDTO.ConfirmEmail));
-                Guard.Against.InvalidCompare(userRegisterDTO.Email, userRegisterDTO.ConfirmEmail, nameof(userRegisterDTO.Email), nameof(userRegisterDTO.ConfirmEmail));
+                //Guard.Against.InvalidEmail(userRegisterDTO.ConfirmEmail, nameof(userRegisterDTO.ConfirmEmail));
+                //Guard.Against.InvalidCompare(userRegisterDTO.Email, userRegisterDTO.ConfirmEmail, nameof(userRegisterDTO.Email), nameof(userRegisterDTO.ConfirmEmail));
                 //Guard.Against.NullOrEmpty(roleId, nameof(roleId));
-               
                 Guard.Against.InvalidPhone(userRegisterDTO.PhoneNumber);
                 string role = await _roleServices.GetRoleNameByIdAsync(roleId);
                 //default role removed for test purpose

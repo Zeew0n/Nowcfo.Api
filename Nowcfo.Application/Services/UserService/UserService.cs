@@ -358,6 +358,9 @@ namespace Nowcfo.Application.Services.UserService
                                     user.CreatedDate,
                                     Role = role.Name,
                                     user.PhoneNumber,
+                                    user.Address,
+                                    user.City,
+                                    user.ZipCode,
                                     EmailConfirmmed = user.EmailConfirmed,
                                     IsDeleted = EF.Property<bool>(user, "IsDeleted")
                                 }).Where(x => !x.IsDeleted).OrderByDescending(q => q.CreatedDate).ToListAsync();
@@ -370,6 +373,9 @@ namespace Nowcfo.Application.Services.UserService
                 LastName = user.LastName,
                 Role = user.Role,
                 PhoneNumber = user.PhoneNumber,
+                Address=user.Address,
+                City=user.City,
+                ZipCode=user.ZipCode,
                 Status = user.IsDeleted ? UserConstants.Deleted : (user.EmailConfirmmed ? UserConstants.Active : UserConstants.InActive)
             }).ToList();
         }
@@ -444,7 +450,7 @@ namespace Nowcfo.Application.Services.UserService
                 {
                     To = appUser.Email,
                     Subject = SharedConstants.SignUpSubject,
-                    Body = @$"Your StreamHarbor account has been created. Click the link below to confirm your email address and finish the sign up process.This link will expire after 24 hours.<br/>
+                    Body = @$"Your NowCFO account has been created. Click the link below to confirm your email address and finish the sign up process.This link will expire after 24 hours.<br/>
                               <a href={callBackUri}>Click Here</a>"
                 };
                 return emailMessage;
