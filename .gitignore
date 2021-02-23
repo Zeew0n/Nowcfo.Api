@@ -338,4 +338,4 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/WorkFlowTM.WebAPI/appsettings.json
+/Nowco.API/appsettings.json
