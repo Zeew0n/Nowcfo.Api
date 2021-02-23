@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.CurrentUserService;
 using Nowcfo.Domain.Models;
 using Nowcfo.Domain.Models.AppUserModels;
 using Nowcfo.Domain.Models.User;
+using Nowcfo.Infrastructure.Extensions;
 using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Nowcfo.Application.IRepository;
-using Nowcfo.Infrastructure.Extensions;
 using static Nowcfo.Infrastructure.Data.ConfigureRelation;
 
 namespace Nowcfo.Infrastructure.Data
@@ -53,10 +53,11 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
 
+            modelBuilder.Seed();
 
         }
 
-        
+
         public async Task<bool> IsSaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             return await this.SaveChangesAsync(cancellationToken)>0;
