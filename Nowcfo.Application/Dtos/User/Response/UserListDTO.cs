@@ -14,6 +14,7 @@ namespace Nowcfo.Application.Dtos.User.Response
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
+        public string RoleId { get; set; }
         public string Role { get; set; }
         public string Status { get; set; }
     }

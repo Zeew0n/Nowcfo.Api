@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.Application.Dtos.Email;
 using Nowcfo.Application.Dtos.User.Request;
@@ -28,9 +29,10 @@ namespace Nowcfo.API.Controllers
         private readonly IMapper _mapper;
         private readonly ApplicationDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<AppUser> _userManager;
 
         public UserController(IUserAuthService authService, IUserService userService,
-             IRoleService roleServices, IMapper mapper,IMailService emailService, ApplicationDbContext context, IUnitOfWork unitOfWork)
+             IRoleService roleServices, IMapper mapper,IMailService emailService, ApplicationDbContext context, IUnitOfWork unitOfWork,UserManager<AppUser> userManager)
         {
             _authService = authService;
             _userService = userService;
@@ -39,6 +41,7 @@ namespace Nowcfo.API.Controllers
             _emailService = emailService;
             _context = context;
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         #region Registration
@@ -241,26 +244,29 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
+                var appuser = await _userManager.FindByIdAsync(userRegisterDTO.Id.ToString());
 
-                Guard.Against.NullOrEmpty(userRegisterDTO.FirstName, nameof(userRegisterDTO.FirstName));
-                Guard.Against.NullOrEmpty(userRegisterDTO.LastName, nameof(userRegisterDTO.LastName));
-                //Guard.Against.InvalidPasswordCompare(userRegisterDTO.Password, userRegisterDTO.ConfirmPassword, nameof(userRegisterDTO.Password), nameof(userRegisterDTO.ConfirmPassword));
-               // AppUser oldUser = await _userService.FindByIdAsync(userRegisterDTO.Id);
-                AppUser oldUser = await _unitOfWork.UserRepository.GetUserById(userRegisterDTO.Id);
-
-                _unitOfWork.UserRepository.Update(_mapper.Map(userRegisterDTO, oldUser));
-                if(await _unitOfWork.SaveChangesAsync())
-                    return Ok();
-                //_context.Entry(oldUser).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
-
-                //var result = await _userService.UpdateUserAsync(oldUser, userRegisterDTO);
-                //if (result.Succeeded)
-                //{
-                //    return Ok();
+                var x = await _userManager.UpdateAsync(_mapper.Map(userRegisterDTO, appuser));
 
 
-                //}
-                return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));
+                if (x.Succeeded)
+                {
+
+                    var roles = await _userManager.GetRolesAsync(appuser);
+                    var removeresult = await _userManager.RemoveFromRolesAsync(appuser, roles);
+                    if (removeresult.Succeeded)
+                    {
+                        var userId = appuser.Id;
+                        var user = await _userService.FindByIdAsync(userId);
+                        string roleName = await _roleServices.GetRoleNameByIdAsync(userRegisterDTO.RoleId);
+                        var roleResult = await _roleServices.AddToRoleAsync(user, roleName);
+                        return Ok(user);
+
+                    }
+                   return BadRequest(HandleActionResult($"User registration failed.", StatusCodes.Status400BadRequest));
+                }
+                return BadRequest(HandleActionResult($"User registration failed.", StatusCodes.Status400BadRequest));
+
             }
             catch (Exception ex)
             {
@@ -269,7 +275,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+      //  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             try

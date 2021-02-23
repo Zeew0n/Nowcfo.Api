@@ -281,10 +281,9 @@ namespace Nowcfo.Application.Services.UserService
                 {
                     throw new Exception("Provided user doesn't exists.");
                 }
-
-                //_unitOfWork.UserRepository.Remove(userDetail);
-                await _unitOfWork.SaveChangesAsync();
-                return true;
+                var result = await _userManager.DeleteAsync(userDetail);
+                if (result.Succeeded) return true;
+                return false;
             }
             catch (Exception ex)
             {
@@ -357,6 +356,7 @@ namespace Nowcfo.Application.Services.UserService
                                     user.LastName,
                                     user.CreatedDate,
                                     Role = role.Name,
+                                    RoleId= role.Id,
                                     user.PhoneNumber,
                                     user.Address,
                                     user.City,
@@ -376,6 +376,7 @@ namespace Nowcfo.Application.Services.UserService
                 Address=user.Address,
                 City=user.City,
                 ZipCode=user.ZipCode,
+                RoleId = user.RoleId.ToString(),
                 Status = user.IsDeleted ? UserConstants.Deleted : (user.EmailConfirmmed ? UserConstants.Active : UserConstants.InActive)
             }).ToList();
         }
