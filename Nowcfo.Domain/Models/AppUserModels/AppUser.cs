@@ -14,11 +14,19 @@ namespace Nowcfo.Domain.Models.AppUserModels
         [StringLength(50)]
         public string LastName { get; set; }
 
+
+
         //[NotMapped]
         public string FullName { get => FirstName + " " + LastName; }
 
         [NotMapped]
         public string Password { get; set; }
+
+    
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string? State { get; set; }
+        public string ZipCode { get; set; }
 
         //Standard Columns
         public Guid? UpdatedBy { get; set; }
