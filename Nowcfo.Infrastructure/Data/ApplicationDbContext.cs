@@ -46,6 +46,7 @@ namespace Nowcfo.Infrastructure.Data
             }
 
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<AppUser>(ConfigureAppUser);
             modelBuilder.Entity<UserSignUp>(ConfigureUserSignup);
             modelBuilder.Entity<RolePermissionMapping>(ConfigureRolePermissionMapping);
 
@@ -53,7 +54,7 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
 
-            modelBuilder.Seed();
+            modelBuilder.SeedAdminUser();
 
         }
 

@@ -10,8 +10,8 @@ using Nowcfo.Infrastructure.Data;
 namespace Nowcfo.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210223100848_SeedRoles")]
-    partial class SeedRoles
+    [Migration("20210224053049_AppUserOptionalFields")]
+    partial class AppUserOptionalFields
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -159,26 +159,6 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("be70cd03-8c42-4592-baa3-5726de19d922"),
-                            ConcurrencyStamp = "cdce82a0-c51e-4031-9b7d-1146275d36e2",
-                            Name = "SuperAdmin"
-                        },
-                        new
-                        {
-                            Id = new Guid("a481f160-897d-4ae1-9c00-4fbdb523ad01"),
-                            ConcurrencyStamp = "aa6b40ab-a480-4c3f-807e-5af913f29ab8",
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("61891920-cec7-45ef-af88-1eb33dfe67d2"),
-                            ConcurrencyStamp = "525fc979-e0a7-40b4-a777-8df5da184f1c",
-                            Name = "User"
-                        });
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.AppUserModels.AppUser", b =>
@@ -191,11 +171,9 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -285,7 +263,6 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("ZipCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
