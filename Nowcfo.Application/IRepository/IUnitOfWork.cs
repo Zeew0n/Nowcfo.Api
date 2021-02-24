@@ -6,6 +6,7 @@ namespace Nowcfo.Application.IRepository
     public interface IUnitOfWork:IDisposable
     {
         IOrganizationRepository OrganizationRepository { get;}
+        IEmployeeRepository EmployeeRepository { get; }
         IUserRepository UserRepository { get;}
         IRoleRepository RoleRepository { get;}
         IUserRoleRepository UserRoleRepository { get; }
