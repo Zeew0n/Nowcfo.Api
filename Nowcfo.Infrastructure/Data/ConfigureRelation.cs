@@ -32,6 +32,10 @@ namespace Nowcfo.Infrastructure.Data
         public static void ConfigureAppUser(EntityTypeBuilder<AppUser> builder)
         {
             builder.HasKey(q => q.Id);
+            builder.Property(p => p.Address).IsRequired(false);
+            builder.Property(p => p.City).IsRequired(false);
+            builder.Property(p => p.State).IsRequired(false);
+            builder.Property(p => p.ZipCode).IsRequired(false);
         }
 
 
