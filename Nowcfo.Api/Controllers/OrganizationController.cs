@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.Application.DTO;
+using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using System;
 using System.Threading.Tasks;
-using Nowcfo.Application.IRepository;
-using Nowcfo.Infrastructure.Repository;
 
 namespace Nowcfo.API.Controllers
 {
@@ -20,14 +19,14 @@ namespace Nowcfo.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("listallorganizations")]
         public async Task<IActionResult> GetOrganizations()
         {
             var org = await _unitOfWork.OrganizationRepository.GetAllAsync();
             return Ok(org);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("getorganization/{id}")]
         public async Task<IActionResult> GetOrganization(int id)
         {
             try
@@ -42,7 +41,9 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpPost]
+        //[HttpPost]
+        [HttpPost("create")]
+
         public async Task<IActionResult> PostOrganization(OrganizationDto dto)
         {
             try
@@ -62,7 +63,9 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+       // [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
+
         public async Task<IActionResult> PutOrganization([FromRoute] int id, [FromBody] OrganizationDto dto)
         {
             try
@@ -89,7 +92,8 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        //[HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteOrganization(int id)
         {
             try

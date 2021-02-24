@@ -14,6 +14,8 @@ namespace Nowcfo.Infrastructure.Repository
         private readonly ApplicationDbContext _dbContext;
 
         public IOrganizationRepository OrganizationRepository { get; }
+
+        public IEmployeeRepository EmployeeRepository { get; }
         public IUserRepository UserRepository { get; }
         public IRoleRepository RoleRepository { get; }
         public IUserRoleRepository UserRoleRepository { get; }

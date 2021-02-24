@@ -1,106 +1,117 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Nowcfo.Application.DTO;
+using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
-using Nowcfo.Infrastructure.Data;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EmployeeController : ControllerBase
+    public class EmployeeController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public EmployeeController(ApplicationDbContext context)
+        public EmployeeController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        // GET: api/Employee
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmployeeInfo>>> GetEmployeeInfos()
+        [HttpGet("listallemployees")]
+        public async Task<IActionResult> GetEmployees()
         {
-            return await _context.EmployeeInfos.ToListAsync();
+            var emp = await _unitOfWork.EmployeeRepository.GetAllAsync();
+            return Ok(emp);
         }
 
-        // GET: api/Employee/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EmployeeInfo>> GetEmployeeInfo(int id)
+        [HttpGet("getemployee/{id}")]
+        public async Task<IActionResult> GetEmployee(int id)
         {
-            var employeeInfo = await _context.EmployeeInfos.FindAsync(id);
-
-            if (employeeInfo == null)
-            {
-                return NotFound();
-            }
-
-            return employeeInfo;
-        }
-
-        // PUT: api/Employee/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployeeInfo(int id, EmployeeInfo employeeInfo)
-        {
-            if (id != employeeInfo.EmployeeId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(employeeInfo).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var employee = await _unitOfWork.EmployeeRepository.GetByIdAsync(id);
+                if (employee == null) return NotFound($"Could not find Employee with id {id}");
+                return Ok(employee);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!EmployeeInfoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return ExceptionResponse(e.Message);
             }
-
-            return NoContent();
         }
 
-        // POST: api/Employee
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<EmployeeInfo>> PostEmployeeInfo(EmployeeInfo employeeInfo)
-        {
-            _context.EmployeeInfos.Add(employeeInfo);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        [HttpPost("create")]
 
-            return CreatedAtAction("GetEmployeeInfo", new { id = employeeInfo.EmployeeId }, employeeInfo);
-        }
-
-        // DELETE: api/Employee/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteEmployeeInfo(int id)
+        public async Task<IActionResult> PostEmployee(EmployeeInfoDto dto)
         {
-            var employeeInfo = await _context.EmployeeInfos.FindAsync(id);
-            if (employeeInfo == null)
+            try
             {
-                return NotFound();
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                var employee = _mapper.Map<EmployeeInfo>(dto);
+                await _unitOfWork.EmployeeRepository.CreateAsync(employee);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, dto);
+                return BadRequest();
             }
-
-            _context.EmployeeInfos.Remove(employeeInfo);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message, dto);
+            }
         }
 
-        private bool EmployeeInfoExists(int id)
+        // [HttpPut("{id}")]
+        [HttpPut("update/{id}")]
+
+        public async Task<IActionResult> PutEmployee([FromRoute] int id, [FromBody] EmployeeInfoDto dto)
         {
-            return _context.EmployeeInfos.Any(e => e.EmployeeId == id);
+            try
+            {
+                dto.EmployeeId = id;
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var existingEmployee = _mapper.Map<EmployeeInfo>(await _unitOfWork.EmployeeRepository.GetByIdAsync(id));
+                if (existingEmployee == null)
+                    return NotFound($"Could not find Employee with id {id}");
+
+                _mapper.Map(dto, existingEmployee);
+
+                _unitOfWork.EmployeeRepository.Update(existingEmployee);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+        //[HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            try
+            {
+                var existingEmployee = _mapper.Map<EmployeeInfo>(await _unitOfWork.EmployeeRepository.GetByIdAsync(id));
+                if (existingEmployee == null)
+                    return NotFound($"Could not find Employee with id {id}");
+
+                _unitOfWork.EmployeeRepository.Delete(existingEmployee);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
         }
     }
 }
