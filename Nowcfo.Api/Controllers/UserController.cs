@@ -95,11 +95,11 @@ namespace Nowcfo.API.Controllers
         #region Commands
 
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromBody] CreateUserDto userRegisterDTO)
+        public async Task<IActionResult> ResetPassword([FromBody] CreateUserDto userRegisterDto)
         {
             try
             {
-                AppUser appUser = await _userService.FindByEmailAsync(userRegisterDTO.UserName);
+                AppUser appUser = await _userService.FindByEmailAsync(userRegisterDto.UserName);
 
                 if (appUser == null)
                 {
