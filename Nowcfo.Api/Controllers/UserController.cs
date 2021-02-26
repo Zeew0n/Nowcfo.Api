@@ -85,9 +85,9 @@ namespace Nowcfo.API.Controllers
                 var result = await _authService.AuthenticateAsync(request);
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return BadRequest(HandleActionResult($"Username or Password is Invalid!", StatusCodes.Status400BadRequest));
+                return ExceptionResponse(e.Message);
             }
         }
 

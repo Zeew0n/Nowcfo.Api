@@ -19,14 +19,14 @@ namespace Nowcfo.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("listallorganizations")]
+        [HttpGet]
         public async Task<IActionResult> GetOrganizations()
         {
             var org = await _unitOfWork.OrganizationRepository.GetAllAsync();
             return Ok(org);
         }
 
-        [HttpGet("getorganization/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetOrganization(int id)
         {
             try
@@ -41,9 +41,7 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        //[HttpPost]
-        [HttpPost("create")]
-
+        [HttpPost]
         public async Task<IActionResult> PostOrganization(OrganizationDto dto)
         {
             try
@@ -63,10 +61,8 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-       // [HttpPut("{id}")]
-        [HttpPut("update/{id}")]
-
-        public async Task<IActionResult> PutOrganization([FromRoute] int id, [FromBody] OrganizationDto dto)
+       [HttpPut("{id}")]
+       public async Task<IActionResult> PutOrganization([FromRoute] int id, [FromBody] OrganizationDto dto)
         {
             try
             {
@@ -91,9 +87,7 @@ namespace Nowcfo.API.Controllers
                 return ExceptionResponse(e.Message);
             }
         }
-
-        //[HttpDelete("{id}")]
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrganization(int id)
         {
             try
