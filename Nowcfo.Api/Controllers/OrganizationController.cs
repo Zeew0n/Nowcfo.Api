@@ -32,7 +32,7 @@ namespace Nowcfo.API.Controllers
             try
             {
                 var organization = await _unitOfWork.OrganizationRepository.GetByIdAsync(id);
-                if (organization == null) return NotFound($"Could not find Organization with id {id}");
+                if (organization == null) return NotFound($"Could not find Organization with id  {id}");
                 return Ok(organization);
             }
             catch (Exception e)
