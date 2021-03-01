@@ -36,9 +36,7 @@ namespace Nowcfo.Domain.Models
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
-
-
-
+        public bool IsActive { get; set; }
         public Designation Designation { get; set; }
 
         public Organization Organization { get; set; }

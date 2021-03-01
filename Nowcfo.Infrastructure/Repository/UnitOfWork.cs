@@ -14,6 +14,7 @@ namespace Nowcfo.Infrastructure.Repository
         private readonly ApplicationDbContext _dbContext;
 
         public IOrganizationRepository OrganizationRepository { get; }
+        public IDesignationRepository DesignationRepository { get; set; }
 
         public IEmployeeRepository EmployeeRepository { get; }
         public IUserRepository UserRepository { get; }
@@ -30,6 +31,7 @@ namespace Nowcfo.Infrastructure.Repository
             _dbContext = context;
             OrganizationRepository = new OrganizationRepository(context,mapper);
             UserRepository = new UserRepository(context,mapper);
+            DesignationRepository = new DesignationRepository(context, mapper);
             
         }
 
