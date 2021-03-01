@@ -17,6 +17,8 @@ namespace Nowcfo.Domain.Models
         [StringLength(100)]
         public string DesignationName { get; set; }
 
+        public bool IsActive { get; set; }
+
         public  ICollection<EmployeeInfo> EmployeeInfo { get; set; }
     }
 }

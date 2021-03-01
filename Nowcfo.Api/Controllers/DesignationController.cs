@@ -1,106 +1,110 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Nowcfo.Application.DTO;
+using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
-using Nowcfo.Infrastructure.Data;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class DesignationController : ControllerBase
+    public class DesignationController : BaseController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public DesignationController(ApplicationDbContext context)
+        public DesignationController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
-        // GET: api/Designation
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Designation>>> GetDesignations()
+        public async Task<IActionResult> GetDesignations()
         {
-            return await _context.Designations.ToListAsync();
+            var deg = await _unitOfWork.DesignationRepository.GetAllAsync();
+            return Ok(deg);
         }
 
-        // GET: api/Designation/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Designation>> GetDesignation(int id)
+        public async Task<IActionResult> GetDesignation(int id)
         {
-            var designation = await _context.Designations.FindAsync(id);
-
-            if (designation == null)
-            {
-                return NotFound();
-            }
-
-            return designation;
-        }
-
-        // PUT: api/Designation/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDesignation(int id, Designation designation)
-        {
-            if (id != designation.DesignationId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(designation).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var designation = await _unitOfWork.DesignationRepository.GetByIdAsync(id);
+                if (designation == null) return NotFound($"Could not find Designation with id  {id}");
+                return Ok(designation);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception e)
             {
-                if (!DesignationExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return ExceptionResponse(e.Message);
             }
-
-            return NoContent();
         }
 
-        // POST: api/Designation
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Designation>> PostDesignation(Designation designation)
+        public async Task<IActionResult> PostDesignation(DesignationDto dto)
         {
-            _context.Designations.Add(designation);
-            await _context.SaveChangesAsync();
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                var designation = _mapper.Map<Designation>(dto);
+                await _unitOfWork.DesignationRepository.CreateAsync(designation);
 
-            return CreatedAtAction("GetDesignation", new { id = designation.DesignationId }, designation);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return CreatedAtAction("GetDesignation", new { id = designation.DesignationId }, dto);
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message, dto);
+            }
         }
 
-        // DELETE: api/Designation/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutDesignation([FromRoute] int id, [FromBody] DesignationDto dto)
+        {
+            try
+            {
+                dto.DesignationId = id;
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var existingDesignation = _mapper.Map<Designation>(await _unitOfWork.DesignationRepository.GetByIdAsync(id));
+                if (existingDesignation == null)
+                    return NotFound($"Could not find Designation with id {id}");
+
+                _mapper.Map(dto, existingDesignation);
+
+                _unitOfWork.DesignationRepository.Update(existingDesignation);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDesignation(int id)
         {
-            var designation = await _context.Designations.FindAsync(id);
-            if (designation == null)
+            try
             {
-                return NotFound();
+                var existingDesignation = _mapper.Map<Designation>(await _unitOfWork.DesignationRepository.GetByIdAsync(id));
+                if (existingDesignation == null)
+                    return NotFound($"Could not find Designation with id {id}");
+
+                _unitOfWork.DesignationRepository.Delete(existingDesignation);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
             }
-
-            _context.Designations.Remove(designation);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool DesignationExists(int id)
-        {
-            return _context.Designations.Any(e => e.DesignationId == id);
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
         }
     }
 }
