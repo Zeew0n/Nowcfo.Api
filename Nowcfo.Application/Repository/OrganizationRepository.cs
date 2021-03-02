@@ -6,6 +6,7 @@ using Nowcfo.Domain.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Nowcfo.Application.Repository
@@ -40,8 +41,20 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var organizations =  await _dbContext.Organizations.ToListAsync();
-                return _mapper.Map<List<OrganizationDto>>(organizations);
+                var result =  await( from o in   _dbContext.Organizations
+                                            join os   in _dbContext.Organizations on o.ParentOrganizationId equals os.OrganizationId into og
+                                            from os in og.DefaultIfEmpty()
+                                            select new OrganizationDto
+                                            {
+                                                OrganizationId = o.OrganizationId,
+                                                OrganizationName = o.OrganizationName,
+                                                HasParent = o.HasParent,
+                                                ParentOrganizationId = o.ParentOrganizationId,
+                                                ParentOrganization = o.ParentOrganizationId==null? "Head Organization":os.OrganizationName
+                                            }).ToListAsync();
+
+                
+                return result ;
             }
             catch (Exception e)
             {

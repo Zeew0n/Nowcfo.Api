@@ -103,7 +103,7 @@ namespace Nowcfo.API.Controllers
             }
             catch (Exception e)
             {
-                return ExceptionResponse(e.Message);
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
             }
         }
     }
