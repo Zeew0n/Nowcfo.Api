@@ -19,7 +19,7 @@ namespace Nowcfo.Domain.Models
 
         public string OrganizationName { get; set; }
 
-        public bool? IsHeadOrganization { get; set; }
+        public bool? HasParent { get; set; }
 
         [StringLength(100)]
         public int? ParentOrganizationId { get; set; }
