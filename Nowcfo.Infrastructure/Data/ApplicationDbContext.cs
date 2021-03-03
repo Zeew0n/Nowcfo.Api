@@ -55,7 +55,7 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
 
-            modelBuilder.SeedAdminUser();
+            //modelBuilder.SeedAdminUser();
 
         }
 

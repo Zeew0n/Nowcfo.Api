@@ -7,7 +7,7 @@ using System;
 
 namespace Nowcfo.Application.IRepository
 {
-    public interface IApplicationDbContext
+    public interface IApplicationDbContext:IDbContext
     {
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<AppRole> AppRoles { get; set; }
