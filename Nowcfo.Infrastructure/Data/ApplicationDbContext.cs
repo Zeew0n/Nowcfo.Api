@@ -51,6 +51,7 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<RolePermissionMapping>(ConfigureRolePermissionMapping);
 
             modelBuilder.Entity<EmployeeInfo>(ConfigureEmployeeInfo);
+            modelBuilder.Entity<EmployeeOrgPermission>(ConfigureEmpOrgPermission);
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
 
@@ -160,6 +161,7 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<UserSignUp> UserSignup { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<EmployeeInfo> EmployeeInfos { get; set; }
+        public DbSet<EmployeeOrgPermission> EmployeeOrgPermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Menu> Menus { get; set; }
         public DbSet<MenuPermission> MenuPermissions { get; set; }

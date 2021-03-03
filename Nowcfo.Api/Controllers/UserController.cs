@@ -103,7 +103,7 @@ namespace Nowcfo.API.Controllers
 
                 if (appUser == null)
                 {
-                    return BadRequest(HandleActionResult($"Email Not Found!", StatusCodes.Status400BadRequest));
+                    return BadRequest(HandleActionResult($"User Registered with this email Not Found!", StatusCodes.Status400BadRequest));
                 }
 
                 Guid appuserid = Guid.Parse(appUser.Id.ToString());
@@ -159,7 +159,6 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-               // Guard.Against.InvalidPasswordCompare(userRegisterDTO.Password, userRegisterDTO.ConfirmPassword, nameof(userRegisterDTO.Password), nameof(userRegisterDTO.ConfirmPassword));
                 AppUser User = await _userService.FindByIdAsync(userId);
                 var result = await _userService.ConfirmUserAsync(User, token);
                 if (result)
@@ -263,9 +262,9 @@ namespace Nowcfo.API.Controllers
                         return Ok(user);
 
                     }
-                   return BadRequest(HandleActionResult($"User registration failed.", StatusCodes.Status400BadRequest));
+                   return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));
                 }
-                return BadRequest(HandleActionResult($"User registration failed.", StatusCodes.Status400BadRequest));
+                return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));
 
             }
             catch (Exception ex)

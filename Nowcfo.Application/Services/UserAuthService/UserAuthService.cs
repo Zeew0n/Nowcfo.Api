@@ -53,9 +53,6 @@ namespace Nowcfo.Application.Services.UserAuthService
                 
                 var claimsIdentity = await GetClaimsIdentityAsync(request.UserName, request.Password);
                 var jwtResponse = await _jwtService.GenerateJwt(claimsIdentity);
-                //await GenerateRefreshToken(claimsIdentity);
-                //jwtResponse.RefreshToken = claimsIdentity.RefreshToken.Token;
-                // jwtResponse.RefreshTokenExpiry = claimsIdentity.RefreshToken.ExpiryDate;
                 return jwtResponse;
             }
             catch (Exception ex)

@@ -1,4 +1,7 @@
-﻿namespace Nowcfo.Application.DTO
+﻿using Nowcfo.Application.Dtos;
+using System.Collections.Generic;
+
+namespace Nowcfo.Application.DTO
 {
     public class EmployeeInfoDto
     {
@@ -22,6 +25,8 @@
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
         public bool IsActive { get; set; }
+        public ICollection<EmployeeOrgPermissionDto> EmployeeOrgPermissionDtos { get; set; }
+
 
     }
 }

@@ -55,6 +55,12 @@ namespace Nowcfo.Application.Repository
             try
             {
                 await _dbContext.EmployeeInfos.AddAsync(model);
+                //List<EmployeeOrgPermission> employeespermissions = new List<EmployeeOrgPermission>();
+
+                //foreach (EmployeeOrgPermission employee in model.EmployeeOrgPermissions)
+                //{
+                //    _dbContext.EmployeeOrgPermissions.Add(employee);
+                //}
             }
             catch (Exception e)
             {

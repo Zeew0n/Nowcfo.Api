@@ -27,6 +27,12 @@ namespace Nowcfo.Infrastructure.Data
             builder.HasKey(q => q.UserId);
         }
 
+        public static void ConfigureEmpOrgPermission(EntityTypeBuilder<EmployeeOrgPermission> builder)
+        {
+            builder.HasKey(q => q.EmployeeOrganizationPermissionId);
+            builder.Property(p => p.Employee_Id).IsRequired(false);
+            builder.Property(p => p.Organization_Id).IsRequired(false);
+        }
 
 
         public static void ConfigureAppUser(EntityTypeBuilder<AppUser> builder)
