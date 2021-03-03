@@ -15,7 +15,7 @@ using static Nowcfo.Infrastructure.Data.ConfigureRelation;
 namespace Nowcfo.Infrastructure.Data
 {
 
-    public class ApplicationDbContext :DbContext IdentityDbContext<AppUser, AppRole, Guid>,IApplicationDbContext
+    public class ApplicationDbContext :IdentityDbContext<AppUser, AppRole, Guid>,IApplicationDbContext
     {
         private readonly ICurrentUserService _currentUserService;
         private const string IsDeletedColumnName = "IsDeleted";
