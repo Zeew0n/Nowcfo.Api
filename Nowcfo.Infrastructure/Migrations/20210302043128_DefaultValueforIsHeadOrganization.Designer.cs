@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nowcfo.Infrastructure.Data;
 
 namespace Nowcfo.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210302043128_DefaultValueforIsHeadOrganization")]
+    partial class DefaultValueforIsHeadOrganization
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,21 +171,21 @@ namespace Nowcfo.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("cc086577-d584-404a-bb5c-b44166199b01"),
-                            ConcurrencyStamp = "351f11c6-96a0-45ee-9cc5-9cf5f6a4112a",
+                            ConcurrencyStamp = "9970089c-eae9-4789-b57c-d9d99c99ea82",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("92dea008-9d4b-4c59-904d-7f5a700e67ae"),
-                            ConcurrencyStamp = "3d8ba650-a301-4b21-a6e7-4940d683b9cb",
+                            ConcurrencyStamp = "54c64259-8485-4e34-8b41-1e7553ef036b",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("31bfdef9-6776-4156-b727-5e8ff2a12573"),
-                            ConcurrencyStamp = "707c9457-8067-496b-90ed-646e504e68ac",
+                            ConcurrencyStamp = "2bc4d374-ac88-41eb-aa97-2c1438f4366a",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -310,9 +312,9 @@ namespace Nowcfo.Infrastructure.Migrations
                         {
                             Id = new Guid("b3bb50ef-d624-41de-a93b-2031d0fd392e"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4a2237a5-9150-4c0d-9fdb-6495aa3f31b0",
-                            CreatedBy = new Guid("cbdd9cce-707f-4fce-9066-cf9ad78307cf"),
-                            CreatedDate = new DateTime(2021, 3, 2, 11, 2, 24, 317, DateTimeKind.Local).AddTicks(3086),
+                            ConcurrencyStamp = "6e4478dc-72eb-43c0-8e3d-acfdcbad096e",
+                            CreatedBy = new Guid("29bf6c1c-06aa-420d-a80e-d191f0319294"),
+                            CreatedDate = new DateTime(2021, 3, 2, 10, 16, 26, 375, DateTimeKind.Local).AddTicks(3906),
                             Email = "merolook@outlook.com",
                             EmailConfirmed = true,
                             FirstName = "",
@@ -321,12 +323,10 @@ namespace Nowcfo.Infrastructure.Migrations
                             LastName = "",
                             LockoutEnabled = false,
                             NormalizedUserName = "SUPERADMIN",
-
-                            PasswordHash = "AQAAAAEAACcQAAAAEAyhJ/c4Ro6GQpX27D9NJPwGnS5JiyLaYyCt+IpJQxfLbIV+yqFXIm/0GxuiWGpUTg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMSngnPvOF9u+phlsvM+ERyDzbPijAZUM56JgTiL5WmPvHAOjzQBwftWZQVumTBFRw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
-                            UpdatedDate = new DateTime(2021, 3, 2, 11, 2, 24, 284, DateTimeKind.Local).AddTicks(8175),
-
+                            UpdatedDate = new DateTime(2021, 3, 2, 10, 16, 26, 342, DateTimeKind.Local).AddTicks(9488),
                             UserName = "superadmin"
                         });
                 });
@@ -477,24 +477,6 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.ToTable("EmployeeInfo");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeOrgPermission", b =>
-                {
-                    b.Property<int>("EmployeeOrganizationPermissionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("Employee_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Organization_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeeOrganizationPermissionId");
-
-                    b.ToTable("EmployeeOrgPermissions");
-                });
-
             modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>
                 {
                     b.Property<string>("MenuId")
@@ -560,6 +542,11 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<bool?>("IsHeadOrganization")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("OrganizationName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -567,11 +554,6 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.Property<int?>("ParentOrganizationId")
                         .HasMaxLength(100)
                         .HasColumnType("int");
-
-                    b.Property<bool?>("hasParent")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.HasKey("OrganizationId");
 

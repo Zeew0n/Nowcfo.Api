@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nowcfo.Infrastructure.Data;
 
 namespace Nowcfo.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210302051726_hasParent")]
+    partial class hasParent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,7 +171,7 @@ namespace Nowcfo.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("cc086577-d584-404a-bb5c-b44166199b01"),
-                            ConcurrencyStamp = "351f11c6-96a0-45ee-9cc5-9cf5f6a4112a",
+                            ConcurrencyStamp = "fd60afec-6aa7-4122-ad6a-b4d6224e4b15",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
@@ -321,12 +323,10 @@ namespace Nowcfo.Infrastructure.Migrations
                             LastName = "",
                             LockoutEnabled = false,
                             NormalizedUserName = "SUPERADMIN",
-
                             PasswordHash = "AQAAAAEAACcQAAAAEAyhJ/c4Ro6GQpX27D9NJPwGnS5JiyLaYyCt+IpJQxfLbIV+yqFXIm/0GxuiWGpUTg==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UpdatedDate = new DateTime(2021, 3, 2, 11, 2, 24, 284, DateTimeKind.Local).AddTicks(8175),
-
                             UserName = "superadmin"
                         });
                 });
@@ -475,24 +475,6 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.HasIndex("SupervisorId");
 
                     b.ToTable("EmployeeInfo");
-                });
-
-            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeOrgPermission", b =>
-                {
-                    b.Property<int>("EmployeeOrganizationPermissionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("Employee_Id")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Organization_Id")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeeOrganizationPermissionId");
-
-                    b.ToTable("EmployeeOrgPermissions");
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>

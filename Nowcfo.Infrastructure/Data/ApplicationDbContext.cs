@@ -15,7 +15,7 @@ using static Nowcfo.Infrastructure.Data.ConfigureRelation;
 namespace Nowcfo.Infrastructure.Data
 {
 
-    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>,IApplicationDbContext
+    public class ApplicationDbContext :DbContext IdentityDbContext<AppUser, AppRole, Guid>,IApplicationDbContext
     {
         private readonly ICurrentUserService _currentUserService;
         private const string IsDeletedColumnName = "IsDeleted";
@@ -60,11 +60,6 @@ namespace Nowcfo.Infrastructure.Data
         }
 
 
-        public async Task<bool> IsSaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-        {
-            return await this.SaveChangesAsync(cancellationToken)>0;
-        }
-
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             DateTime currentDateTime = DateTime.Now;
@@ -108,7 +103,7 @@ namespace Nowcfo.Infrastructure.Data
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        public override int SaveChanges()
+        public  int SaveChange()
         {
             DateTime currentDateTime = DateTime.Now;
             var currentUser = _currentUserService.GetUser();
@@ -147,8 +142,7 @@ namespace Nowcfo.Infrastructure.Data
                         break;
                 }
             }
-
-            return base.SaveChanges();
+            return  base.SaveChanges();
         }
 
         private bool IsAuthenticatedRequest(Guid currentUser) => currentUser != Guid.Empty;
@@ -165,5 +159,6 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Menu> Menus { get; set; }
         public DbSet<MenuPermission> MenuPermissions { get; set; }
+       
     }
 }

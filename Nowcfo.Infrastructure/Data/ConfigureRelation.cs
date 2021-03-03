@@ -80,6 +80,9 @@ namespace Nowcfo.Infrastructure.Data
                 .HasForeignKey(e => e.ParentOrganizationId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(p => p.HasParent)
+                .HasDefaultValue(false);
         }
     }
 }
