@@ -129,7 +129,7 @@ namespace Nowcfo.Application.Services.UserService
                 string email = appUser.Email;
                 string userName = appUser.UserName;
                 AppUser oldUserEmailDetail = await FindByEmailAsync(email);
-                AppUser oldUserUsername = await FindByUsernameAsync(email);
+                AppUser oldUserUsername = await FindByUsernameAsync(userName);
 
                 if (oldUserEmailDetail == null)
                     throw new Exception($"Email not available.");
@@ -173,7 +173,7 @@ namespace Nowcfo.Application.Services.UserService
                 string email = appUser.Email;
                 string userName = appUser.UserName;
                 AppUser oldUserEmailDetail = await FindByEmailAsync(email);
-                AppUser oldUserUsername = await FindByUsernameAsync(email);
+                AppUser oldUserUsername = await FindByUsernameAsync(userName);
 
                 if (oldUserEmailDetail == null)
                     throw new Exception($"Email not available.");
@@ -506,7 +506,7 @@ namespace Nowcfo.Application.Services.UserService
             string token = await EncodePasswordTokenAsync(appUser);
             string clientUri = _configuration["URL"];
             appUser.UserName = appUser.UserName ?? "0";
-            string generatedUri = $"{clientUri}/{uriParam}/{appUser.Id}/{appUser.Email}/{token}";
+            string generatedUri = $"{clientUri}/{uriParam}/{appUser.Id}/{appUser.Email}/{appUser.UserName}/{token}";
             Uri callBackUri = new Uri(Uri.EscapeUriString(generatedUri));
             return callBackUri;
         }

@@ -32,7 +32,8 @@ namespace Nowcfo.Infrastructure.Repository
             OrganizationRepository = new OrganizationRepository(context,mapper);
             UserRepository = new UserRepository(context,mapper);
             DesignationRepository = new DesignationRepository(context, mapper);
-            
+            EmployeeRepository = new EmployeeRepository(context, mapper);
+
         }
 
 

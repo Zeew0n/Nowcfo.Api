@@ -1,9 +1,9 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Nowcfo.Domain.Models;
 using Nowcfo.Domain.Models.AppUserModels;
 using Nowcfo.Domain.Models.User;
+using System;
 
 namespace Nowcfo.Application.IRepository
 {
@@ -19,6 +19,7 @@ namespace Nowcfo.Application.IRepository
         public DbSet<UserSignUp> UserSignup { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<EmployeeInfo> EmployeeInfos { get; set; }
+        public DbSet<EmployeeOrgPermission> EmployeeOrgPermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Menu> Menus { get; set; }
         public DbSet<MenuPermission> MenuPermissions { get; set; }
