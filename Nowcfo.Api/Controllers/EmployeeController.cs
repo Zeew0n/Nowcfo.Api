@@ -21,14 +21,14 @@ namespace Nowcfo.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("listallemployees")]
+        [HttpGet]
         public async Task<IActionResult> GetEmployees()
         {
             var emp = await _unitOfWork.EmployeeRepository.GetAllAsync();
             return Ok(emp);
         }
 
-        [HttpGet("getemployee/{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployee(int id)
         {
             try
@@ -44,7 +44,7 @@ namespace Nowcfo.API.Controllers
         }
 
         //[HttpPost]
-        [HttpPost("create")]
+        [HttpPost]
 
         public async Task<IActionResult> PostEmployee(EmployeeInfoDto dto)
         {
@@ -52,10 +52,10 @@ namespace Nowcfo.API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-                var employee = _mapper.Map<EmployeeInfo>(dto);
-                await _unitOfWork.EmployeeRepository.CreateAsync(employee);
+                await _unitOfWork.EmployeeRepository.CreateAsync(dto);
+
                 if (await _unitOfWork.SaveChangesAsync())
-                    return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, dto);
+                return CreatedAtAction("GetEmployee", new { id = dto.EmployeeId}, dto);
                 return BadRequest();
             }
             catch (Exception e)
@@ -65,7 +65,7 @@ namespace Nowcfo.API.Controllers
         }
 
         // [HttpPut("{id}")]
-        [HttpPut("update/{id}")]
+        [HttpPut("{id}")]
 
         public async Task<IActionResult> PutEmployee([FromRoute] int id, [FromBody] EmployeeInfoDto dto)
         {
@@ -94,7 +94,7 @@ namespace Nowcfo.API.Controllers
         }
 
         //[HttpDelete("{id}")]
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             try

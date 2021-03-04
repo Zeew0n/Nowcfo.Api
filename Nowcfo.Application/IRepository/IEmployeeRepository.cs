@@ -9,7 +9,7 @@ namespace Nowcfo.Application.IRepository
     {
         Task<EmployeeInfoDto> GetByIdAsync(int id);
         Task<List<EmployeeInfoDto>> GetAllAsync();
-        Task CreateAsync(EmployeeInfo model);
+        Task CreateAsync(EmployeeInfoDto model);
         void Update(EmployeeInfo model);
         void Delete(EmployeeInfo model);
     }

@@ -50,17 +50,29 @@ namespace Nowcfo.Application.Repository
             }
         }
 
-        public async Task CreateAsync(EmployeeInfo model)
+        public async Task CreateAsync(EmployeeInfoDto model)
         {
             try
             {
-                await _dbContext.EmployeeInfos.AddAsync(model);
-                //List<EmployeeOrgPermission> employeespermissions = new List<EmployeeOrgPermission>();
+                var empOrg = new List<EmployeeOrgPermission>();
+                var employee = _mapper.Map<EmployeeInfoDto,EmployeeInfo>(model);
+            
+                await _dbContext.EmployeeInfos.AddAsync(employee);
+                 var y = _dbContext.SaveChange();
+                var x = employee.EmployeeId;
 
-                //foreach (EmployeeOrgPermission employee in model.EmployeeOrgPermissions)
-                //{
-                //    _dbContext.EmployeeOrgPermissions.Add(employee);
-                //}
+               
+                foreach (var employees in model.employeepermissions)
+                {
+                  var model1 = new EmployeeOrgPermission
+                    {
+                        Employee_Id = x,
+                        Organization_Id = employees
+                    };
+                    empOrg.Add(model1);
+                }
+                _dbContext.EmployeeOrgPermissions.AddRange(empOrg);
+                _dbContext.SaveChange();
             }
             catch (Exception e)
             {
