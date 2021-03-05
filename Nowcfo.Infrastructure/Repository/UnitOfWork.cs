@@ -23,7 +23,6 @@ namespace Nowcfo.Infrastructure.Repository
         public IUserClaimRepository UserClaimRepository { get; }
         public IRolePermissionRepository RolePermissionRepository { get; }
         public IRolePermissionMappingRepository RolePermissionMappingRepository { get; }
-        public IRefreshTokenRepository RefreshTokenRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context,IMapper mapper )

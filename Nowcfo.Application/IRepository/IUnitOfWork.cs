@@ -14,9 +14,8 @@ namespace Nowcfo.Application.IRepository
         IUserClaimRepository UserClaimRepository { get; }
         IRolePermissionRepository RolePermissionRepository { get; }
         IRolePermissionMappingRepository RolePermissionMappingRepository { get; }
-        IRefreshTokenRepository RefreshTokenRepository { get; }
 
-        
+
         void BeginTransaction();
 
         void Commit();
