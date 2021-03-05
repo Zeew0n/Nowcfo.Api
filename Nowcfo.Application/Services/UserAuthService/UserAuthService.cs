@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Dtos.User.Response;
 using Nowcfo.Application.Extensions;
@@ -53,25 +52,9 @@ namespace Nowcfo.Application.Services.UserAuthService
                 
                 var claimsIdentity = await GetClaimsIdentityAsync(request.UserName, request.Password);
                 var jwtResponse = await _jwtService.GenerateJwt(claimsIdentity);
-                return jwtResponse;
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error: {ErrorMessage},{ErrorDetails}", ex.Message, ex.StackTrace);
-                throw;
-            }
-        }
-
-
-        public async Task<AuthenticationResponseDto> AuthenticateTenantAsync(AuthenticationRequestDto request)
-        {
-            try
-            {
-                var claimsIdentity = await GetClaimsIdentityAsync(request.UserName, request.Password);
-                var jwtResponse = await _jwtService.GenerateJwt(claimsIdentity);
-                //await GenerateRefreshToken(claimsIdentity);
-                //jwtResponse.RefreshToken = claimsIdentity.RefreshToken.Token;
-                // jwtResponse.RefreshTokenExpiry = claimsIdentity.RefreshToken.ExpiryDate;
+                await GenerateRefreshToken(claimsIdentity);
+                jwtResponse.RefreshToken = claimsIdentity.RefreshToken.Token;
+                jwtResponse.RefreshTokenExpiry = claimsIdentity.RefreshToken.ExpiryDate;
                 return jwtResponse;
             }
             catch (Exception ex)
@@ -91,11 +74,11 @@ namespace Nowcfo.Application.Services.UserAuthService
             {
                 Guid userId = userDetails.Id;
                 var refreshToken = CreateRefreshToken(userId);
-                //var refreshModel = refreshToken.MapToRefreshTokenResponseDTO();
+                var refreshModel = refreshToken.MapToRefreshTokenResponseDTO();
                 refreshToken.CreatedBy = userId;
                 _dbContext.RefreshTokens.Add(refreshToken);
-                await _unitOfWork.SaveChangesAsync();
-                //userDetails.RefreshToken = refreshModel;
+                _dbContext.SaveChange();
+                userDetails.RefreshToken = refreshModel;
             }
         }
 
@@ -129,9 +112,6 @@ namespace Nowcfo.Application.Services.UserAuthService
                     if (userDetails == null)
                         throw new Exception($"You must be assigned a role before you login.");
 
-                    //if (!userDetails.IsAdmin && userDetails.Permissions.Count == 0)
-                    //    throw new Exception($"You must be assigned a permission before you login.");
-
                     return await VerifyUserNamePasswordAsync(password, appUser, userDetails);
                 }
 
@@ -159,12 +139,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                 {
                     Id = userToVerify.Id,
                     UserName = userDetails.UserName,
-                    // FullName = userDetails.FullName,
                     Email = userToVerify.Email,
-                    // RoleId = userDetails.RoleId,
-                    // Role = userDetails.RoleName,
-                    //IsAdmin = userDetails.IsAdmin,
-                    // Permissions = JsonConvert.SerializeObject(userDetails.Permissions)
                 };
                 userDetails.ClaimsIdentity = await Task.FromResult(_jwtService.GenerateClaimsIdentity(claimDto));
                 return userDetails;
@@ -179,8 +154,8 @@ namespace Nowcfo.Application.Services.UserAuthService
             var userDetails = await (from user in _dbContext.AppUsers
                                      join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
                                      join role in _dbContext.AppRoles on userRole.RoleId equals role.Id
-                                     //join refToken in _unitOfWork.RefreshTokenRepository.GetAll() on user.Id equals refToken.UserId into rt
-                                     //from refreshToken in rt.DefaultIfEmpty()
+                                     join refToken in _dbContext.RefreshTokens on user.Id equals refToken.UserId into rt
+                                     from refreshToken in rt.DefaultIfEmpty()
                                      where user.Id == userId
                                      select new
                                      {
@@ -191,9 +166,8 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.IsAdmin,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
-                                         Permission = "",
-                                         RefreshToken = ""
-                                     }).OrderBy(t => t.Permission).ToListAsync();
+                                         RefreshToken = refreshToken
+                                     }).ToListAsync();
             return userDetails.GroupBy(t => t.RoleId)
                  .Select(q =>
                  {
@@ -207,8 +181,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                          IsAdmin = q.Select(t => t.IsAdmin).FirstOrDefault(),
                          RoleId = q.Key,
                          RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
-                         //Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).ToList(),
-                         //RefreshToken = refreshToken?.MapToRefreshTokenResponseDTO()
+                         RefreshToken = refreshToken?.MapToRefreshTokenResponseDTO()
                      };
                  }).FirstOrDefault();
         }
@@ -256,12 +229,12 @@ namespace Nowcfo.Application.Services.UserAuthService
         private async Task UpdateRefreshToken(AppUserDto userDetails)
         {
             Guid userId = userDetails.Id;
-            var currentRefreshToken = await _dbContext.RefreshTokens.FindAsync(userId);
+            var currentRefreshToken = _dbContext.RefreshTokens.Where(m => m.UserId == userId).FirstOrDefault();
             currentRefreshToken.UpdateToken(GenerateRefreshToken());
             currentRefreshToken.UpdatedBy = userId;
             var refreshModel = currentRefreshToken.MapToRefreshTokenResponseDTO();
             _dbContext.RefreshTokens.Update(currentRefreshToken);
-            await _unitOfWork.SaveChangesAsync();
+            _dbContext.SaveChange();
             userDetails.RefreshToken = refreshModel;
         }
 
@@ -288,9 +261,6 @@ namespace Nowcfo.Application.Services.UserAuthService
                 var userDetails = await GetUserDetailsByRefreshToken(token);
                 if (userDetails == null)
                     throw new Exception($"Token did not match any users.");
-
-                if (!userDetails.IsAdmin && userDetails.Permissions.Count == 0)
-                    throw new Exception($"You must be assigned a permission before you login.");
 
                 var refreshToken = userDetails.RefreshToken;
                 return await GenerateClaimsIdentity(userDetails);
@@ -319,8 +289,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                 Email = userDetails.Email,
                 RoleId = userDetails.RoleId,
                 Role = userDetails.RoleName,
-                IsAdmin = userDetails.IsAdmin,
-                Permissions = JsonConvert.SerializeObject(userDetails.Permissions)
+
             };
             userDetails.ClaimsIdentity = await Task.FromResult(_jwtService.GenerateClaimsIdentity(claimDTO));
             return userDetails;
@@ -333,10 +302,6 @@ namespace Nowcfo.Application.Services.UserAuthService
                                      join user in _dbContext.AppUsers on refreshToken.UserId equals user.Id
                                      join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
                                      join role in _dbContext.AppRoles on userRole.RoleId equals role.Id
-                                     join rolePer in _dbContext.RolePermissionMappings on role.Id equals rolePer.RoleId into rp
-                                     from rolePermission in rp.DefaultIfEmpty()
-                                     join perm in _dbContext.RolePermissions on rolePermission.PermissionId equals perm.Id into per
-                                     from permission in per.DefaultIfEmpty()
                                      where refreshToken.Token == token
                                      select new
                                      {
@@ -347,9 +312,8 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.IsAdmin,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
-                                         Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
-                                     }).OrderBy(t => t.Permission).ToListAsync();
+                                     }).ToListAsync();
             return userDetails.GroupBy(t => t.RoleId)
                  .Select(q =>
                  {
@@ -363,8 +327,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                          IsAdmin = q.Select(t => t.IsAdmin).FirstOrDefault(),
                          RoleId = q.Key,
                          RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
-                         Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).ToList(),
-                         //RefreshToken = refreshToken.MapToRefreshTokenResponseDTO()
+                         RefreshToken = refreshToken.MapToRefreshTokenResponseDTO()
                      };
                  }).FirstOrDefault();
         }

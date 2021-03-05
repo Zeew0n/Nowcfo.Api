@@ -8,8 +8,6 @@ namespace Nowcfo.Application.Services.UserAuthService
     {
         Task<AuthenticationResponseDto> AuthenticateAsync(AuthenticationRequestDto request);
 
-        Task<AuthenticationResponseDto> AuthenticateTenantAsync(AuthenticationRequestDto request);
-
         Task<AuthenticationResponseDto> RefreshTokenAsync(string refreshToken);
 
         Task<bool> RevokeTokenAsync(string token);

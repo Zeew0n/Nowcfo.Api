@@ -6,6 +6,7 @@ using Nowcfo.Domain.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Nowcfo.Application.Repository
@@ -41,6 +42,20 @@ namespace Nowcfo.Application.Repository
             try
             {
                 var employees = await _dbContext.EmployeeInfos.ToListAsync();
+                return _mapper.Map<List<EmployeeInfoDto>>(employees);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
+
+        public async Task<List<EmployeeInfoDto>> GetAllSuperAdmins(int orgId)
+        {
+            try
+            {
+                var employees = await _dbContext.EmployeeInfos.Where(m => m.OrganizationId == orgId && m.IsSupervisor.Value && m.IsActive).ToListAsync();
                 return _mapper.Map<List<EmployeeInfoDto>>(employees);
             }
             catch (Exception e)

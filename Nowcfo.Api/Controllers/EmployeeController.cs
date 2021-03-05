@@ -13,6 +13,7 @@ namespace Nowcfo.API.Controllers
     public class EmployeeController : BaseController
     {
         private readonly IUnitOfWork _unitOfWork;
+
         private readonly IMapper _mapper;
 
         public EmployeeController(IUnitOfWork unitOfWork, IMapper mapper)
@@ -25,6 +26,14 @@ namespace Nowcfo.API.Controllers
         public async Task<IActionResult> GetEmployees()
         {
             var emp = await _unitOfWork.EmployeeRepository.GetAllAsync();
+            return Ok(emp);
+        }
+
+
+        [HttpGet("listallsupervisors/{orgId}")]
+        public async Task<IActionResult> GetSuperVisors(int orgId)
+        {
+            var emp = await _unitOfWork.EmployeeRepository.GetAllSuperAdmins(orgId);
             return Ok(emp);
         }
 
@@ -52,6 +61,7 @@ namespace Nowcfo.API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+             
                 await _unitOfWork.EmployeeRepository.CreateAsync(dto);
 
                 if (await _unitOfWork.SaveChangesAsync())

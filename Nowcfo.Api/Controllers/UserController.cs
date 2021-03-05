@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Nowcfo.Application.DTO.User.RefreshToken;
 using Nowcfo.Application.Dtos.Email;
+using Nowcfo.Application.Dtos.User.RefreshToken;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Extensions;
 using Nowcfo.Application.IRepository;
@@ -46,32 +47,7 @@ namespace Nowcfo.API.Controllers
 
         #region Registration
 
-        [HttpPost("authenticatetenant")]
-        [AllowAnonymous]
-        public async Task<IActionResult> AuthenticateTenantAsync([FromBody] AuthenticationRequestDto request)
-        {
-            try
-            {
-                AppUser appUser = await _userService.FindByEmailAsync(request.UserName);
-                if (appUser == null)
-                {
-                    return BadRequest(HandleActionResult($"User Not Found!", StatusCodes.Status400BadRequest));
-
-                }
-                //if(appUser.TenantInformationTenantId!=request.TenantId)
-                //{
-                //    return BadRequest(HandleActionResult($"Tenant User Not Found!", StatusCodes.Status400BadRequest));
-
-                //}
-                var result = await _authService.AuthenticateTenantAsync(request);
-                return Ok(result);
-
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(HandleActionResult($"Username or Password is Invalid!", StatusCodes.Status400BadRequest));
-            }
-        }
+    
 
 
         [HttpPost("authenticate")]
@@ -90,6 +66,41 @@ namespace Nowcfo.API.Controllers
                 return ExceptionResponse(e.Message);
             }
         }
+
+
+
+
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto tokenRequestDTO)
+        {
+            try
+            {
+                var response = await _authService.RefreshTokenAsync(tokenRequestDTO.RefreshToken);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+            }
+        }
+
+        [HttpPost("revoke-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequestDto model)
+        {
+            try
+            {
+                await _authService.RevokeTokenAsync(model.Token);
+                return Ok(new { message = "Token revoked" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+            }
+        }
+
+
 
 
         #region Commands
@@ -177,27 +188,16 @@ namespace Nowcfo.API.Controllers
 
 
         [HttpPost("create")]
-       // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 
         public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userRegisterDTO)
         {
             try
             {
                 Guid roleId = userRegisterDTO.RoleId;
-                //Guard.Against.NullOrEmpty(userRegisterDTO.FirstName, nameof(userRegisterDTO.FirstName));
-                //Guard.Against.NullOrEmpty(userRegisterDTO.LastName, nameof(userRegisterDTO.LastName));
                 Guard.Against.InvalidEmail(userRegisterDTO.Email, nameof(userRegisterDTO.Email));
-                //Guard.Against.InvalidEmail(userRegisterDTO.ConfirmEmail, nameof(userRegisterDTO.ConfirmEmail));
-                //Guard.Against.InvalidCompare(userRegisterDTO.Email, userRegisterDTO.ConfirmEmail, nameof(userRegisterDTO.Email), nameof(userRegisterDTO.ConfirmEmail));
-                //Guard.Against.NullOrEmpty(roleId, nameof(roleId));
                 Guard.Against.InvalidPhone(userRegisterDTO.PhoneNumber);
                 string role = await _roleServices.GetRoleNameByIdAsync(roleId);
-                //default role removed for test purpose
                 AppUser appUser = _mapper.Map<CreateUserDto, AppUser>(userRegisterDTO);
-               
-
-                
-
                 var result = await _userService.CreateAsync(appUser, role);
                 if (result.Succeeded)
                 {
@@ -237,8 +237,6 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPut("update")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userRegisterDTO)
         {
             try
@@ -274,7 +272,6 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
-      //  [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             try
@@ -295,50 +292,6 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpPost("signup")]
-        //[AllowAnonymous]
-        //[Authorize]
-
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-
-        public async Task<IActionResult> SignUpUser([FromBody] SignUpUserDto userRegisterDTO)
-        {
-            try
-            {
-                Guard.Against.NullOrEmpty(userRegisterDTO.UserName, nameof(userRegisterDTO.UserName));
-                Guard.Against.InvalidPasswordCompare(userRegisterDTO.Password, userRegisterDTO.ConfirmPassword, nameof(userRegisterDTO.Password), nameof(userRegisterDTO.ConfirmPassword));
-                var result = await _userService.SignUpUserAsync(userRegisterDTO);
-                if (result.Succeeded)
-                    return Ok();
-
-                string identityErrors = string.Empty;
-                foreach (var item in result.Errors)
-                {
-                    identityErrors = string.Concat(identityErrors, item.Code, ": ", item.Description);
-                }
-                return BadRequest(HandleActionResult($"User registration failed. { identityErrors }", StatusCodes.Status400BadRequest));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
-            }
-        }
-
-        [HttpPost("Login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] CreateUserDto userRegisterDTO)
-        {
-            try
-            {
-                var user= await _userService.FindByNameAsync(userRegisterDTO.UserName);
-                var result = await _userService.LoginAsync(user,userRegisterDTO.Password);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
-            }
-        }
 
 
         #endregion Commands
@@ -346,8 +299,6 @@ namespace Nowcfo.API.Controllers
         #region Queries
 
         [HttpGet("listallusers")]
-        //[Authorize]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<IActionResult> GetAllUsers()
         {
             try
@@ -366,21 +317,7 @@ namespace Nowcfo.API.Controllers
 
         #region Queries
 
-        [HttpGet("listalladmins")]
-        //[Authorize]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<IActionResult> GetAllAdmins()
-        {
-            try
-            {
-                var result = await _userService.GetAllAdmins();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
-            }
-        }
+        
 
 
         /// <summary>

@@ -23,6 +23,7 @@ using Nowcfo.Domain.Models;
 using Nowcfo.Domain.Models.AppUserModels;
 using Nowcfo.Infrastructure.Data;
 using Nowcfo.Infrastructure.Repository;
+using System;
 using System.Text;
 
 namespace Nowcfo.API
@@ -95,6 +96,7 @@ namespace Nowcfo.API
                     IssuerSigningKey = _signingKey,
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 options.SaveToken = true;
             });
@@ -158,9 +160,8 @@ namespace Nowcfo.API
                 c.RoutePrefix = string.Empty;
             });
             app.UseRouting();
-
-            app.UseAuthorization();
             app.UseCors("BasePolicy");
+            app.UseAuthorization();
             app.UseHttpsRedirection();
             app.UseEndpoints(endpoints =>
             {
