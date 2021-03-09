@@ -55,7 +55,7 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var employees = await _dbContext.EmployeeInfos.Where(m => m.OrganizationId == orgId && m.IsSupervisor.Value && m.IsActive).ToListAsync();
+                var employees = await _dbContext.EmployeeInfos.Where(m => m.OrganizationId == orgId && m.IsSupervisor.Value).ToListAsync();
                 return _mapper.Map<List<EmployeeInfoDto>>(employees);
             }
             catch (Exception e)

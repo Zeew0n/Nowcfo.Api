@@ -16,7 +16,7 @@
 
         public bool? IsSupervisor { get; set; }
 
-        public int? SupervisorId { get; set; }
+        public int? SuperVisorId { get; set; }
 
         public string PayType { get; set; }
         public string Pay { get; set; }
