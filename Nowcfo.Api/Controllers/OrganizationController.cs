@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Nowcfo.Application.DTO;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using System;
 using System.Threading.Tasks;
+using Nowcfo.Application.Dtos;
 
 namespace Nowcfo.API.Controllers
 {
@@ -41,7 +41,7 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost] 
         public async Task<IActionResult> PostOrganization(OrganizationDto dto)
         {
             try
@@ -52,7 +52,7 @@ namespace Nowcfo.API.Controllers
                 await _unitOfWork.OrganizationRepository.CreateAsync(organization);
 
                 if (await _unitOfWork.SaveChangesAsync())
-                    return CreatedAtAction("GetOrganization", new {id = organization.OrganizationId}, dto);
+                    return CreatedAtAction("GetOrganization", new { id = organization.OrganizationId }, dto);
                 return BadRequest();
             }
             catch (Exception e)
@@ -61,8 +61,8 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-       [HttpPut("{id}")]
-       public async Task<IActionResult> PutOrganization([FromRoute] int id, [FromBody] OrganizationDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutOrganization([FromRoute] int id, [FromBody] OrganizationDto dto)
         {
             try
             {
@@ -70,7 +70,7 @@ namespace Nowcfo.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var existingOrganization = _mapper.Map<Organization>( await _unitOfWork.OrganizationRepository.GetByIdAsync(id));
+                var existingOrganization = _mapper.Map<Organization>(await _unitOfWork.OrganizationRepository.GetByIdAsync(id));
                 if (existingOrganization == null)
                     return NotFound($"Could not find Organization with id {id}");
 
@@ -100,6 +100,34 @@ namespace Nowcfo.API.Controllers
                 if (await _unitOfWork.SaveChangesAsync())
                     return NoContent();
                 return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
+
+        [HttpGet("OrganizationHierarchy")]
+        public async Task<IActionResult> GetOrganizationHierarchy()
+        {
+            try
+            {
+                var organizationTree = await _unitOfWork.OrganizationRepository.GetOrganizationTreeHierarchy();
+                return Ok(organizationTree);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
+
+        [HttpGet("EmployeesByOrganizationHierarchy/{id}")]
+        public async Task<IActionResult> GetEmployeesByOrganizationHierarchy(int id)
+        {
+            try
+            {
+                var organizationTree = await _unitOfWork.OrganizationRepository.GetEmployeesByOrganizationHierarchy(id);
+                return Ok(organizationTree);
             }
             catch (Exception e)
             {
