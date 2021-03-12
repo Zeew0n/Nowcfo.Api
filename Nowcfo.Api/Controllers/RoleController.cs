@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.Application.Dtos.Role;
@@ -27,7 +28,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPost("Create")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
        // [Permission(Permission.AddRole)]
         public async Task<IActionResult> Create([FromBody] RoleDto dto)
         {

@@ -19,7 +19,7 @@ namespace Nowcfo.Application.Services.EmailService
         {
             var apiKey = _configuration["SendGridAPIKey"];
             var client = new SendGridClient(apiKey);
-            var from = new EmailAddress("abhattarai@devfinity.io", "JWT Implementation");
+            var from = new EmailAddress("hello@qkly.io", "Org NowCFO");
             var to = new EmailAddress(emailDto.To);
             var msg = MailHelper.CreateSingleEmail(from,to,emailDto.Subject,emailDto.Body,emailDto.Body);
             var response = await client.SendEmailAsync(msg);

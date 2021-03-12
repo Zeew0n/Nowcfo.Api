@@ -47,12 +47,16 @@ namespace Nowcfo.Infrastructure.Data
 
         public static void ConfigureEmployeeInfo(EntityTypeBuilder<EmployeeInfo> builder)
         {
+            
             builder
                 .HasMany(e => e.EmployeeInfos)
                 .WithOne(e => e.Employee)
                 .HasForeignKey(e => e.SupervisorId)
-                
+        
                 .OnDelete(DeleteBehavior.Restrict);
+          
+
+
 
         }
 

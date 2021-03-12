@@ -156,7 +156,7 @@ namespace Nowcfo.API
             });
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "StreamHarbor API V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "NowCFO OrgManager API V1");
                 c.RoutePrefix = string.Empty;
             });
             app.UseRouting();

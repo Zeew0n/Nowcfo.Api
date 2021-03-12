@@ -29,6 +29,11 @@ namespace Nowcfo.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<EmployeeInfo>().HasIndex(u => u.Email).IsUnique();
+            //modelBuilder.Entity<EmployeeInfo>().HasIndex(u => u.PhoneNumber).IsUnique();
+
+
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.Cascade;
@@ -54,6 +59,7 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<EmployeeOrgPermission>(ConfigureEmpOrgPermission);
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
+            modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
 
             //modelBuilder.SeedAdminUser();
 
