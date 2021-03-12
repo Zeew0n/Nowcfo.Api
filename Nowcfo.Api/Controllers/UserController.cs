@@ -106,6 +106,7 @@ namespace Nowcfo.API.Controllers
         #region Commands
 
         [HttpPost("ResetPassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] CreateUserDto userRegisterDto)
         {
             try
@@ -142,6 +143,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPut("updatepassword")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdatePasswordReset([FromBody] UpdateUserDto userRegisterDTO)
         {
             try
@@ -166,6 +168,7 @@ namespace Nowcfo.API.Controllers
 
         [HttpGet]
         [Route("confirmUser")]
+        [AllowAnonymous]
         public async Task<IActionResult> ConfirmUser(Guid userId, string token)
         {
             try
@@ -326,9 +329,10 @@ namespace Nowcfo.API.Controllers
         /// <param name="userId"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        [AllowAnonymous]
         [HttpGet]
         [Route("verifyEmailToken")]
+        [AllowAnonymous]
+
         public async Task<IActionResult> VerifyEmailToken(Guid userId, string token)
         {
             try

@@ -41,8 +41,35 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var employees = await _dbContext.EmployeeInfos.ToListAsync();
-                return _mapper.Map<List<EmployeeInfoDto>>(employees);
+                //var employees = await _dbContext.EmployeeInfos.ToListAsync();
+                //return _mapper.Map<List<EmployeeInfoDto>>(employees);
+
+                var result = await (from o in _dbContext.EmployeeInfos
+                                    join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
+                                    join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId 
+                                    select new EmployeeInfoDto
+                                    {
+                                        EmployeeId = o.EmployeeId,
+                                        EmployeeName = o.EmployeeName,
+                                        Email = o.Email,
+                                        PhoneNumber = o.PhoneNumber,
+                                        Address = o.Address,
+                                        City=o.City,
+                                        ZipCode=o.ZipCode,
+                                        DesignationName=ds.DesignationName,
+                                        DesignationId=ds.DesignationId,
+                                        OrganizationName=os.OrganizationName,
+                                        OrganizationId=os.OrganizationId,
+                                        PayType=o.PayType,
+                                        Pay=o.Pay,
+                                        OverTimeRate=o.OverTimeRate,
+                                        IsSupervisor=o.IsSupervisor,
+                                        SuperVisorId=o.SupervisorId,
+                                        IsActive= o.IsActive
+                                    }).Where(m=>m.IsActive==true).ToListAsync();
+
+
+                return result;
             }
             catch (Exception e)
             {
@@ -113,7 +140,8 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                _dbContext.EmployeeInfos.Remove(model);
+                model.IsActive = false;
+                _dbContext.EmployeeInfos.Update(model);
             }
             catch (Exception ex)
             {

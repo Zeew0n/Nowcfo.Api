@@ -46,7 +46,7 @@ namespace Nowcfo.Infrastructure.Extensions
                     Id = Guid.Parse("B3BB50EF-D624-41DE-A93B-2031D0FD392E"), // primary key
                     UserName = "superadmin",
                     NormalizedUserName = "superadmin".ToUpper(),
-                    PasswordHash = hasher.HashPassword(null, "superadmin"),
+                    PasswordHash = hasher.HashPassword(null, "D3vfinity#$123"),
                     FirstName = string.Empty,
                     LastName = string.Empty,
                     CreatedDate = DateTime.Now,

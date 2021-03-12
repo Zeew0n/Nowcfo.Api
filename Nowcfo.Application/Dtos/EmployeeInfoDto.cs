@@ -9,10 +9,13 @@
         public string Address { get; set; }
         public string City { get; set; }
         public string ZipCode { get; set; }
+        public string State { get; set; }
 
         public int? OrganizationId { get; set; }
+        public string OrganizationName { get; set; }
 
         public int? DesignationId { get; set; }
+        public string DesignationName { get; set; }
 
         public bool? IsSupervisor { get; set; }
 
