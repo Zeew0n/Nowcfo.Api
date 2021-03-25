@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Nowcfo.Application.DTO;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using Serilog;
@@ -52,7 +52,7 @@ namespace Nowcfo.Application.Repository
                                         EmployeeId = o.EmployeeId,
                                         EmployeeName = o.EmployeeName,
                                         Email = o.Email,
-                                        PhoneNumber = o.PhoneNumber,
+                                        PhoneNumber = o.Phone,
                                         Address = o.Address,
                                         City=o.City,
                                         ZipCode=o.ZipCode,
@@ -104,7 +104,7 @@ namespace Nowcfo.Application.Repository
                 var x = employee.EmployeeId;
 
                
-                foreach (var employees in model.employeepermissions)
+                foreach (var employees in model.EmployeePermissions)
                 {
                   var model1 = new EmployeeOrgPermission
                     {

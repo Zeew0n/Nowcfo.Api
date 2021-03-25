@@ -210,9 +210,6 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<bool>("IsSuperAdmin")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -317,7 +314,7 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.AppUserModels.RolePermissionMapping", b =>
+            modelBuilder.Entity("Nowcfo.Domain.Models.AppUserModels.RolePermission", b =>
                 {
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
@@ -329,7 +326,7 @@ namespace Nowcfo.Infrastructure.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissionMappings");
+                    b.ToTable("RolePermission");
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Designation", b =>
@@ -339,13 +336,33 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("DesignationName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("DesignationId");
 
@@ -367,6 +384,18 @@ namespace Nowcfo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("DesignationId")
                         .HasColumnType("int");
 
@@ -381,6 +410,11 @@ namespace Nowcfo.Infrastructure.Migrations
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<bool?>("IsSupervisor")
                         .HasColumnType("bit");
@@ -400,9 +434,9 @@ namespace Nowcfo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Phone")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -410,6 +444,12 @@ namespace Nowcfo.Infrastructure.Migrations
 
                     b.Property<int?>("SupervisorId")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ZipCode")
                         .IsRequired()
@@ -426,6 +466,9 @@ namespace Nowcfo.Infrastructure.Migrations
 
                     b.HasIndex("SupervisorId");
 
+                    b.HasIndex("Email", "Phone")
+                        .IsUnique();
+
                     b.ToTable("EmployeeInfo");
                 });
 
@@ -436,11 +479,34 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int?>("Employee_Id")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<int?>("Organization_Id")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("EmployeeOrganizationPermissionId");
 
@@ -449,60 +515,47 @@ namespace Nowcfo.Infrastructure.Migrations
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>
                 {
-                    b.Property<string>("MenuId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("DisplayOrder")
                         .HasColumnType("int");
 
                     b.Property<string>("Icon")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MenuLevel")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("MenuName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("UnderMenuId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("MenuId");
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.HasIndex("UnderMenuId");
+                    b.HasKey("Id");
 
                     b.ToTable("Menu");
-                });
-
-            modelBuilder.Entity("Nowcfo.Domain.Models.MenuPermission", b =>
-                {
-                    b.Property<string>("MenuPermissionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("MenuId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MenuPermissionId");
-
-                    b.HasIndex("MenuId");
-
-                    b.ToTable("MenuPermission");
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Organization", b =>
@@ -512,7 +565,24 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool?>("HasParent")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
@@ -525,6 +595,12 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("OrganizationId");
 
                     b.HasIndex("ParentOrganizationId");
@@ -532,20 +608,21 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.ToTable("Organization");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.RolePermission", b =>
+            modelBuilder.Entity("Nowcfo.Domain.Models.Permission", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Group")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Icon")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -558,58 +635,13 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("SubGroup")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("RolePermissions");
-                });
+                    b.HasIndex("MenuId");
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.User.UserSignUp", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConfirmPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DatabaseHost")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("UserSignup");
+                    b.ToTable("Permission");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -673,9 +705,9 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.Navigation("AppUser");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.AppUserModels.RolePermissionMapping", b =>
+            modelBuilder.Entity("Nowcfo.Domain.Models.AppUserModels.RolePermission", b =>
                 {
-                    b.HasOne("Nowcfo.Domain.Models.RolePermission", "Permission")
+                    b.HasOne("Nowcfo.Domain.Models.Permission", "Permission")
                         .WithMany("RolePermissions")
                         .HasForeignKey("PermissionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -716,28 +748,6 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>
-                {
-                    b.HasOne("Nowcfo.Domain.Models.Menu", "MenuOne")
-                        .WithMany("Menus")
-                        .HasForeignKey("UnderMenuId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("MenuOne");
-                });
-
-            modelBuilder.Entity("Nowcfo.Domain.Models.MenuPermission", b =>
-                {
-                    b.HasOne("Nowcfo.Domain.Models.Menu", "Menu")
-                        .WithMany("MenuPermissions")
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-                });
-
             modelBuilder.Entity("Nowcfo.Domain.Models.Organization", b =>
                 {
                     b.HasOne("Nowcfo.Domain.Models.Organization", "OneOrganization")
@@ -746,6 +756,17 @@ namespace Nowcfo.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("OneOrganization");
+                });
+
+            modelBuilder.Entity("Nowcfo.Domain.Models.Permission", b =>
+                {
+                    b.HasOne("Nowcfo.Domain.Models.Menu", "Menu")
+                        .WithMany("Permissions")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.AppUserModels.AppRole", b =>
@@ -765,9 +786,7 @@ namespace Nowcfo.Infrastructure.Migrations
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>
                 {
-                    b.Navigation("MenuPermissions");
-
-                    b.Navigation("Menus");
+                    b.Navigation("Permissions");
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Organization", b =>
@@ -777,7 +796,7 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.Navigation("Organizations");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.RolePermission", b =>
+            modelBuilder.Entity("Nowcfo.Domain.Models.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
                 });

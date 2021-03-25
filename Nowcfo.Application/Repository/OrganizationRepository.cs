@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Nowcfo.Application.DTO;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
@@ -162,7 +161,7 @@ namespace Nowcfo.Application.Repository
                                                    EmployeeId = c == null ? 0 : c.EmployeeId,
                                                    EmployeeName = c == null ? null : c.EmployeeName,
                                                    Email = c.Email,
-                                                   Phone = c.PhoneNumber,
+                                                   Phone = c.Phone,
                                                    Address = c.Address,
                                                    City = c.City
                                                }

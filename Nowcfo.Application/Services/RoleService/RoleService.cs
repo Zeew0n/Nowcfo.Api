@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Dtos.Role;
 using Nowcfo.Application.Exceptions;
 using Nowcfo.Application.IRepository;
@@ -158,9 +159,9 @@ namespace Nowcfo.Application.Services.RoleService
         {
             try
             {
-
                 var res = await _roleManager.Roles.ToListAsync();
                 return _mapper.Map<List<RoleDto>>(res);
+                
             }
             catch (Exception ex)
             {
@@ -216,24 +217,24 @@ namespace Nowcfo.Application.Services.RoleService
             {
 
 
-                var roles = await _dbContext.RolePermissions.Where(x => x.Id == model.RoleId).ToListAsync();
+                var roles = await _dbContext.RolePermissions.Where(x => x.RoleId == model.RoleId).ToListAsync();
                 
-                var rolePermissionMapping = new List<RolePermissionMapping>();
-                if (model.Premission != null)
+                var rolePermissionMapping = new List<RolePermission>();
+                if (model.PermissionIds != null)
                 {
-                    foreach (var role in model.Premission)
+                    foreach (var role in model.PermissionIds)
                     {
-                        var premission = new RolePermissionMapping();
+                        var permission = new RolePermission();
 
-                        premission.PermissionId = role;
-                        premission.RoleId = model.RoleId;
-                        rolePermissionMapping.Add(premission);
+                        permission.PermissionId = role;
+                        permission.RoleId = model.RoleId;
+                        rolePermissionMapping.Add(permission);
 
                     }
                     if (roles != null)
                     {
                         
-                        //_dbContext.RolePermissionMapping.RemoveRange(roles);
+                        //_dbContext.RolePermission.RemoveRange(roles);
 
                         //_unitOfWork.RolePermissionMappingRepository.Remove(roles);
 
@@ -254,6 +255,59 @@ namespace Nowcfo.Application.Services.RoleService
             catch (Exception ex)
             {
                 Log.Error("Error: { ErrorMessage},{ ErrorDetails}", ex.Message, ex.StackTrace);
+                throw;
+            }
+        }
+        public async Task<List<MenuDto>> GetAllMenus()
+        {
+            try
+            {
+                var menus = await _dbContext.Menus.ToListAsync();
+                return _mapper.Map<List<MenuDto>>(menus);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", ex.Message, ex.StackTrace);
+                throw;
+            }
+        }
+
+       
+        public async Task AddRolePermission(RolePermissionDto dto)
+        {
+            try
+            {
+                var permissionIds = _dbContext.Permissions.Where(x => dto.MenuIds.Contains(x.MenuId)).Select(x => x.Id);
+
+                foreach (var permId in permissionIds)
+                {
+                    var rolePermission = new RolePermission
+                    {
+                        RoleId = dto.RoleId,
+                        PermissionId = permId
+                    };
+                     await _dbContext.RolePermissions.AddAsync(rolePermission);
+                }
+                _dbContext.SaveChange();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        public async Task EditRolePermission(RolePermissionDto dto)
+        {
+            try
+            {
+                var rolePermissions = await _dbContext.RolePermissions.Where(x => x.RoleId == dto.RoleId).ToListAsync();
+                _dbContext.RolePermissions.RemoveRange(rolePermissions);
+                _dbContext.SaveChange();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
                 throw;
             }
         }

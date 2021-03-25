@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Nowcfo.Domain.Models
 {
     [Table("Designation")]
-    public  class Designation
+    public  class Designation: BaseEntity, ISoftDeletableEntity
     {
         public Designation()
         {
@@ -16,8 +16,6 @@ namespace Nowcfo.Domain.Models
 
         [StringLength(100)]
         public string DesignationName { get; set; }
-
-        public bool IsActive { get; set; }
 
         public  ICollection<EmployeeInfo> EmployeeInfo { get; set; }
     }

@@ -2,13 +2,20 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Nowcfo.Domain.Models;
 using Nowcfo.Domain.Models.AppUserModels;
-using Nowcfo.Domain.Models.User;
 
 namespace Nowcfo.Infrastructure.Data
 {
     public  class ConfigureRelation
     {
-        public static void ConfigureRolePermissionMapping(EntityTypeBuilder<RolePermissionMapping> builder)
+        public static void ConfigurePermission(EntityTypeBuilder<Permission> builder)
+        {
+            builder.HasOne(q => q.Menu)
+                .WithMany(q=>q.Permissions)
+                .HasForeignKey(q=>q.MenuId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
+        public static void ConfigureRolePermission(EntityTypeBuilder<RolePermission> builder)
         {
 
             builder.HasKey(q => new { q.RoleId, q.PermissionId });
@@ -20,11 +27,6 @@ namespace Nowcfo.Infrastructure.Data
             builder.HasOne(q => q.Permission)
                 .WithMany(q => q.RolePermissions)
                 .HasForeignKey(q => q.PermissionId);
-        }
-
-        public static void ConfigureUserSignup(EntityTypeBuilder<UserSignUp> builder)
-        {
-            builder.HasKey(q => q.UserId);
         }
 
         public static void ConfigureEmpOrgPermission(EntityTypeBuilder<EmployeeOrgPermission> builder)
@@ -53,26 +55,6 @@ namespace Nowcfo.Infrastructure.Data
                 .WithOne(e => e.Employee)
                 .HasForeignKey(e => e.SupervisorId)
         
-                .OnDelete(DeleteBehavior.Restrict);
-          
-
-
-
-        }
-
-        public static void ConfigureMenu(EntityTypeBuilder<Menu> builder)
-        {
-
-            builder
-                .HasMany(e => e.Menus)
-                .WithOne(e => e.MenuOne)
-                .HasForeignKey(e => e.UnderMenuId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder
-                .HasMany(e => e.MenuPermissions)
-                .WithOne(e => e.Menu)
-                .HasForeignKey(e=>e.MenuId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
 

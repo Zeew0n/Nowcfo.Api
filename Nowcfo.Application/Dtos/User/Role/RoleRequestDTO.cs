@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Nowcfo.Application.DTO.User.Role
+namespace Nowcfo.Application.Dtos.User.Role
 {
-    public class RoleRequestDTO
+    public class RoleRequestDto
     {
         [Required]
         [MaxLength(25)]

@@ -7,6 +7,7 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Nowcfo.Application.Dtos;
 
 namespace Nowcfo.Application.Repository
 {
@@ -21,7 +22,7 @@ namespace Nowcfo.Application.Repository
             _mapper = mapper;
         }
 
-        public async Task<MenuDto> GetByIdAsync(string id)
+        public async Task<MenuDto> GetByIdAsync(int id)
         {
             try
             {

@@ -1,4 +1,4 @@
-﻿using Nowcfo.Application.DTO;
+﻿using Nowcfo.Application.Dtos;
 using Nowcfo.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;

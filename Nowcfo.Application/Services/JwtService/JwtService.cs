@@ -90,15 +90,21 @@ namespace Nowcfo.Application.Services.JwtService
         private async Task<string> GenerateEncodedToken(ClaimsIdentity identity)
         {
             string email = identity.Claims.Single(c => c.Type == ClaimTypes.Email).Value;
+            string isAdmin = identity.Claims.Single(c => c.Type == AuthConstants.IsAdmin).Value;
             var claimList = new List<Claim>() {
-                     identity.FindFirst(AuthConstants.JwtId),
-                     new Claim(JwtRegisteredClaimNames.Sub, email),
-                     new Claim(JwtRegisteredClaimNames.Email, email),
-                     identity.FindFirst(ClaimTypes.Name),
-                     identity.FindFirst(AuthConstants.UserName),
-                     new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
-                     new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
-                };
+                identity.FindFirst(AuthConstants.JwtId),
+                new Claim(JwtRegisteredClaimNames.Sub, email),
+                new Claim(JwtRegisteredClaimNames.Email, email),
+                identity.FindFirst(ClaimTypes.Name),
+                identity.FindFirst(AuthConstants.UserName),
+                new Claim(AuthConstants.IsAdmin, isAdmin, ClaimValueTypes.Boolean),
+                identity.FindFirst(AuthConstants.RoleId),
+                identity.FindFirst(ClaimTypes.Role),
+                identity.FindFirst(AuthConstants.Menus),
+                identity.FindFirst(AuthConstants.Permissions),
+                new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
+                new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
+            };
             // Create the JWT security token and encode it.
             var jwt = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,
@@ -114,13 +120,23 @@ namespace Nowcfo.Application.Services.JwtService
         /// <summary>
         /// Adds userid, role and roleaccess to claim list.
         /// </summary>
-        /// <param name="claimDTO"></param>
+        /// <param name="claimDto"></param>
         /// <returns></returns>
-        private IEnumerable<Claim> AddToClaimList(ClaimDto claimDTO)
+
+        private IEnumerable<Claim> AddToClaimList(ClaimDto claimDto)
         {
-            yield return new Claim(AuthConstants.JwtId, claimDTO.Id.ToString());
-            yield return new Claim(ClaimTypes.Email, claimDTO.Email);
+
+            yield return new Claim(AuthConstants.JwtId, claimDto.Id.ToString());
+            yield return new Claim(AuthConstants.IsAdmin, claimDto.IsAdmin.ToString(), ClaimValueTypes.Boolean);
+            yield return new Claim(ClaimTypes.Email, claimDto.Email);
+            yield return new Claim(ClaimTypes.Name, claimDto.FullName);
+            yield return new Claim(AuthConstants.UserName, claimDto.UserName);
+            yield return new Claim(AuthConstants.RoleId, claimDto.RoleId.ToString());
+            yield return new Claim(ClaimTypes.Role, claimDto.Role);
+            yield return new Claim(AuthConstants.Menus, claimDto.Menus);
+            yield return new Claim(AuthConstants.Permissions, claimDto.Permissions);
         }
+
 
         /// <returns>Date converted to seconds since Unix epoch (Jan 1, 1970, midnight UTC).</returns>
         private static long ToUnixEpochDate(DateTime date)

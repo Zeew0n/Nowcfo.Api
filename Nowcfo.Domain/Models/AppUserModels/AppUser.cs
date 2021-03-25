@@ -16,13 +16,12 @@ namespace Nowcfo.Domain.Models.AppUserModels
 
 
 
-        //[NotMapped]
+        [NotMapped]
         public string FullName { get => FirstName + " " + LastName; }
 
         [NotMapped]
         public string Password { get; set; }
 
-    
         public string Address { get; set; }
         public string City { get; set; }
         public string? State { get; set; }
@@ -34,6 +33,5 @@ namespace Nowcfo.Domain.Models.AppUserModels
         public Guid CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public bool IsAdmin { get; set; }
-        public bool IsSuperAdmin { get; set; }
     }
 }

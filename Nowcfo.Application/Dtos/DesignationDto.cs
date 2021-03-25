@@ -1,4 +1,4 @@
-﻿namespace Nowcfo.Application.DTO
+﻿namespace Nowcfo.Application.Dtos
 {
     public class DesignationDto
     {

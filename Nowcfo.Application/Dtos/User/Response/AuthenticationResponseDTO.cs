@@ -11,9 +11,8 @@ namespace Nowcfo.Application.Dtos.User.Response
         public string RefreshToken { get; set; }
 
         //For fetching Role to Control Menu
+        public string RoleId { get; set; }
         public string RoleName { get; set; }
-        public bool IsSuperAdmin { get; set; }
-        public string TenantId { get; set; }
 
         [JsonIgnore]
         public DateTime RefreshTokenExpiry { get; set; }

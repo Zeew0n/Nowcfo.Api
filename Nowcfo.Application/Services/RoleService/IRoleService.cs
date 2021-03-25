@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Dtos.Role;
 using Nowcfo.Domain.Models.AppUserModels;
 using System;
@@ -19,10 +20,13 @@ namespace Nowcfo.Application.Services.RoleService
 
 
         //
-        Task<RoleDto> CreateAsync(RoleDto role);
-        Task<bool> UpdateAsync(RoleDto role);
+        Task<RoleDto> CreateAsync(RoleDto dto);
+        Task<bool> UpdateAsync(RoleDto dto);
         Task<bool> DeleteAsync(Guid Id);
         Task<List<RoleDto>> GetAllAsync(Guid? id = null);
         Task<RoleDto> GetByIdAsync(Guid id);
+        Task<List<MenuDto>> GetAllMenus();
+        Task AddRolePermission(RolePermissionDto dto);
+        Task EditRolePermission(RolePermissionDto dto);
     }
 }

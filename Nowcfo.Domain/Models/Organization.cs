@@ -6,7 +6,7 @@ namespace Nowcfo.Domain.Models
 
 
     [Table("Organization")]
-    public class Organization
+    public class Organization: BaseEntity, ISoftDeletableEntity
     {
         public Organization()
         {

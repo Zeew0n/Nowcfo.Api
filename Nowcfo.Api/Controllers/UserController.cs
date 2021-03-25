@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Nowcfo.Application.DTO.User.RefreshToken;
+using Nowcfo.API.Attributes;
+using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos.Email;
 using Nowcfo.Application.Dtos.User.RefreshToken;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Extensions;
+using Nowcfo.Application.Helper;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.EmailService;
 using Nowcfo.Application.Services.RoleService;
@@ -72,11 +74,11 @@ namespace Nowcfo.API.Controllers
 
         [HttpPost("refresh-token")]
         [AllowAnonymous]
-        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto tokenRequestDTO)
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto tokenRequestDto)
         {
             try
             {
-                var response = await _authService.RefreshTokenAsync(tokenRequestDTO.RefreshToken);
+                var response = await _authService.RefreshTokenAsync(tokenRequestDto.RefreshToken);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -144,13 +146,13 @@ namespace Nowcfo.API.Controllers
 
         [HttpPut("updatepassword")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdatePasswordReset([FromBody] UpdateUserDto userRegisterDTO)
+        public async Task<IActionResult> UpdatePasswordReset([FromBody] UpdateUserDto userRegisterDto)
         {
             try
             {
-                Guard.Against.InvalidPasswordCompare(userRegisterDTO.Password, userRegisterDTO.ConfirmPassword, nameof(userRegisterDTO.Password), nameof(userRegisterDTO.ConfirmPassword));
-                AppUser User = await _userService.FindByIdAsync(userRegisterDTO.Id);
-                var result = await _userService.ResetPasswordAsync(User,userRegisterDTO.token,userRegisterDTO.Password);
+                Guard.Against.InvalidPasswordCompare(userRegisterDto.Password, userRegisterDto.ConfirmPassword, nameof(userRegisterDto.Password), nameof(userRegisterDto.ConfirmPassword));
+                AppUser User = await _userService.FindByIdAsync(userRegisterDto.Id);
+                var result = await _userService.ResetPasswordAsync(User,userRegisterDto.token,userRegisterDto.Password);
                 if (result.Succeeded)
                 {
                     return Ok();
@@ -191,16 +193,16 @@ namespace Nowcfo.API.Controllers
 
 
         [HttpPost("create")]
-
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userRegisterDTO)
+        [Permission(CrudPermission.AddUser)]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userRegisterDto)
         {
             try
             {
-                Guid roleId = userRegisterDTO.RoleId;
-                Guard.Against.InvalidEmail(userRegisterDTO.Email, nameof(userRegisterDTO.Email));
-                Guard.Against.InvalidPhone(userRegisterDTO.PhoneNumber);
+                Guid roleId = userRegisterDto.RoleId;
+                Guard.Against.InvalidEmail(userRegisterDto.Email, nameof(userRegisterDto.Email));
+                Guard.Against.InvalidPhone(userRegisterDto.PhoneNumber);
                 string role = await _roleServices.GetRoleNameByIdAsync(roleId);
-                AppUser appUser = _mapper.Map<CreateUserDto, AppUser>(userRegisterDTO);
+                AppUser appUser = _mapper.Map<CreateUserDto, AppUser>(userRegisterDto);
                 var result = await _userService.CreateAsync(appUser, role);
                 if (result.Succeeded)
                 {
@@ -240,30 +242,30 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userRegisterDTO)
+        [Permission(CrudPermission.UpdateUser)]
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserDto userRegisterDto)
         {
             try
             {
-                var appuser = await _userManager.FindByIdAsync(userRegisterDTO.Id.ToString());
+                var appuser = await _userManager.FindByIdAsync(userRegisterDto.Id.ToString());
 
-                var x = await _userManager.UpdateAsync(_mapper.Map(userRegisterDTO, appuser));
+                var x = await _userManager.UpdateAsync(_mapper.Map(userRegisterDto, appuser));
 
 
                 if (x.Succeeded)
                 {
 
                     var roles = await _userManager.GetRolesAsync(appuser);
-                    var removeresult = await _userManager.RemoveFromRolesAsync(appuser, roles);
-                    if (removeresult.Succeeded)
+                    var removeResult = await _userManager.RemoveFromRolesAsync(appuser, roles);
+                    if (removeResult.Succeeded)
                     {
                         var userId = appuser.Id;
                         var user = await _userService.FindByIdAsync(userId);
-                        string roleName = await _roleServices.GetRoleNameByIdAsync(userRegisterDTO.RoleId);
+                        string roleName = await _roleServices.GetRoleNameByIdAsync(userRegisterDto.RoleId);
                         var roleResult = await _roleServices.AddToRoleAsync(user, roleName);
                         return Ok(user);
 
                     }
-                   return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));
                 }
                 return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));
 
@@ -275,6 +277,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpDelete("delete/{userId}")]
+        [Permission(CrudPermission.DeleteUser)]
         public async Task<IActionResult> DeleteUser(string userId)
         {
             try

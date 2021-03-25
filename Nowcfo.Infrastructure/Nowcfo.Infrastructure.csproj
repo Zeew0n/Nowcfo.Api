@@ -5,12 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\Seed\**" />
-    <EmbeddedResource Remove="Data\Seed\**" />
-    <None Remove="Data\Seed\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Remove="Repository\Repository.cs" />
   </ItemGroup>
 

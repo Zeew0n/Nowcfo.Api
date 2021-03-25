@@ -1,4 +1,4 @@
-﻿namespace Nowcfo.Infrastructure.Identity.Helpers
+﻿namespace Nowcfo.Application.Helper
 {
     public static class UserConstants
     {

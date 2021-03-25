@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Nowcfo.Application.DTO;
+using Nowcfo.API.Controllers.Base;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using System;
@@ -65,7 +66,7 @@ namespace Nowcfo.API.Controllers
                 await _unitOfWork.EmployeeRepository.CreateAsync(dto);
 
                 if (await _unitOfWork.SaveChangesAsync())
-                return CreatedAtAction("GetEmployee", new { id = dto.EmployeeId}, dto);
+                    return CreatedAtAction("GetEmployee", new { id = dto.EmployeeId}, dto);
                 return BadRequest();
             }
             catch (Exception e)
