@@ -339,3 +339,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /Nowcfo.Api/appsettings.json
+
+#Logs
+/Nowcfo.Api/wwwroot/Logs
