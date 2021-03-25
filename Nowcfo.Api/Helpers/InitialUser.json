@@ -1,0 +1,45 @@
+{
+  "RoleData": [
+    {
+      "Name": "SuperAdmin"
+    },
+    {
+      "Name": "Admin"
+    },
+    {
+      "Name": "User"
+    }
+  ],
+  "UserData": [
+    {
+      "UserName": "super",
+      "Password": "Devfinity#$123",
+      "FirstName": "super",
+      "LastName": "",
+      "Email": "super@cfo.com",
+      "IsAdmin": true,
+      "Role": "superadmin",
+      "EmailConfirmed": true
+    },
+    {
+      "UserName": "admin",
+      "Password": "Devfinity#$123",
+      "FirstName": "admin",
+      "LastName": "",
+      "Email": "admin@cfo.com",
+      "IsAdmin": false,
+      "Role": "admin",
+      "EmailConfirmed": true
+    },
+    {
+      "UserName": "user",
+      "Password": "Devfinity#$123",
+      "FirstName": "user",
+      "LastName": "",
+      "Email": "user@cfo.com",
+      "IsAdmin": false,
+      "Role": "user",
+      "EmailConfirmed": true
+    }
+  ]
+}

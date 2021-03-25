@@ -1,0 +1,69 @@
+2021-03-22 14:04:21.470 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The value of 'RolePermission.PermissionId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.PrepareToSave()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.GetEntriesToSave(Boolean cascadeChanges)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(DbContext _, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 58
+2021-03-22 14:07:14.526 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The value of 'RolePermission.PermissionId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.PrepareToSave()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.GetEntriesToSave(Boolean cascadeChanges)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(DbContext _, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 58
+2021-03-22 14:09:56.340 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The value of 'RolePermission.PermissionId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.PrepareToSave()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.GetEntriesToSave(Boolean cascadeChanges)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(DbContext _, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 58
+2021-03-22 14:11:42.843 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The value of 'RolePermission.PermissionId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.PrepareToSave()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.GetEntriesToSave(Boolean cascadeChanges)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(DbContext _, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 58
+2021-03-22 14:13:53.085 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The instance of entity type 'RolePermission' cannot be tracked because another instance with the key value '{RoleId: f985f10d-325c-4832-5a9f-08d8ed0b7645, PermissionId: cb10ba63-6bae-4b8a-9727-343e28d12819}' is already being tracked. When attaching existing entities, ensure that only one entity instance with a given key value is attached.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.ThrowIdentityConflict(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.IdentityMap`1.Add(TKey key, InternalEntityEntry entry, Boolean updateDuplicate)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.StartTracking(InternalEntityEntry entry)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityState(EntityState oldState, EntityState newState, Boolean acceptChanges, Boolean modifyProperties)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.SetEntityStateAsync(EntityState entityState, Boolean acceptChanges, Boolean modifyProperties, Nullable`1 forceStateWhenUnknownKey, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityGraphAttacher.PaintActionAsync(EntityEntryGraphNode`1 node, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.EntityEntryGraphIterator.TraverseGraphAsync[TState](EntityEntryGraphNode`1 node, Func`3 handleNode, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Internal.InternalDbSet`1.AddRangeAsync(IEnumerable`1 entities, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedUserPermissions(ApplicationDbContext context, List`1 roles, List`1 permissions) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 179
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 57
+2021-03-22 14:26:44.269 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The value of 'RolePermission.PermissionId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.PrepareToSave()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.GetEntriesToSave(Boolean cascadeChanges)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(DbContext _, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 58
+2021-03-22 14:29:52.151 +05:45 [ERR] Failed to seed RolePermissionMappings
+System.InvalidOperationException: The value of 'RolePermission.PermissionId' is unknown when attempting to save changes. This is because the property is also part of a foreign key for which the principal entity in the relationship is not known.
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.InternalEntityEntry.PrepareToSave()
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.GetEntriesToSave(Boolean cascadeChanges)
+   at Microsoft.EntityFrameworkCore.ChangeTracking.Internal.StateManager.SaveChangesAsync(DbContext _, Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.DbContext.SaveChangesAsync(Boolean acceptAllChangesOnSuccess, CancellationToken cancellationToken)
+   at Nowcfo.Infrastructure.Data.Seed.RolePermissionData.SeedPermissionsForRole(ApplicationDbContext context) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Infrastructure\Data\Seed\RolePermissionData.cs:line 58
+2021-03-22 16:24:03.955 +05:45 [ERR] Error: Token did not match any users.,   at Nowcfo.Application.Services.UserAuthService.UserAuthService.GetClaimsIdentityAsync(String token) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 293
+2021-03-22 16:24:04.502 +05:45 [ERR] Error: Token did not match any users.,   at Nowcfo.Application.Services.UserAuthService.UserAuthService.GetClaimsIdentityAsync(String token) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 293
+   at Nowcfo.Application.Services.UserAuthService.UserAuthService.RefreshTokenAsync(String refreshToken) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 245

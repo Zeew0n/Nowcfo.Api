@@ -1,0 +1,23 @@
+2021-03-20 06:27:31.927 +05:45 [ERR] Error: Value cannot be null. (Parameter 'value'),   at System.Security.Claims.Claim..ctor(String type, String value, String valueType, String issuer, String originalIssuer, ClaimsIdentity subject, String propertyKey, String propertyValue)
+   at System.Security.Claims.Claim..ctor(String type, String value)
+   at Nowcfo.Application.Services.JwtService.JwtService.AddToClaimList(ClaimDto claimDto)+MoveNext() in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\JwtService\JwtService.cs:line 136
+   at System.Security.Claims.ClaimsIdentity.SafeAddClaims(IEnumerable`1 claims)
+   at System.Security.Claims.ClaimsIdentity..ctor(IIdentity identity, IEnumerable`1 claims)
+   at Nowcfo.Application.Services.JwtService.JwtService.GenerateClaimsIdentity(ClaimDto claimDTO) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\JwtService\JwtService.cs:line 47
+2021-03-20 06:27:32.551 +05:45 [ERR] Error: Value cannot be null. (Parameter 'value'),   at System.Security.Claims.Claim..ctor(String type, String value, String valueType, String issuer, String originalIssuer, ClaimsIdentity subject, String propertyKey, String propertyValue)
+   at System.Security.Claims.Claim..ctor(String type, String value)
+   at Nowcfo.Application.Services.JwtService.JwtService.AddToClaimList(ClaimDto claimDto)+MoveNext() in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\JwtService\JwtService.cs:line 136
+   at System.Security.Claims.ClaimsIdentity.SafeAddClaims(IEnumerable`1 claims)
+   at System.Security.Claims.ClaimsIdentity..ctor(IIdentity identity, IEnumerable`1 claims)
+   at Nowcfo.Application.Services.JwtService.JwtService.GenerateClaimsIdentity(ClaimDto claimDTO) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\JwtService\JwtService.cs:line 47
+   at Nowcfo.Application.Services.UserAuthService.UserAuthService.GenerateClaimsIdentity(AppUserDto userDetails) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 320
+   at Nowcfo.Application.Services.UserAuthService.UserAuthService.GetClaimsIdentityAsync(String token) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 292
+2021-03-20 06:27:32.984 +05:45 [ERR] Error: Value cannot be null. (Parameter 'value'),   at System.Security.Claims.Claim..ctor(String type, String value, String valueType, String issuer, String originalIssuer, ClaimsIdentity subject, String propertyKey, String propertyValue)
+   at System.Security.Claims.Claim..ctor(String type, String value)
+   at Nowcfo.Application.Services.JwtService.JwtService.AddToClaimList(ClaimDto claimDto)+MoveNext() in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\JwtService\JwtService.cs:line 136
+   at System.Security.Claims.ClaimsIdentity.SafeAddClaims(IEnumerable`1 claims)
+   at System.Security.Claims.ClaimsIdentity..ctor(IIdentity identity, IEnumerable`1 claims)
+   at Nowcfo.Application.Services.JwtService.JwtService.GenerateClaimsIdentity(ClaimDto claimDTO) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\JwtService\JwtService.cs:line 47
+   at Nowcfo.Application.Services.UserAuthService.UserAuthService.GenerateClaimsIdentity(AppUserDto userDetails) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 320
+   at Nowcfo.Application.Services.UserAuthService.UserAuthService.GetClaimsIdentityAsync(String token) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 292
+   at Nowcfo.Application.Services.UserAuthService.UserAuthService.RefreshTokenAsync(String refreshToken) in C:\Users\Lenovo\Desktop\Ashok Home\Nowcfo.Api\Nowcfo.Application\Services\UserAuthService\UserAuthService.cs:line 241
