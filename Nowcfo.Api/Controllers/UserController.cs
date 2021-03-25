@@ -166,7 +166,33 @@ namespace Nowcfo.API.Controllers
             }
         }
 
+        [HttpPut("changepassword")]
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
+        {
+            try
+            {
+                var appuser = await _userManager.FindByNameAsync(updatePasswordDto.UserName);
+                var x = await _userManager.ChangePasswordAsync(appuser, updatePasswordDto.CurrentPassword, updatePasswordDto.Password);
 
+
+                if (x.Succeeded)
+                {
+                    {
+
+                        var userId = appuser.Id;
+                        var user = await _userService.FindByIdAsync(userId);
+                        return Ok(user);
+
+                    }
+                }
+                return BadRequest(HandleActionResult($"Password update failed.", StatusCodes.Status400BadRequest));
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+            }
+        }
 
         [HttpGet]
         [Route("confirmUser")]

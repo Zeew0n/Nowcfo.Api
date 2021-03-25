@@ -1,5 +1,4 @@
 ﻿using Nowcfo.Application.Dtos;
-using Nowcfo.Domain.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,11 +6,13 @@ namespace Nowcfo.Application.IRepository
 {
     public interface IEmployeeRepository
     {
-        Task<EmployeeInfoDto> GetByIdAsync(int id);
-        Task<List<EmployeeInfoDto>> GetAllAsync();
-        Task<List<EmployeeInfoDto>> GetAllSuperAdmins(int orgId);
-        Task CreateAsync(EmployeeInfoDto model);
-        void Update(EmployeeInfo model);
-        void Delete(EmployeeInfo model);
+        Task<EmployeeInfoListDto> GetByIdAsync(int id);
+        Task<List<EmployeeInfoListDto>> GetAllAsync();
+        Task<List<EmployeeInfoDto>> GetAllSuperVisors();
+        Task CreateAsync(EmployeeUpdateDto model);
+        void Update(EmployeeUpdateDto model);
+        void Delete(EmployeeInfoListDto model);
+        Task<List<KendoDto>> GetKendoTreeHierarchy();
+        Task<List<EmployeeOrganizationPermissionNavDto>> GetEmployeePermissionHierarchy(int employeeId);
     }
 }

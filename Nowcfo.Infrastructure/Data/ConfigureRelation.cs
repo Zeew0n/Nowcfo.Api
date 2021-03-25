@@ -54,7 +54,6 @@ namespace Nowcfo.Infrastructure.Data
                 .HasMany(e => e.EmployeeInfos)
                 .WithOne(e => e.Employee)
                 .HasForeignKey(e => e.SupervisorId)
-        
                 .OnDelete(DeleteBehavior.Restrict);
         }
 

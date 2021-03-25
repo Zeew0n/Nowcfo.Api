@@ -13,6 +13,7 @@ namespace Nowcfo.Application.Dtos.User.Response
         //For fetching Role to Control Menu
         public string RoleId { get; set; }
         public string RoleName { get; set; }
+        public string UserName { get; set; }
 
         [JsonIgnore]
         public DateTime RefreshTokenExpiry { get; set; }

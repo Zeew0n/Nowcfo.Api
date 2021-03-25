@@ -113,11 +113,12 @@ namespace Nowcfo.Application.Repository
                     {
                         Value = x.OrganizationId,
                         Text = x.OrganizationName,
-                        ParentOrganizationId = x.ParentOrganizationId
+                        ParentOrganizationId = x.ParentOrganizationId,
+                        Level=1
                     }
                 ).ToListAsync();
 
-                var tree = GetTree(organizationList, null);
+                var tree = GetTree(organizationList, null,0);
 
                 return _mapper.Map<List<OrganizationNavTreeViewDto>>(tree);
 
@@ -129,14 +130,17 @@ namespace Nowcfo.Application.Repository
             }
         }
 
-        private static List<OrganizationNavDto> GetTree(List<OrganizationNavDto> list, int? parentId)
+        private static List<OrganizationNavDto> GetTree(List<OrganizationNavDto> list, int? parentId, int level)
         {
+            level += 1;
             return list.Where(x => x.ParentOrganizationId == parentId).Select(x =>
             new OrganizationNavDto
             {
                 Value = x.Value,
                 Text = x.Text,
-                Children = GetTree(list, x.Value)
+                Children = GetTree(list, x.Value,level),
+                ParentOrganizationId = x.ParentOrganizationId,
+                Level = level
 
             }).ToList();
 
@@ -177,6 +181,7 @@ namespace Nowcfo.Application.Repository
                              EmployeeName = w.EmployeeName,
                              Email = w.Email,
                              Address = w.Address,
+                             Phone= w.Phone,
                              City = w.City
                          }).ToList())
 
