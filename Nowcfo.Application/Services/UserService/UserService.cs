@@ -210,6 +210,18 @@ namespace Nowcfo.Application.Services.UserService
             }
         }
 
+        public string CreatePassword(int length)
+        {
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder res = new StringBuilder();
+            Random rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            return res.ToString();
+        }
+
 
         /// <summary>
         /// Creates a new user asynchronously.
@@ -222,7 +234,8 @@ namespace Nowcfo.Application.Services.UserService
             appUser.IsAdmin = role.ToUpper() == DesignationAndRoleConstants.Admin;
             appUser.CreatedBy = _currentUserService.GetUser();
             appUser.CreatedDate = DateTime.Now;
-            var userResult = await _userManager.CreateAsync(appUser);
+            appUser.Password = CreatePassword(8);
+            var userResult = await _userManager.CreateAsync(appUser,appUser.Password);
             return userResult;
         }
 
