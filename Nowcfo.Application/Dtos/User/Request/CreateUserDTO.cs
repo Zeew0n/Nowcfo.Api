@@ -15,11 +15,7 @@ namespace Nowcfo.Application.Dtos.User.Request
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
-        public bool IsAdmin { get; set; }
-        public bool IsSuperAdmin { get; set; }
-        public string RoleName { get; set; }
+
         public Guid RoleId { get; set; }
-
-
     }
 }

@@ -4,6 +4,7 @@ using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using System;
 using System.Threading.Tasks;
+using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
 
 namespace Nowcfo.API.Controllers

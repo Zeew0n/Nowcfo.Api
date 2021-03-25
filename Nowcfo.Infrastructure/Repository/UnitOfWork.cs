@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Nowcfo.Infrastructure.Repository
 {
-    public class UnitOfWork :IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private IDbContextTransaction _transaction;
         private readonly ApplicationDbContext _dbContext;
@@ -22,7 +22,6 @@ namespace Nowcfo.Infrastructure.Repository
         public IUserRoleRepository UserRoleRepository { get; }
         public IUserClaimRepository UserClaimRepository { get; }
         public IRolePermissionRepository RolePermissionRepository { get; }
-        public IRolePermissionMappingRepository RolePermissionMappingRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context,IMapper mapper )
@@ -32,6 +31,7 @@ namespace Nowcfo.Infrastructure.Repository
             UserRepository = new UserRepository(context,mapper);
             DesignationRepository = new DesignationRepository(context, mapper);
             EmployeeRepository = new EmployeeRepository(context, mapper);
+            RolePermissionRepository = new RolePermissionRepository(context, mapper);
 
         }
 

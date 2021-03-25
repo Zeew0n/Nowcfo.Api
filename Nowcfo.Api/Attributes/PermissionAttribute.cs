@@ -83,7 +83,9 @@ namespace Nowcfo.API.Attributes
                     }
                 }
                 catch
-                { }
+                {
+
+                }
             }
             return false;
         }

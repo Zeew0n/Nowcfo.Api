@@ -17,9 +17,13 @@ namespace Nowcfo.Application.Services.UserService
 
         Task<IdentityResult> CreateUserAsync(AppUser appUser, string role);
 
-        Task<IdentityResult> UpdateUserAsync(AppUser oldUser, UpdateUserDto userRegiterDTO);
+        //Task<IdentityResult> UpdateUserAsync(AppUser oldUser, UpdateUserDto userRegiterDto);
 
-        Task<IdentityResult> SignUpUserAsync(SignUpUserDto signUpUserDTO);
+        //Task<IdentityResult> SignUpUserAsync(SignUpUserDto signUpUserDto);
+
+        Task<IdentityResult> UpdateUserAsync(AppUser oldUser, UpdateUserDto userRegisterDto, string role);
+
+        Task<IdentityResult> SignUpUserAsync(AppUser oldUser, SignUpUserDto signUpUserDto);
 
         Task<bool> DeleteUserAsync(AppUser userDetail, Guid id);
 

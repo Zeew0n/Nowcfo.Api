@@ -6,10 +6,11 @@ using Microsoft.IdentityModel.Tokens;
 using Nowcfo.Application.Dtos.Email;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Dtos.User.Response;
+using Nowcfo.Application.Exceptions;
 using Nowcfo.Application.Helper;
 using Nowcfo.Application.IRepository;
+using Nowcfo.Application.Services.CurrentUserService;
 using Nowcfo.Domain.Models.AppUserModels;
-using Nowcfo.Infrastructure.Identity.Helpers;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -28,10 +29,12 @@ namespace Nowcfo.Application.Services.UserService
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
         private readonly IApplicationDbContext _dbContext;
+        private readonly ICurrentUserService _currentUserService;
 
         public UserService(UserManager<AppUser> userManager, IUnitOfWork unitOfWork,
             IConfiguration configuration, IMapper mapper
             , IApplicationDbContext context
+            , ICurrentUserService currentUserService
             )
         {
             _userManager = userManager;
@@ -39,6 +42,7 @@ namespace Nowcfo.Application.Services.UserService
             _configuration = configuration;
             _mapper = mapper;
             _dbContext = context;
+            _currentUserService = currentUserService;
         }
 
         #region Command Methods
@@ -98,7 +102,6 @@ namespace Nowcfo.Application.Services.UserService
             }
         }
 
-
         public async Task<IdentityResult> CreateUserAsync(AppUser appUser, string role)
         {
             try
@@ -121,6 +124,7 @@ namespace Nowcfo.Application.Services.UserService
                 throw;
             }
         }
+
 
         public async Task<IdentityResult> ResetPasswordAsync(AppUser appUser, string token, string password)
         {
@@ -214,30 +218,49 @@ namespace Nowcfo.Application.Services.UserService
         /// <returns></returns>
         private async Task<IdentityResult> SaveUserAsync(AppUser appUser, string role)
         {
-            string email = appUser.Email;
-            //For TenantId
-            // Guid obj = Guid.NewGuid();
-
-            
-            var userResult = await _userManager.CreateAsync(appUser, appUser.Password);
+            appUser.UserName = appUser.UserName.ToLower();
+            appUser.IsAdmin = role.ToUpper() == DesignationAndRoleConstants.Admin;
+            appUser.CreatedBy = _currentUserService.GetUser();
+            appUser.CreatedDate = DateTime.Now;
+            var userResult = await _userManager.CreateAsync(appUser);
             return userResult;
         }
 
-        public async Task<IdentityResult> UpdateUserAsync(AppUser oldUser, UpdateUserDto userRegiterDTO)
+        public async Task<IdentityResult> UpdateUserAsync(AppUser oldUser, UpdateUserDto userRegiterDto, string role)
         {
             try
             {
+                IdentityResult model = new IdentityResult();
+                string email = userRegiterDto.Email;
+                string userName = userRegiterDto.UserName;
+                if (oldUser.Email == email)
+                {
+                    model = await EditUserAsync(oldUser, userRegiterDto, role);
+                }
+                else
+                {
+                    AppUser oldUserEmailDetail = await FindByEmailAsync(email);
 
-                //string username = userRegiterDTO.UserName;
-                //AppUser oldUserName = await FindByUsernameAsync(username);
-                //    if (oldUserName != null)
-                //  throw new Exception($"DuplicateUsername: Username {username} is already taken.");
-                // _mapper.Map<AppUser,UserRegisterDTO>(userRegiterDTO)
-                var appUser = _mapper.Map<AppUser>(userRegiterDTO);
-                appUser.SecurityStamp = Guid.NewGuid().ToString();
-                var userResult = await _userManager.UpdateAsync(appUser);
-                return userResult;
+                    if (oldUserEmailDetail != null)
+                        throw new ApiException($"DuplicateEmail: Email {email} is already taken.");
 
+                    model = await EditUserAsync(oldUser, userRegiterDto, role);
+                }
+
+                if (oldUser.UserName == userName)
+                {
+                    model = await EditUserAsync(oldUser, userRegiterDto, role);
+                }
+                else
+                {
+                    AppUser oldUserNameDetail = await FindByNameAsync(userName);
+
+                    if (oldUserNameDetail != null)
+                        throw new ApiException($"DuplicateEmail: UserName {userName} is already taken.");
+
+                    model = await EditUserAsync(oldUser, userRegiterDto, role);
+                }
+                return model;
             }
             catch (Exception ex)
             {
@@ -246,30 +269,36 @@ namespace Nowcfo.Application.Services.UserService
             }
         }
 
-        //private async Task<IdentityResult> EditUserAsync(AppUser oldUser, UpdateUserDTO userRegiterDTO)
-        //{
+        private async Task<IdentityResult> EditUserAsync(AppUser oldUser, UpdateUserDto userRegiterDto, string roleName)
+        {
+            oldUser.UserName = userRegiterDto.UserName.ToLower();
+            oldUser.FirstName = userRegiterDto.FirstName.Trim();
+            oldUser.LastName = userRegiterDto.LastName.Trim();
+            oldUser.Email = userRegiterDto.Email.Trim();
+            oldUser.PhoneNumber = userRegiterDto.PhoneNumber;
+            oldUser.UpdatedBy = _currentUserService.GetUser();
+            oldUser.UpdatedDate = DateTime.Now;
+            oldUser.IsAdmin = roleName.ToUpper() == DesignationAndRoleConstants.Admin;
+            var userResult = await _userManager.UpdateAsync(oldUser);
+            return userResult;
+        }
 
-        //    var userResult = await _userManager.UpdateAsync(oldUser);
-        //    return userResult;
-        //}
-
-        public async Task<IdentityResult> SignUpUserAsync(SignUpUserDto signUpUserDTO)
+        public async Task<IdentityResult> SignUpUserAsync(AppUser oldUser, SignUpUserDto signUpUserDto)
         {
             try
             {
-                var user = new AppUser
-                {
-                    Email = signUpUserDTO.UserName.Trim(),
-                    UserName = signUpUserDTO.UserName.Trim(),
-                };
 
-                var userResult = await _userManager.CreateAsync(user, signUpUserDTO.Password);
+                var result = await _userManager.UpdateSecurityStampAsync(oldUser);
+                oldUser.UserName = signUpUserDto.UserName.Trim();
+                oldUser.EmailConfirmed = true;
+                oldUser.PasswordHash = _userManager.PasswordHasher.HashPassword(oldUser, signUpUserDto.Password);
+                var userResult = await _userManager.UpdateAsync(oldUser);
                 return userResult;
             }
             catch (Exception ex)
             {
                 Log.Error("Error: {ErrorMessage},{ErrorDetails}", ex.Message, ex.StackTrace);
-                throw ;
+                throw;
             }
         }
 
@@ -279,19 +308,25 @@ namespace Nowcfo.Application.Services.UserService
             {
                 if (userDetail == null)
                 {
-                    throw new Exception("Provided user doesn't exists.");
+                    Log.Error("Error: User with {Id} doesn't exist.", id);
+                    throw new ApiException("Provided user doesn't exists.");
                 }
+
+                userDetail.UpdatedBy = _currentUserService.GetUser();
+                userDetail.UpdatedDate = DateTime.Now;
                 var result = await _userManager.DeleteAsync(userDetail);
                 if (result.Succeeded) return true;
                 return false;
+                
             }
+
             catch (Exception ex)
             {
                 Log.Error("Error: {ErrorMessage},{ErrorDetails}", ex.Message, ex.StackTrace);
-                throw ;
+                throw;
             }
-
         }
+
 
         #endregion Command Methods
 
@@ -397,9 +432,8 @@ namespace Nowcfo.Application.Services.UserService
                                     Role = role.Name,
                                     user.PhoneNumber,
                                     EmailConfirmmed = user.EmailConfirmed,
-                                    user.IsAdmin,
                                     IsDeleted = EF.Property<bool>(user, "IsDeleted")
-                                }).Where(x => !x.IsDeleted).Where(x => x.IsAdmin == true).OrderByDescending(q => q.CreatedDate).ToListAsync();
+                                }).Where(x => !x.IsDeleted).OrderByDescending(q => q.CreatedDate).ToListAsync();
             return result.Select(user => new UserListDto
             {
                 Id = user.Id,
@@ -534,19 +568,6 @@ namespace Nowcfo.Application.Services.UserService
         }
 
 
-        ////Generate Token
-        //public async Task<string> GetTenantId(AppUser appUser)
-        //{
-        //    var user = await _userManager.FindByIdAsync(appUser.Id.ToString());
-        //    string tenantId = user.TenantInformationTenantId.ToString();
-        //    return tenantId;
-        //}
-
-        /// <summary>
-        /// Generates token for email and encodes into base64.
-        /// </summary>
-        /// <param name="appUser"></param>
-        /// <returns></returns>
         private async Task<string> EncodeTokenAsync(AppUser appUser)
         {
             string token = await _userManager.GenerateEmailConfirmationTokenAsync(appUser);

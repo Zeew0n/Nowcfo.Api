@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Nowcfo.Application.DTO;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Dtos.Role;
 using Nowcfo.Application.Dtos.User.Request;
@@ -20,9 +19,8 @@ namespace Nowcfo.Application.MappingProfile
             CreateMap<Organization,OrganizationDto>().ReverseMap();
             CreateMap<EmployeeInfo,EmployeeInfoDto>().ReverseMap();
             CreateMap<Designation,DesignationDto>().ReverseMap();
+            CreateMap<Permission,PermissionDto>().ReverseMap();
             CreateMap<Menu,MenuDto>().ReverseMap();
-            CreateMap<MenuPermission,MenuPermissionDto>().ReverseMap();
-            
         }
     }
 }

@@ -1,59 +1,37 @@
-﻿namespace Nowcfo.Infrastructure.Identity.Helpers
+﻿namespace Nowcfo.Application.Helper
 {
-    public static class Permission
+    public  class CrudPermission
     {
         //User
         public const string ViewUser = "user.read";
-
         public const string AddUser = "user.create";
         public const string UpdateUser = "user.update";
         public const string DeleteUser = "user.delete";
-        //Role
-        public const string ViewRole = "user.read";
 
+        //Role
+        public const string ViewRole = "role.read";
         public const string AddRole = "role.create";
         public const string UpdateRole = "role.update";
         public const string DeleteRole = "role.delete";
 
-        //Audience
-        public const string ViewAudience = "audience.read";
+        //Organization 
+        public const string ViewOrganization = "org.read";
+        public const string AddOrganization = "org.create";
+        public const string UpdateOrganization = "org.update";
+        public const string DeleteOrganization = "org.delete";
 
-        public const string AddAudience = "audience.create";
-        public const string UpdateAudience = "audience.update";
-        public const string DeleteAudience = "audience.delete";
+        //Employee
+        public const string ViewEmployee = "emp.read";
+        public const string AddEmployee = "emp.create";
+        public const string UpdateEmployee = "emp.update";
+        public const string DeleteEmployee = "emp.delete";
 
-        //Internal Company
-        public const string ViewInternalCompany = "internalcompany.read";
+        //Designation
+        public const string ViewDesignation = "deg.read";
+        public const string AddDesignation = "deg.create";
+        public const string UpdateDesignation = "deg.update";
+        public const string DeleteDesignation = "deg.delete";
 
-        public const string AddInternalCompany = "internalcompany.create";
-        public const string UpdateInternalCompany = "internalcompany.update";
-        public const string DeleteInternalCompany = "internalcompany.delete";
-        //Internal Company contact
-        public const string ViewInternalCompanyContact = "internalcompanycontact.read";
 
-        public const string AddInternalCompanyContact = "internalcompanycontact.create";
-        public const string UpdateInternalCompanyContact = "internalcompanycontact.update";
-        public const string DeleteInternalCompanyContact = "internalcompanyCompany.delete";
-
-        //Campaign
-        public const string ViewCampaign = "campaign.read";
-
-        public const string AddCampaign = "campaign.create";
-        public const string UpdateCampaign = "campaign.update";
-        public const string DeleteCampaign = "campaign.delete";
-
-        //Contact To Campaign
-        public const string ViewContactToCampaign = "contacttocampaign.read";
-
-        public const string AddContactToCampaign = "contacttocampaign.create";
-        public const string UpdateContactToCampaign = "contacttocampaign.update";
-        public const string DeleteContactToCampaign = "contacttocampaign.delete";
-
-        //Campaign Node
-        public const string ViewCampaignNode = "campaignnode.read";
-
-        public const string AddCampaignNode = "campaignnode.create";
-        public const string UpdateCampaignNode = "campaignnode.update";
-        public const string DeleteCampaignNode = "campaignnode.delete";
     }
 }

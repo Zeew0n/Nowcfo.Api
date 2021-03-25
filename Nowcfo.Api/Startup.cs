@@ -49,6 +49,11 @@ namespace Nowcfo.API
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString).EnableSensitiveDataLogging(), ServiceLifetime.Transient);
             services.AddControllers();
+            //services.AddControllers().AddNewtonsoftJson(options =>
+            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            //);
+            //services.AddControllers().AddJsonOptions(options =>
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
             var origins = Configuration["CorsUrl"].Split(",");
             services.AddCors(options =>

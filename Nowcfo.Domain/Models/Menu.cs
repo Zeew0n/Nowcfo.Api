@@ -1,3 +1,5 @@
+using System;
+
 namespace Nowcfo.Domain.Models
 {
     using System.Collections.Generic;
@@ -5,37 +7,32 @@ namespace Nowcfo.Domain.Models
     using System.ComponentModel.DataAnnotations.Schema;
 
     [Table("Menu")]
-    public class Menu
+    public class Menu: BaseEntity, ISoftDeletableEntity
     {
+
         public Menu()
         {
-            MenuPermissions = new HashSet<MenuPermission>();
+            Permissions = new HashSet<Permission>();
         }
 
-        [StringLength(100)]
-        public string MenuId { get; set; }
+        public Menu(Guid id, string name )
+        {
+            Id = id;
+            MenuName = name;
+        }
+
+       [Key]
+        public Guid Id { get; set; }
 
         [Required]
         [StringLength(100)]
         public string MenuName { get; set; }
 
-        public int MenuLevel { get; set; }
-
-        [StringLength(100)]
-        public string UnderMenuId { get; set; }
-
-        [StringLength(100)]
-        public string Icon { get; set; }
+        public string? Icon { get; set; }
 
         public int? DisplayOrder { get; set; }
 
-        public bool? IsActive { get; set; }
 
-
-        public Menu MenuOne { get; set; }
-
-        public ICollection<Menu> Menus { get; set; }
-
-        public ICollection<MenuPermission> MenuPermissions { get; set; }
+        public ICollection<Permission> Permissions { get; set; }
     }
 }

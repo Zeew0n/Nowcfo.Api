@@ -4,7 +4,6 @@ using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.CurrentUserService;
 using Nowcfo.Domain.Models;
 using Nowcfo.Domain.Models.AppUserModels;
-using Nowcfo.Domain.Models.User;
 using Nowcfo.Infrastructure.Extensions;
 using System;
 using System.Linq;
@@ -18,6 +17,7 @@ namespace Nowcfo.Infrastructure.Data
     public class ApplicationDbContext :IdentityDbContext<AppUser, AppRole, Guid>,IApplicationDbContext
     {
         private readonly ICurrentUserService _currentUserService;
+
         private const string IsDeletedColumnName = "IsDeleted";
         private const string DeletedByColumnName = "DeletedBy";
         private const string DeletedDateColumnName = "DeletedDate";
@@ -30,8 +30,7 @@ namespace Nowcfo.Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            modelBuilder.Entity<EmployeeInfo>().HasIndex(u => u.Email).IsUnique();
-            //modelBuilder.Entity<EmployeeInfo>().HasIndex(u => u.PhoneNumber).IsUnique();
+            modelBuilder.Entity<EmployeeInfo>().HasIndex(u => new{ u.Email, u.Phone}).IsUnique();
 
 
             foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))
@@ -52,12 +51,9 @@ namespace Nowcfo.Infrastructure.Data
 
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<AppUser>(ConfigureAppUser);
-            modelBuilder.Entity<UserSignUp>(ConfigureUserSignup);
-            modelBuilder.Entity<RolePermissionMapping>(ConfigureRolePermissionMapping);
-
+            modelBuilder.Entity<RolePermission>(ConfigureRolePermission);
             modelBuilder.Entity<EmployeeInfo>(ConfigureEmployeeInfo);
             modelBuilder.Entity<EmployeeOrgPermission>(ConfigureEmpOrgPermission);
-            modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
             modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
 
@@ -156,15 +152,13 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<AppRole> AppRoles { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<Menu> Menus { get; set; }
         public DbSet<RolePermission> RolePermissions { get; set; }
-        public DbSet<RolePermissionMapping> RolePermissionMappings { get; set; }
-        public DbSet<UserSignUp> UserSignup { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<EmployeeInfo> EmployeeInfos { get; set; }
         public DbSet<EmployeeOrgPermission> EmployeeOrgPermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<Menu> Menus { get; set; }
-        public DbSet<MenuPermission> MenuPermissions { get; set; }
-       
+
     }
 }

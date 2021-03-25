@@ -22,5 +22,8 @@ namespace Nowcfo.Application.Dtos.User.Response
         public ClaimsIdentity ClaimsIdentity { get; set; }
         public RefreshTokenResponseDto RefreshToken { get; set; }
         public List<string> Permissions { get; set; }
+
+        //
+        public List<string> AssignedMenus { get; set; }
     }
 }

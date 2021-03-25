@@ -4,8 +4,12 @@ using System.Collections.Generic;
 
 namespace Nowcfo.Domain.Models.AppUserModels
 {
-    public class AppRole : IdentityRole<Guid>, ISoftDeletableEntity
+    public class AppRole : IdentityRole<Guid> ,ISoftDeletableEntity
     {
-        public ICollection<RolePermissionMapping> RolePermissions { get; set; }
+        public AppRole()
+        {
+            RolePermissions = new HashSet<RolePermission>();
+        }
+        public ICollection<RolePermission> RolePermissions { get; set; }
     }
 }

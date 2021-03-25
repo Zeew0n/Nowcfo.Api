@@ -1,6 +1,4 @@
-﻿using Nowcfo.Application.DTO;
-using System.Collections.Generic;
-using Nowcfo.Domain.Models;
+﻿using System.Collections.Generic;
 
 namespace Nowcfo.Application.Dtos
 {

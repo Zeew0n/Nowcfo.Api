@@ -1,4 +1,4 @@
-﻿namespace Nowcfo.Application.DTO.User.RefreshToken
+﻿namespace Nowcfo.Application.Dtos.User.RefreshToken
 {
     public class RefreshTokenRequestDto
     {

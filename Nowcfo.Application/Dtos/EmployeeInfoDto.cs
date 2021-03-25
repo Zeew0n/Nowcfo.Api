@@ -1,4 +1,4 @@
-﻿namespace Nowcfo.Application.DTO
+﻿namespace Nowcfo.Application.Dtos
 {
     public class EmployeeInfoDto
     {
@@ -25,7 +25,7 @@
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
         public bool IsActive { get; set; }
-        public int[] employeepermissions { get; set; }
+        public int[] EmployeePermissions { get; set; }
 
 
     }

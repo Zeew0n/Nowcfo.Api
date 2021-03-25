@@ -2,9 +2,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Nowcfo.API.Attributes;
+using Nowcfo.API.Controllers.Base;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Dtos.Role;
+using Nowcfo.Application.Helper;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.RoleService;
+using Nowcfo.Domain.Models;
 using Nowcfo.Domain.Models.AppUserModels;
 using System;
 using System.Linq;
@@ -13,6 +18,7 @@ using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
 {
+    [AllowAnonymous]
     public class RoleController : BaseController
     {
       
@@ -29,7 +35,7 @@ namespace Nowcfo.API.Controllers
 
         [HttpPost("Create")]
         [AllowAnonymous]
-       // [Permission(Permission.AddRole)]
+        //[Permission(CrudPermission.AddRole)]
         public async Task<IActionResult> Create([FromBody] RoleDto dto)
         {
             try
@@ -50,7 +56,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpGet("Listrole")]
-        //[Permission(Permission.ViewRole)]
+        //[Permission(CrudPermission.ViewRole)]
         public async Task<IActionResult> Read()
         {
             try
@@ -69,8 +75,8 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpGet("Role/{Id}")]
-        //[Permission(Permission.ViewRole)]
+        [HttpGet("Role/{Id}")] 
+        //[Permission(CrudPermission.ViewRole)]
         public async Task<IActionResult> Read(Guid Id)
         {
             try
@@ -89,7 +95,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPut("UpdateRole")]
-       // [Permission(Permission.UpdateRole)]
+        [Permission(CrudPermission.UpdateRole)]
        // [AllowAnonymous]
         public async Task<IActionResult> Update([FromBody] RoleDto actionType)
         {
@@ -107,21 +113,58 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpDelete("deleterole/{Id}")]
-       // [Permission(Permission.DeleteRole)]
+        //[Permission(CrudPermission.DeleteRole)]
         //[AllowAnonymous]
         public async Task<IActionResult> Delete(Guid Id)
         {
             try
             {
-                if (Id != null)
-                {
-                    await _roleService.DeleteAsync(Id);
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest(StatusCodes.Status400BadRequest);
-                }
+                await _roleService.DeleteAsync(Id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+            }
+        }
+
+        [HttpGet("menus")]
+        //[Permission(CrudPermission.DeleteRole)]
+        public async Task<IActionResult> GetAllMenus()
+        {
+            try
+            {
+                var permissions = await _roleService.GetAllMenus();
+                return Ok(permissions);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+            }
+        }
+
+        [HttpPost("CreateRolePermission")]
+        public async Task<IActionResult> PostRolePermission(RolePermissionDto dto)
+        {
+            try
+            {
+                await _roleService.AddRolePermission(dto);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(HandleActionResult(ex.Message, StatusCodes.Status400BadRequest));
+            }
+        }
+
+        [HttpPut("UpdateRolePermission")]
+        public async Task<IActionResult> PutRolePermission(RolePermissionDto dto)
+        {
+            try
+            { 
+                await _roleService.EditRolePermission(dto);
+                await _roleService.AddRolePermission(dto);
+                return Ok();
             }
             catch (Exception ex)
             {

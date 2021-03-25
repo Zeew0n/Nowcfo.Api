@@ -1,42 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Nowcfo.Domain.Models.AppUserModels;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Nowcfo.Domain.Models
+namespace Nowcfo.Domain.Models.AppUserModels
 {
+    [Table("RolePermission")] 
     public class RolePermission
     {
-        public Guid Id { get; private set; }
-
-        [MaxLength(100)]
-        public string Name { get; private set; }
-
-        [MaxLength(250)]
-        public string Slug { get; private set; }
-
-        [MaxLength(100)]
-        public string Icon { get; private set; }
-
-        public string Group { get; private set; }
-        public string SubGroup { get; private set; }
-        public ICollection<RolePermissionMapping> RolePermissions { get; set; }
-
-        //For ef
-        private RolePermission() { }
-
-        public RolePermission(
-            Guid id,
-            string name,
-            string slug,
-            string group,
-            string subGroup = "")
-        {
-            Id = id;
-            Name = name;
-            Slug = slug;
-            Group = group;
-            SubGroup = subGroup;
-        }
+        [Key]
+        public Guid RoleId { get; set; }
+        public Guid PermissionId { get; set; }
+        public AppRole Role { get; set; }
+        public Permission Permission { get; set; }
     }
 }

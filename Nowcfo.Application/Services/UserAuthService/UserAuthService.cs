@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Dtos.User.Response;
+using Nowcfo.Application.Exceptions;
 using Nowcfo.Application.Extensions;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.JwtService;
@@ -52,7 +54,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                 
                 var claimsIdentity = await GetClaimsIdentityAsync(request.UserName, request.Password);
                 var jwtResponse = await _jwtService.GenerateJwt(claimsIdentity);
-                await GenerateRefreshToken(claimsIdentity);
+                GenerateRefreshToken(claimsIdentity);
                 jwtResponse.RefreshToken = claimsIdentity.RefreshToken.Token;
                 jwtResponse.RefreshTokenExpiry = claimsIdentity.RefreshToken.ExpiryDate;
                 return jwtResponse;
@@ -65,7 +67,7 @@ namespace Nowcfo.Application.Services.UserAuthService
         }
 
 
-        private async Task GenerateRefreshToken(AppUserDto userDetails)
+        private void GenerateRefreshToken(AppUserDto userDetails)
         {
             var currentRefreshToken = userDetails.RefreshToken;
             if (currentRefreshToken != null)
@@ -104,18 +106,21 @@ namespace Nowcfo.Application.Services.UserAuthService
             {
                 AppUser appUser = await VerifyEmailOrUserNameAsync(userName);
                 if (appUser == null)
-                    throw new Exception($"No Accounts Registered with {userName}.");
+                    throw new ApiException($"No Accounts Registered with {userName}.");
 
                 if (await _userManager.IsEmailConfirmedAsync(appUser))
                 {
                     var userDetails = await GetUserDetailsByUserId(appUser.Id);
                     if (userDetails == null)
-                        throw new Exception($"You must be assigned a role before you login.");
+                        throw new ApiException($"You must be assigned a role before you login.");
+
+                    if (!userDetails.IsAdmin && userDetails.Permissions.Count == 0)
+                        throw new ApiException($"You must be assigned a permission before you login.");
 
                     return await VerifyUserNamePasswordAsync(password, appUser, userDetails);
                 }
 
-                throw new Exception("You must confirm your email before you log in.");
+                throw new ApiException("You must confirm your email before you log in.");
             }
             catch (Exception ex)
             {
@@ -139,7 +144,13 @@ namespace Nowcfo.Application.Services.UserAuthService
                 {
                     Id = userToVerify.Id,
                     UserName = userDetails.UserName,
+                    FullName = userDetails.FullName,
                     Email = userToVerify.Email,
+                    RoleId = userDetails.RoleId,
+                    Role = userDetails.RoleName,
+                    IsAdmin = userDetails.IsAdmin,
+                    Menus= JsonConvert.SerializeObject(userDetails.AssignedMenus),
+                    Permissions = JsonConvert.SerializeObject(userDetails.Permissions)
                 };
                 userDetails.ClaimsIdentity = await Task.FromResult(_jwtService.GenerateClaimsIdentity(claimDto));
                 return userDetails;
@@ -150,12 +161,22 @@ namespace Nowcfo.Application.Services.UserAuthService
 
         private async Task<AppUserDto> GetUserDetailsByUserId(Guid userId)
         {
-            
-            var userDetails = await (from user in _dbContext.AppUsers
+            var userDetails =
+                              await (from user in _dbContext.AppUsers
                                      join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
                                      join role in _dbContext.AppRoles on userRole.RoleId equals role.Id
+                                     join rolePer in _dbContext.RolePermissions on role.Id equals rolePer.RoleId into rp
+                                     from rolePermission in rp.DefaultIfEmpty()
+                                     join perm in _dbContext.Permissions on rolePermission.PermissionId equals perm.Id into per
+                                     from permission in per.DefaultIfEmpty()
+
+                                     join men in _dbContext.Menus on permission.MenuId equals men.Id into menus
+                                     from menu in menus.DefaultIfEmpty()
+
                                      join refToken in _dbContext.RefreshTokens on user.Id equals refToken.UserId into rt
                                      from refreshToken in rt.DefaultIfEmpty()
+
+
                                      where user.Id == userId
                                      select new
                                      {
@@ -166,31 +187,40 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.IsAdmin,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
+                                         MenuName = menu == null ? null : menu.MenuName,
+                                         Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
-                                     }).ToListAsync();
-            return userDetails.GroupBy(t => t.RoleId)
-                 .Select(q =>
-                 {
-                     var refreshToken = q.Select(t => t.RefreshToken).FirstOrDefault();
-                     return new AppUserDto
-                     {
-                         Id = q.Select(t => t.Id).FirstOrDefault(),
-                         FullName = q.Select(t => t.FullName).FirstOrDefault(),
-                         UserName = q.Select(t => t.UserName).FirstOrDefault(),
-                         Email = q.Select(t => t.Email).FirstOrDefault(),
-                         IsAdmin = q.Select(t => t.IsAdmin).FirstOrDefault(),
-                         RoleId = q.Key,
-                         RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
-                         RefreshToken = refreshToken?.MapToRefreshTokenResponseDTO()
-                     };
-                 }).FirstOrDefault();
+                                     }).OrderBy(t => t.Permission).ToListAsync();
+
+                var userDto = userDetails.GroupBy(t => t.RoleId)
+                .Select(q =>
+                {
+                    var refreshToken = q.Select(t => t.RefreshToken).FirstOrDefault();
+                    return new AppUserDto
+                    {
+                        Id = q.Select(t => t.Id).FirstOrDefault(),
+                        FullName = q.Select(t => t.FullName).FirstOrDefault(),
+                        UserName = q.Select(t => t.UserName).FirstOrDefault(),
+                        Email = q.Select(t => t.Email).FirstOrDefault(),
+                        IsAdmin = q.Select(t => t.IsAdmin).FirstOrDefault(),
+                        RoleId = q.Key,
+                        RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
+                        Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).Distinct().ToList(),
+                        RefreshToken = refreshToken?.MapToRefreshTokenResponseDTO(),
+                        AssignedMenus = q.Select(t=>t.MenuName).Distinct().ToList()
+                    };
+                }).FirstOrDefault();
+
+                if (userDto != null && userDto.IsAdmin)
+                    userDto.AssignedMenus = _dbContext.Menus.Select(x => x.MenuName).ToList();
+
+                return userDto;
         }
 
         /// <summary>
         /// Verifies provided user data is username or email and fetches data asynchronously.
         /// </summary>
         /// <param name="userName"></param>
-        /// <param name="userToVerify"></param>
         /// <returns></returns>
         private async Task<AppUser> VerifyEmailOrUserNameAsync(string userName)
         {
@@ -214,7 +244,7 @@ namespace Nowcfo.Application.Services.UserAuthService
             {
                 var claimsIdentity = await GetClaimsIdentityAsync(refreshToken);
                 var jwtResponse = await _jwtService.GenerateJwt(claimsIdentity);
-                await UpdateRefreshToken(claimsIdentity);
+                UpdateRefreshToken(claimsIdentity);
                 jwtResponse.RefreshToken = claimsIdentity.RefreshToken.Token;
                 jwtResponse.RefreshTokenExpiry = claimsIdentity.RefreshToken.ExpiryDate;
                 return jwtResponse;
@@ -226,7 +256,7 @@ namespace Nowcfo.Application.Services.UserAuthService
             }
         }
 
-        private async Task UpdateRefreshToken(AppUserDto userDetails)
+        private void UpdateRefreshToken(AppUserDto userDetails)
         {
             Guid userId = userDetails.Id;
             var currentRefreshToken = _dbContext.RefreshTokens.Where(m => m.UserId == userId).FirstOrDefault();
@@ -309,7 +339,6 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          FullName = user.FirstName + " " + user.LastName,
                                          user.UserName,
                                          user.Email,
-                                         user.IsAdmin,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
                                          RefreshToken = refreshToken
@@ -324,7 +353,6 @@ namespace Nowcfo.Application.Services.UserAuthService
                          FullName = q.Select(t => t.FullName).FirstOrDefault(),
                          UserName = q.Select(t => t.UserName).FirstOrDefault(),
                          Email = q.Select(t => t.Email).FirstOrDefault(),
-                         IsAdmin = q.Select(t => t.IsAdmin).FirstOrDefault(),
                          RoleId = q.Key,
                          RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
                          RefreshToken = refreshToken.MapToRefreshTokenResponseDTO()
