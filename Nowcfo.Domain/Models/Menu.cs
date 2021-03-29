@@ -28,6 +28,8 @@ namespace Nowcfo.Domain.Models
         [StringLength(100)]
         public string MenuName { get; set; }
 
+        //public string MenuUrl { get; set; }
+
         public string? Icon { get; set; }
 
         public int? DisplayOrder { get; set; }

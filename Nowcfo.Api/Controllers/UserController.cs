@@ -173,17 +173,11 @@ namespace Nowcfo.API.Controllers
             {
                 var appuser = await _userManager.FindByNameAsync(updatePasswordDto.UserName);
                 var x = await _userManager.ChangePasswordAsync(appuser, updatePasswordDto.CurrentPassword, updatePasswordDto.Password);
-
-
                 if (x.Succeeded)
                 {
-                    {
-
-                        var userId = appuser.Id;
-                        var user = await _userService.FindByIdAsync(userId);
-                        return Ok(user);
-
-                    }
+                    var userId = appuser.Id;
+                    var user = await _userService.FindByIdAsync(userId);
+                    return Ok(user);
                 }
                 return BadRequest(HandleActionResult($"Password update failed.", StatusCodes.Status400BadRequest));
 
@@ -273,24 +267,21 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
+                string roleName = await _roleServices.GetRoleNameByIdAsync(userRegisterDto.RoleId);
                 var appuser = await _userManager.FindByIdAsync(userRegisterDto.Id.ToString());
-
+                var appuserIsAdmin = roleName.ToLower() == "superadmin";
+                appuser.IsAdmin = appuserIsAdmin;
                 var x = await _userManager.UpdateAsync(_mapper.Map(userRegisterDto, appuser));
-
-
                 if (x.Succeeded)
                 {
-
                     var roles = await _userManager.GetRolesAsync(appuser);
                     var removeResult = await _userManager.RemoveFromRolesAsync(appuser, roles);
                     if (removeResult.Succeeded)
                     {
                         var userId = appuser.Id;
                         var user = await _userService.FindByIdAsync(userId);
-                        string roleName = await _roleServices.GetRoleNameByIdAsync(userRegisterDto.RoleId);
                         var roleResult = await _roleServices.AddToRoleAsync(user, roleName);
                         return Ok(user);
-
                     }
                 }
                 return BadRequest(HandleActionResult($"User update failed.", StatusCodes.Status400BadRequest));

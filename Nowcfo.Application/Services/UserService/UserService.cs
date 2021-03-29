@@ -498,7 +498,7 @@ namespace Nowcfo.Application.Services.UserService
                 {
                     To = appUser.Email,
                     Subject = SharedConstants.SignUpSubject,
-                    Body = @$"Your NowCFO Org account has been created. Your default password is <b> {appUser.Password}</b>. Click the link below to confirm your email address and finish the sign up process.This link will expire after 24 hours.<br/>
+                    Body = @$"Your NowCFO Org account has been created. Your username is <b> {appUser.UserName}</b> and default password is <b> {appUser.Password}</b>. Click the link below to confirm your email address and finish the sign up process.This link will expire after 24 hours.<br/>
                               <a href={callBackUri}>Click Here</a> "
                 };
                 return emailMessage;
