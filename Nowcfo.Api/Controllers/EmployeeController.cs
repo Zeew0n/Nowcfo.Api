@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
+using Nowcfo.Application.Extensions;
+using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using System;
 using System.Threading.Tasks;
@@ -22,9 +24,12 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployees()
-        {
-            var emp = await _unitOfWork.EmployeeRepository.GetAllAsync();
+        public async Task<IActionResult> GetEmployees([FromQuery] Param param)
+     {
+            var emp = await _unitOfWork.EmployeeRepository.GetAllAsync(param);
+            Response.AddPagination(emp.CurrentPage, emp.PageSize,
+              emp.TotalCount, emp.TotalPages);
+            
             return Ok(emp);
         }
 

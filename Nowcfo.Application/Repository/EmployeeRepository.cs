@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Nowcfo.Application.Dtos;
+using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using Serilog;
@@ -81,37 +82,115 @@ namespace Nowcfo.Application.Repository
             }
         }
 
-        public async Task<List<EmployeeInfoListDto>> GetAllAsync()
+        public async Task<PagedList<EmployeeInfoListDto>> GetAllAsync(Param param)
         {
             try
             {
-                var result = await (from o in _dbContext.EmployeeInfos
-                                    join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
-                                    join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
-                                    where o.IsActive
-                                    select new EmployeeInfoListDto
-                                    {
-                                        EmployeeId = o.EmployeeId,
-                                        EmployeeName = o.EmployeeName,
-                                        Email = o.Email,
-                                        Phone = o.Phone,
-                                        Address = o.Address,
-                                        City = o.City,
-                                        ZipCode = o.ZipCode,
-                                        State = o.State,
-                                        DesignationName = ds.DesignationName,
-                                        DesignationId = ds.DesignationId,
-                                        OrganizationName = os.OrganizationName,
-                                        OrganizationId = os.OrganizationId,
-                                        PayType = o.PayType,
-                                        Pay = o.Pay,
-                                        OverTimeRate = o.OverTimeRate,
-                                        IsSupervisor = o.IsSupervisor,
-                                        SuperVisorId = o.SupervisorId,
-                                        IsActive = o.IsActive
-                                    }).ToListAsync();
 
-                return result;
+
+             if(param.SearchType == "null" || param.SearchValue == "null")
+                {
+
+                    var result = (from o in _dbContext.EmployeeInfos
+                                  join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
+                                  join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
+                                  where o.IsActive
+                                  select new EmployeeInfoListDto
+                                  {
+                                      EmployeeId = o.EmployeeId,
+                                      EmployeeName = o.EmployeeName,
+                                      Email = o.Email,
+                                      Phone = o.Phone,
+                                      Address = o.Address,
+                                      City = o.City,
+                                      ZipCode = o.ZipCode,
+                                      State = o.State,
+                                      DesignationName = ds.DesignationName,
+                                      DesignationId = ds.DesignationId,
+                                      OrganizationName = os.OrganizationName,
+                                      OrganizationId = os.OrganizationId,
+                                      PayType = o.PayType,
+                                      Pay = o.Pay,
+                                      OverTimeRate = o.OverTimeRate,
+                                      IsSupervisor = o.IsSupervisor,
+                                      SuperVisorId = o.SupervisorId,
+                                      IsActive = o.IsActive
+                                  });
+
+                    return await PagedList<EmployeeInfoListDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+
+                }
+                else
+                {
+                    if (param.SearchType == "1")
+                    {
+
+                        var result = (from o in _dbContext.EmployeeInfos
+                                      join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
+                                      join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
+                                      where o.IsActive
+                                      select new EmployeeInfoListDto
+                                      {
+                                          EmployeeId = o.EmployeeId,
+                                          EmployeeName = o.EmployeeName,
+                                          Email = o.Email,
+                                          Phone = o.Phone,
+                                          Address = o.Address,
+                                          City = o.City,
+                                          ZipCode = o.ZipCode,
+                                          State = o.State,
+                                          DesignationName = ds.DesignationName,
+                                          DesignationId = ds.DesignationId,
+                                          OrganizationName = os.OrganizationName,
+                                          OrganizationId = os.OrganizationId,
+                                          PayType = o.PayType,
+                                          Pay = o.Pay,
+                                          OverTimeRate = o.OverTimeRate,
+                                          IsSupervisor = o.IsSupervisor,
+                                          SuperVisorId = o.SupervisorId,
+                                          IsActive = o.IsActive
+                                      }).Where(m=>m.EmployeeName == param.SearchValue);
+
+                        return await PagedList<EmployeeInfoListDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+
+
+
+                    }
+                    else
+                    {
+
+                        var result = (from o in _dbContext.EmployeeInfos
+                                      join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
+                                      join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
+                                      where o.IsActive
+                                      select new EmployeeInfoListDto
+                                      {
+                                          EmployeeId = o.EmployeeId,
+                                          EmployeeName = o.EmployeeName,
+                                          Email = o.Email,
+                                          Phone = o.Phone,
+                                          Address = o.Address,
+                                          City = o.City,
+                                          ZipCode = o.ZipCode,
+                                          State = o.State,
+                                          DesignationName = ds.DesignationName,
+                                          DesignationId = ds.DesignationId,
+                                          OrganizationName = os.OrganizationName,
+                                          OrganizationId = os.OrganizationId,
+                                          PayType = o.PayType,
+                                          Pay = o.Pay,
+                                          OverTimeRate = o.OverTimeRate,
+                                          IsSupervisor = o.IsSupervisor,
+                                          SuperVisorId = o.SupervisorId,
+                                          IsActive = o.IsActive
+                                      }).Where(m=>m.Email==param.SearchValue);
+
+                        return await PagedList<EmployeeInfoListDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+
+                    }
+
+
+                }
             }
             catch (Exception e)
             {
