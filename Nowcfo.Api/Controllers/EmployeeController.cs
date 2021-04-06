@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
@@ -25,11 +24,11 @@ namespace Nowcfo.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetEmployees([FromQuery] Param param)
-     {
-            var emp = await _unitOfWork.EmployeeRepository.GetAllAsync(param);
+        {
+            var emp = await _unitOfWork.EmployeeRepository.GetAllPagedListAsync(param);
             Response.AddPagination(emp.CurrentPage, emp.PageSize,
               emp.TotalCount, emp.TotalPages);
-            
+
             return Ok(emp);
         }
 
@@ -56,10 +55,8 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        //[HttpPost]
         [HttpPost]
-
-        public async Task<IActionResult> PostEmployee(EmployeeUpdateDto dto)
+        public async Task<IActionResult> PostEmployee(EmployeeInfoDto dto)
         {
             try
             {
@@ -78,10 +75,9 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        // [HttpPut("{id}")]
-        [HttpPut("{id}")]
 
-        public async Task<IActionResult> PutEmployee([FromRoute] int id, [FromBody] EmployeeUpdateDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutEmployee([FromRoute] int id, [FromBody] EmployeeInfoDto dto)
         {
             try
             {
@@ -106,42 +102,7 @@ namespace Nowcfo.API.Controllers
                 return ExceptionResponse(e.Message);
             }
         }
-        [AllowAnonymous]
-        [HttpGet("listallpermissions/{employeeId}")]
 
-        public async Task<IActionResult> GetEmployeePermissionHierarchy(int employeeId)
-        {
-            try
-            {
-                var permissionTree = await _unitOfWork.EmployeeRepository.GetEmployeePermissionHierarchy(employeeId);
-                return Ok(permissionTree);
-            }
-            catch (Exception e)
-            {
-                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
-            }
-        }
-
-
-
-        [HttpGet("KendoHierarchy")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetKendoHierarchy()
-        {
-            try
-            {
-                var organizationTree = await _unitOfWork.EmployeeRepository.GetKendoTreeHierarchy();
-                return Ok(organizationTree);
-            }
-            catch (Exception e)
-            {
-                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
-            }
-        }
-
-
-
-        //[HttpDelete("{id}")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
@@ -158,6 +119,95 @@ namespace Nowcfo.API.Controllers
             catch (Exception e)
             {
                 return ExceptionResponse(e.Message);
+            }
+        }
+
+        [HttpGet("NonPaginatedEmployees")]
+        public async Task<IActionResult> GetNonPaginatedEmployees()
+        {
+            var emp = await _unitOfWork.EmployeeRepository.GetAllAsync();
+
+            return Ok(emp);
+        }
+
+        [HttpGet("EmployeesAutocomplete/{searchText}")]
+        public async Task<IActionResult> GetEmployeesAutocomplete(  string searchText)
+        {
+            try
+            {
+                var employees = await _unitOfWork.EmployeeRepository.GetEmployeesAutocompleteAsync(searchText);
+                return Ok(employees);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+        [HttpPut("AssignEmployee")]
+        public async Task<IActionResult> PutAssignEmployee([FromBody] AssignEmployeeDto dto)
+        {
+            try
+            {
+                //var existingEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(dto.EmployeeId);
+                //if (existingEmployee == null)
+                //    return NotFound($"Could not find Employee with id {dto.EmployeeId}");
+                //existingEmployee.OrganizationId = dto.OrganizationId;
+                //var employeeDto = _mapper.Map<EmployeeUpdateDto>(existingEmployee);
+                //_unitOfWork.EmployeeRepository.Update(employeeDto);
+                //if (await _unitOfWork.SaveChangesAsync())
+                //    return NoContent();
+                //return BadRequest();
+                return Ok();
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+        //
+        [HttpGet("SyncHierarchy")]
+        public async Task<IActionResult> GetSyncHierarchy()
+        {
+            try
+            {
+                var organization = await _unitOfWork.EmployeeRepository.GetSyncFusionOrganizations();
+                return Ok(organization);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
+
+        [HttpGet("EmployeePermission/{employeeId}")]
+        public async Task<IActionResult> GetEmployeePermissionHierarchy(int employeeId)
+        {
+            try
+            {
+                var permissionTree = await _unitOfWork.EmployeeRepository.GetEmployeePermissionHierarchy(employeeId);
+                return Ok(permissionTree);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
+
+
+        [HttpGet("CheckedPermission/{employeeId}")]
+        public async Task<IActionResult> GetCheckedPermissions(int employeeId)
+        {
+            try
+            {
+                var permissionTree = await _unitOfWork.EmployeeRepository.GetCheckedPermissions(employeeId);
+                return Ok(permissionTree);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
             }
         }
     }

@@ -24,10 +24,8 @@
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
-        public bool IsActive { get; set; }
+
         public int[] EmployeePermissions { get; set; }
-
-
     }
     
 }

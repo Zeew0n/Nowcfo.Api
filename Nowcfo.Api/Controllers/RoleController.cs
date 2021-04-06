@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Attributes;
@@ -18,7 +17,6 @@ using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
 {
-    [AllowAnonymous]
     public class RoleController : BaseController
     {
       
@@ -34,7 +32,6 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpPost("Create")]
-        [AllowAnonymous]
         //[Permission(CrudPermission.AddRole)]
         public async Task<IActionResult> Create([FromBody] RoleDto dto)
         {
@@ -96,7 +93,6 @@ namespace Nowcfo.API.Controllers
 
         [HttpPut("UpdateRole")]
         [Permission(CrudPermission.UpdateRole)]
-       // [AllowAnonymous]
         public async Task<IActionResult> Update([FromBody] RoleDto actionType)
         {
             try
@@ -114,7 +110,6 @@ namespace Nowcfo.API.Controllers
 
         [HttpDelete("deleterole/{Id}")]
         //[Permission(CrudPermission.DeleteRole)]
-        //[AllowAnonymous]
         public async Task<IActionResult> Delete(Guid Id)
         {
             try
