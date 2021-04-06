@@ -28,7 +28,7 @@ namespace Nowcfo.Infrastructure.Data
                 .WithMany(q => q.RolePermissions)
                 .HasForeignKey(q => q.PermissionId);
         }
-
+        
         public static void ConfigureEmpOrgPermission(EntityTypeBuilder<EmployeeOrgPermission> builder)
         {
             builder.HasKey(q => q.EmployeeOrganizationPermissionId);

@@ -21,4 +21,5 @@ namespace Nowcfo.Application.IRepository
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Menu> Menus { get; set; }
     }
+
 }

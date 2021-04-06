@@ -7,13 +7,19 @@ namespace Nowcfo.Application.IRepository
 {
     public interface IEmployeeRepository
     {
-        Task<EmployeeInfoListDto> GetByIdAsync(int id);
-        Task<PagedList<EmployeeInfoListDto>> GetAllAsync(Param param);
+        Task<EmployeeInfoDto> GetByIdAsync(int id);
+        Task<List<EmployeeInfoDto>> GetAllAsync();
+        Task<PagedList<EmployeeInfoDto>> GetAllPagedListAsync(Param param);
+
         Task<List<EmployeeInfoDto>> GetAllSuperVisors();
-        Task CreateAsync(EmployeeUpdateDto model);
-        void Update(EmployeeUpdateDto model);
-        void Delete(EmployeeInfoListDto model);
-        Task<List<KendoDto>> GetKendoTreeHierarchy();
-        Task<List<EmployeeOrganizationPermissionNavDto>> GetEmployeePermissionHierarchy(int employeeId);
+        Task CreateAsync(EmployeeInfoDto model);
+        void Update(EmployeeInfoDto model);
+        void Delete(EmployeeInfoDto model);
+        Task<List<EmployeeInfoDto>> GetEmployeesAutocompleteAsync(string searchText);
+
+        //
+        Task<List<SyncfusionListDto>> GetEmployeePermissionHierarchy(int employeeId);
+        Task<List<SyncfusionListDto>> GetSyncFusionOrganizations();
+        Task<List<UserPermissionDto>> GetCheckedPermissions(int employeeId);
     }
 }
