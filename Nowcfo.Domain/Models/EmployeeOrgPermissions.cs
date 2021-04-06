@@ -2,7 +2,7 @@
 
 namespace Nowcfo.Domain.Models
 {
-    public class EmployeeOrgPermission: BaseEntity, ISoftDeletableEntity
+    public class EmployeeOrgPermission: BaseEntity
     {
         [Key]
         public int EmployeeOrganizationPermissionId { get; set; }

@@ -10,8 +10,8 @@ using Nowcfo.Infrastructure.Data;
 namespace Nowcfo.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210406085848_added employeetype")]
-    partial class addedemployeetype
+    [Migration("20210406114611_EmployeeTypeColumn_AddedToEmployeeInfo")]
+    partial class EmployeeTypeColumn_AddedToEmployeeInfo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -411,7 +411,9 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int?>("EmployeeType")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -487,19 +489,8 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("DeletedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int?>("Employee_Id")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.Property<int?>("Organization_Id")
                         .HasColumnType("int");

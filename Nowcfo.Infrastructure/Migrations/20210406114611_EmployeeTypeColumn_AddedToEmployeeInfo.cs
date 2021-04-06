@@ -2,15 +2,18 @@
 
 namespace Nowcfo.Infrastructure.Migrations
 {
-    public partial class addedemployeetype : Migration
+    public partial class EmployeeTypeColumn_AddedToEmployeeInfo : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            
+
             migrationBuilder.AddColumn<int>(
                 name: "EmployeeType",
                 table: "EmployeeInfo",
                 type: "int",
-                nullable: true);
+                nullable: true,
+                defaultValue: 1);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -18,6 +21,7 @@ namespace Nowcfo.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "EmployeeType",
                 table: "EmployeeInfo");
+
         }
     }
 }

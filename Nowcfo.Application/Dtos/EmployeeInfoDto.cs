@@ -16,7 +16,7 @@
         public string DesignationName { get; set; }
         public bool? IsSupervisor { get; set; }
         public int? SuperVisorId { get; set; }
-        public string EmployeeType { get; set; }
+        public int? EmployeeType { get; set; }
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }

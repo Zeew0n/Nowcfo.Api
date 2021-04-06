@@ -55,6 +55,7 @@ namespace Nowcfo.Infrastructure.Data
                 .WithOne(e => e.Employee)
                 .HasForeignKey(e => e.SupervisorId)
                 .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(x => x.EmployeeType).HasDefaultValue(1);
         }
 
         public static void ConfigureOrganization(EntityTypeBuilder<Organization> builder)
