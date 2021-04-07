@@ -29,7 +29,7 @@ namespace Nowcfo.Application.Repository
             try
             {
                 return  await (from o in _dbContext.EmployeeInfos
-                                    join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
+                                    join os in _dbContext.Organizations.IgnoreQueryFilters() on o.OrganizationId equals os.OrganizationId
                                     join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
                                     where o.EmployeeId == id
                                     select new EmployeeInfoDto
@@ -105,28 +105,31 @@ namespace Nowcfo.Application.Repository
              if(param.SearchType == "null" || param.SearchValue == "null")
              {
 
-                    var result = (from o in _dbContext.EmployeeInfos
-                                  join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
-                                  join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
+                    var result = (
+                                  from o in _dbContext.Organizations.IgnoreQueryFilters()
+                                  join e in  _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
+                                  from e in eg.DefaultIfEmpty()
+                                  join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
                                   select new EmployeeInfoDto
                                   {
-                                      EmployeeId = o.EmployeeId,
-                                      EmployeeName = o.EmployeeName,
-                                      Email = o.Email,
-                                      Phone = o.Phone,
-                                      Address = o.Address,
-                                      City = o.City,
-                                      ZipCode = o.ZipCode,
-                                      State = o.State,
+                                      EmployeeId = e.EmployeeId,
+                                      EmployeeName = e.EmployeeName,
+                                      Email = e.Email,
+                                      Phone = e.Phone,
+                                      Address = e.Address,
+                                      City = e.City,
+                                      ZipCode = e.ZipCode,
+                                      State = e.State,
+                                      PayType = e.PayType,
+                                      Pay = e.Pay,
+                                      OverTimeRate = e.OverTimeRate,
+                                      IsSupervisor = e.IsSupervisor,
+                                      SuperVisorId = e.SupervisorId,
                                       DesignationName = ds.DesignationName,
                                       DesignationId = ds.DesignationId,
-                                      OrganizationName = os.OrganizationName,
-                                      OrganizationId = os.OrganizationId,
-                                      PayType = o.PayType,
-                                      Pay = o.Pay,
-                                      OverTimeRate = o.OverTimeRate,
-                                      IsSupervisor = o.IsSupervisor,
-                                      SuperVisorId = o.SupervisorId,
+                                      OrganizationName = o.OrganizationName,
+                                      OrganizationId = o.OrganizationId,
+                                      
                                   });
 
                     return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
