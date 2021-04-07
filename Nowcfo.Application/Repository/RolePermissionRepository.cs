@@ -2,9 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.IRepository;
-using Nowcfo.Domain.Models.AppUserModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -55,26 +53,6 @@ namespace Nowcfo.Application.Repository
                 Console.WriteLine(e);
                 throw;
             }
-        }
-
-        public Task<List<RolePermissionDto>> GetAllAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task CreateAsync(RolePermission model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Update(RolePermission model)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Delete(RolePermission model)
-        {
-            throw new NotImplementedException();
         }
     }
 }

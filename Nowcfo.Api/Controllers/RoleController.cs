@@ -138,6 +138,22 @@ namespace Nowcfo.API.Controllers
             }
         }
 
+        [HttpGet("ReadRolePermission/{id}")]
+        public async Task<IActionResult> GetRolePermission(Guid id)
+        {
+            try
+            {
+                var rolePermission = await _unitOfWork.RolePermissionRepository.GetByIdAsync(id);
+                if (rolePermission == null) return NotFound();
+                return Ok(rolePermission);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+
+        }
+
         [HttpPost("CreateRolePermission")]
         public async Task<IActionResult> PostRolePermission(RolePermissionDto dto)
         {
