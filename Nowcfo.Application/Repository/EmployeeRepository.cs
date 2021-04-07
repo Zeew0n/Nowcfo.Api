@@ -48,6 +48,7 @@ namespace Nowcfo.Application.Repository
                                         OrganizationId = os.OrganizationId,
                                         PayType = o.PayType,
                                         Pay = o.Pay,
+                                        EmployeeType=o.EmployeeType,
                                         OverTimeRate = o.OverTimeRate,
                                         IsSupervisor = o.IsSupervisor,
                                         SuperVisorId = o.SupervisorId,
@@ -210,7 +211,7 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var employees = await _dbContext.EmployeeInfos.Where(m => m.IsSupervisor.Value).ToListAsync();
+                var employees = await _dbContext.EmployeeInfos.Where(m => m.IsSupervisor.Value==true).ToListAsync();
                 return _mapper.Map<List<EmployeeInfoDto>>(employees);
             }
             catch (Exception e)
