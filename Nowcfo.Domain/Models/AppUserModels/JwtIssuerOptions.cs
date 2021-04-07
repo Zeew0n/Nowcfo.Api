@@ -19,7 +19,7 @@ namespace Nowcfo.Domain.Models
 
         public DateTime IssuedAt => DateTime.UtcNow;
 
-        public TimeSpan ValidFor { get; set; } = TimeSpan.FromMinutes(10);
+        public TimeSpan ValidFor { get; set; } = TimeSpan.FromSeconds(10);
 
         public Func<Task<string>> JtiGenerator => () => Task.FromResult(Guid.NewGuid().ToString());
 
