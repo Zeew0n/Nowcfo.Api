@@ -319,8 +319,11 @@ namespace Nowcfo.Application.Services.UserAuthService
                 Email = userDetails.Email,
                 RoleId = userDetails.RoleId,
                 Role = userDetails.RoleName,
-
+                IsAdmin = userDetails.IsAdmin,
+                Menus = JsonConvert.SerializeObject(userDetails.AssignedMenus),
+                Permissions = JsonConvert.SerializeObject(userDetails.Permissions)
             };
+          
             userDetails.ClaimsIdentity = await Task.FromResult(_jwtService.GenerateClaimsIdentity(claimDTO));
             return userDetails;
         }
@@ -367,6 +370,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                          RoleId = q.Key,
                          RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
                          RefreshToken = refreshToken.MapToRefreshTokenResponseDTO(),
+                         Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).Distinct().ToList(),
                          AssignedMenus = q.Select(t => t.MenuName).Distinct().ToList(),
                      };
                  }).FirstOrDefault();
