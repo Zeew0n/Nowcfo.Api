@@ -95,7 +95,7 @@ namespace Nowcfo.Application.Repository
                 throw;
             }
         }
-        public async Task<PagedList<EmployeeInfoDto>> GetAllPagedListAsync(Param param)
+        public async Task<PagedList<EmployeeInfoDto>> GetPagedListAsync(Param param)
         {
             try
             {
@@ -263,23 +263,23 @@ namespace Nowcfo.Application.Repository
                 var y = _dbContext.SaveChange();
                 var x = employee.EmployeeId;
 
-
-                var permissions = _dbContext.EmployeeOrgPermissions.Where(z => z.Employee_Id == x).ToListAsync();
-                _dbContext.EmployeeOrgPermissions.RemoveRange(permissions.Result);
-                _dbContext.SaveChange();
-
-
-                foreach (var employees in model.EmployeePermissions)
+                if (model.EmployeePermissions!=null)
                 {
-                    var model1 = new EmployeeOrgPermission
+                    var permissions = _dbContext.EmployeeOrgPermissions.Where(z => z.Employee_Id == x).ToList();
+                    _dbContext.EmployeeOrgPermissions.RemoveRange(permissions);
+                    foreach (var employees in model.EmployeePermissions)
                     {
-                        Employee_Id = x,
-                        Organization_Id = employees
-                    };
-                    empOrg.Add(model1);
+                        var model1 = new EmployeeOrgPermission
+                        {
+                            Employee_Id = x,
+                            Organization_Id = employees
+                        };
+                        empOrg.Add(model1);
+                    }
+                    _dbContext.EmployeeOrgPermissions.UpdateRange(empOrg);
+                    _dbContext.SaveChange();
                 }
-                _dbContext.EmployeeOrgPermissions.UpdateRange(empOrg);
-                _dbContext.SaveChange();
+
             }
             catch (Exception e)
             {
