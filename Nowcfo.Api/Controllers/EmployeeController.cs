@@ -23,9 +23,16 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetEmployees([FromQuery] Param param)
+        public async Task<IActionResult> GetEmployees()
         {
-            var emp = await _unitOfWork.EmployeeRepository.GetAllPagedListAsync(param);
+            var employees = await _unitOfWork.EmployeeRepository.GetAllAsync();
+            return Ok(employees);
+        }
+
+        [HttpGet("PaginatedEmployees")]
+        public async Task<IActionResult> GetPaginatedEmployees([FromQuery] Param param)
+        {
+            var emp = await _unitOfWork.EmployeeRepository.GetPagedListAsync(param);
             Response.AddPagination(emp.CurrentPage, emp.PageSize,
               emp.TotalCount, emp.TotalPages);
 
@@ -149,16 +156,15 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-                //var existingEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(dto.EmployeeId);
-                //if (existingEmployee == null)
-                //    return NotFound($"Could not find Employee with id {dto.EmployeeId}");
-                //existingEmployee.OrganizationId = dto.OrganizationId;
-                //var employeeDto = _mapper.Map<EmployeeUpdateDto>(existingEmployee);
-                //_unitOfWork.EmployeeRepository.Update(employeeDto);
-                //if (await _unitOfWork.SaveChangesAsync())
-                //    return NoContent();
-                //return BadRequest();
-                return Ok();
+                var existingEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(dto.EmployeeId);
+                if (existingEmployee == null)
+                    return NotFound($"Could not find Employee with id {dto.EmployeeId}");
+                existingEmployee.OrganizationId = dto.OrganizationId;
+                var employeeDto = _mapper.Map<EmployeeInfoDto>(existingEmployee);
+                _unitOfWork.EmployeeRepository.Update(employeeDto);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
 
             }
             catch (Exception e)
