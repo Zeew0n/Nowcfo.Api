@@ -332,6 +332,15 @@ namespace Nowcfo.Application.Services.UserAuthService
                                      join user in _dbContext.AppUsers on refreshToken.UserId equals user.Id
                                      join userRole in _dbContext.UserRoles on user.Id equals userRole.UserId
                                      join role in _dbContext.AppRoles on userRole.RoleId equals role.Id
+                                     join rolePer in _dbContext.RolePermissions on role.Id equals rolePer.RoleId into rp
+                                     from rolePermission in rp.DefaultIfEmpty()
+                                     
+                                     join perm in _dbContext.Permissions on rolePermission.PermissionId equals perm.Id into per
+                                     from permission in per.DefaultIfEmpty()
+
+                                     join men in _dbContext.Menus on permission.MenuId equals men.Id into menus
+                                     from menu in menus.DefaultIfEmpty()
+
                                      where refreshToken.Token == token
                                      select new
                                      {
@@ -341,9 +350,11 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.Email,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
+                                         MenuName = menu == null ? null : menu.MenuName,
+                                         Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
                                      }).ToListAsync();
-            return userDetails.GroupBy(t => t.RoleId)
+            var userDto =  userDetails.GroupBy(t => t.RoleId)
                  .Select(q =>
                  {
                      var refreshToken = q.Select(t => t.RefreshToken).FirstOrDefault();
@@ -355,9 +366,14 @@ namespace Nowcfo.Application.Services.UserAuthService
                          Email = q.Select(t => t.Email).FirstOrDefault(),
                          RoleId = q.Key,
                          RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
-                         RefreshToken = refreshToken.MapToRefreshTokenResponseDTO()
+                         RefreshToken = refreshToken.MapToRefreshTokenResponseDTO(),
+                         AssignedMenus = q.Select(t => t.MenuName).Distinct().ToList(),
                      };
                  }).FirstOrDefault();
+
+            if (userDto != null && userDto.IsAdmin)
+                userDto.AssignedMenus = _dbContext.Menus.Select(x => x.MenuName).ToList();
+            return userDto;
         }
 
         #endregion RefreshToken
