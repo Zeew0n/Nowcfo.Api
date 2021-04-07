@@ -34,7 +34,7 @@ namespace Nowcfo.Domain.Models
         public bool? IsSupervisor { get; set; }
 
         public int? SupervisorId { get; set; }
-        public string EmployeeType { get; set; }
+        public int? EmployeeType { get; set; }
 
         public string PayType { get; set; }
         public string Pay { get; set; }

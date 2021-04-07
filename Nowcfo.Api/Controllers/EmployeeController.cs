@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Extensions;
 using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
+using Nowcfo.Domain.Models.Enums;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
@@ -37,6 +40,25 @@ namespace Nowcfo.API.Controllers
               emp.TotalCount, emp.TotalPages);
 
             return Ok(emp);
+        }
+
+
+        [HttpGet("GetEmployeeTypes")]
+        public async Task<IActionResult> GetEmployeeType()
+        {
+            var enumVals = new List<object>();
+
+            foreach (var item in Enum.GetValues(typeof(EmployeeType)))
+            {
+
+                enumVals.Add(new 
+                {
+                    employeeType = (int)item,
+                    name= item.ToString()
+                });
+            }
+
+            return Ok(enumVals);
         }
 
 
