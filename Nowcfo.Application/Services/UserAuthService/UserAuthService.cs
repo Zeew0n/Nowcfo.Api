@@ -348,6 +348,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                                      select new
                                      {
                                          user.Id,
+                                         user.IsAdmin,
                                          FullName = user.FirstName + " " + user.LastName,
                                          user.UserName,
                                          user.Email,
