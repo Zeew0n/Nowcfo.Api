@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
@@ -42,9 +41,8 @@ namespace Nowcfo.API.Controllers
             return Ok(emp);
         }
 
-
         [HttpGet("GetEmployeeTypes")]
-        public async Task<IActionResult> GetEmployeeType()
+        public  IActionResult GetEmployeeType()
         {
             var enumVals = new List<object>();
 
@@ -54,7 +52,7 @@ namespace Nowcfo.API.Controllers
                 enumVals.Add(new 
                 {
                     employeeType = (int)item,
-                    name= item.ToString()
+                    name= EnumService.GetEnumDescription((EmployeeType)(int)item)
                 });
             }
 
