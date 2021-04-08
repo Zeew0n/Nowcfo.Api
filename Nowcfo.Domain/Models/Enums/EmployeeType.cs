@@ -1,8 +1,14 @@
-﻿namespace Nowcfo.Domain.Models.Enums
+﻿using System.ComponentModel;
+
+namespace Nowcfo.Domain.Models.Enums
 {
+
     public enum  EmployeeType
     {
-        FullTime=1,
+        [Description("Full-Time")]
+        FullTime = 1,
+        [Description("Part-Time")]
+
         PartTime,
         Hybrid,
         Vendor
