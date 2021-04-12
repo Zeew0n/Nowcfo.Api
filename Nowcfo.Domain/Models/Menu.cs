@@ -28,7 +28,11 @@ namespace Nowcfo.Domain.Models
         [StringLength(100)]
         public string MenuName { get; set; }
 
-        //public string MenuUrl { get; set; }
+        public Guid? UnderMenuId { get; set; }
+
+        public string? NavigateUrl { get; set; }
+
+        public int? MenuLevel { get; set; }
 
         public string? Icon { get; set; }
 

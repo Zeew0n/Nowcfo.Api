@@ -8,10 +8,15 @@ namespace Nowcfo.Application.Dtos
 
         public string MenuName { get; set; }
 
-        public string MenuUrl { get; set; }
+        public string NavigateUrl { get; set; }
+
+        public Guid? UnderMenuId { get; set; }
+
+        public int? MenuLevel { get; set; }
 
         public string Icon { get; set; }
 
         public int? DisplayOrder { get; set; }
+
     }
 }

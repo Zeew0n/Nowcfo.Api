@@ -24,7 +24,7 @@ namespace Nowcfo.Application.Dtos.User.Response
         public List<string> Permissions { get; set; }
 
         //
-        public List<string> AssignedMenus { get; set; }
-        //public List<MenuDto> AssignedMenus { get; set; }
+        //public List<string> AssignedMenus { get; set; }
+        public List<MenuDto> AssignedMenus { get; set; }
     }
 }

@@ -69,5 +69,11 @@ namespace Nowcfo.Infrastructure.Data
             builder.Property(p => p.HasParent)
                 .HasDefaultValue(false);
         }
+
+        public static void ConfigureMenu(EntityTypeBuilder<Menu> builder)
+        {
+            builder.Property(p => p.MenuLevel)
+                .HasDefaultValue(1);
+        }
     }
 }

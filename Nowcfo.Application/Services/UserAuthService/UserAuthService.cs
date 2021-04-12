@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Dtos.User.Response;
 using Nowcfo.Application.Exceptions;
@@ -11,6 +13,7 @@ using Nowcfo.Application.Services.UserService;
 using Nowcfo.Domain.Models.AppUserModels;
 using Serilog;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
@@ -27,6 +30,7 @@ namespace Nowcfo.Application.Services.UserAuthService
         private readonly IJwtService _jwtService;
         private readonly IApplicationDbContext _dbContext;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
         public UserAuthService
         (IUnitOfWork unitOfWork
@@ -35,6 +39,7 @@ namespace Nowcfo.Application.Services.UserAuthService
             ,IJwtService jwtService
             ,IUserService userService
             ,RoleManager<AppRole> roleManager
+            , IMapper mapper
             )
         {
             _roleManager = roleManager;
@@ -43,6 +48,7 @@ namespace Nowcfo.Application.Services.UserAuthService
             _userService = userService;
             _unitOfWork = unitOfWork;
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         #region AuthToken
@@ -187,7 +193,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.IsAdmin,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
-                                         MenuName = menu == null ? null : menu.MenuName,
+                                         Menu = menu,
                                          Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
                                      }).OrderBy(t => t.Permission).ToListAsync();
@@ -207,12 +213,14 @@ namespace Nowcfo.Application.Services.UserAuthService
                         RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
                         Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).Distinct().ToList(),
                         RefreshToken = refreshToken?.MapToRefreshTokenResponseDTO(),
-                        AssignedMenus = q.Select(t=>t.MenuName).Distinct().ToList()
+                        AssignedMenus = _mapper.Map<List<MenuDto>>( q.Select(x=>x.Menu).ToList())
                     };
                 }).FirstOrDefault();
+                userDto?.AssignedMenus?.OrderBy(x => x.DisplayOrder);
 
                 if (userDto != null && userDto.IsAdmin)
-                    userDto.AssignedMenus = _dbContext.Menus.Select(x => x.MenuName).ToList();
+                    userDto.AssignedMenus = _mapper.Map<List<MenuDto>>(_dbContext.Menus.Where(m=>m.MenuLevel==1).OrderBy(x => x.DisplayOrder).ToList());
+               
 
                 return userDto;
         }
@@ -354,7 +362,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.Email,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
-                                         MenuName = menu == null ? null : menu.MenuName,
+                                         Menu = menu,
                                          Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
                                      }).ToListAsync();
@@ -372,12 +380,12 @@ namespace Nowcfo.Application.Services.UserAuthService
                          RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
                          RefreshToken = refreshToken.MapToRefreshTokenResponseDTO(),
                          Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).Distinct().ToList(),
-                         AssignedMenus = q.Select(t => t.MenuName).Distinct().ToList(),
+                         AssignedMenus = _mapper.Map<List<MenuDto>>( q.Select(t => t.Menu).ToList()),
                      };
                  }).FirstOrDefault();
 
             if (userDto != null && userDto.IsAdmin)
-                userDto.AssignedMenus = _dbContext.Menus.Select(x => x.MenuName).ToList();
+                userDto.AssignedMenus = _mapper.Map<List<MenuDto>>(_dbContext.Menus.ToList());
             return userDto;
         }
 
