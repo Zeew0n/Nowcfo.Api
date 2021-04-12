@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20210406071611_Remvove_IsActive_FromEmployeeInfo.cs" />
+    <Compile Remove="Migrations\20210406071611_Remvove_IsActive_FromEmployeeInfo.Designer.cs" />
+    <Compile Remove="Migrations\20210406085848_added employeetype.cs" />
+    <Compile Remove="Migrations\20210406085848_added employeetype.Designer.cs" />
     <Compile Remove="Repository\Repository.cs" />
   </ItemGroup>
 

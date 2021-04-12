@@ -55,6 +55,7 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<EmployeeInfo>(ConfigureEmployeeInfo);
             modelBuilder.Entity<EmployeeOrgPermission>(ConfigureEmpOrgPermission);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
+            modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
 
             //modelBuilder.SeedAdminUser();
