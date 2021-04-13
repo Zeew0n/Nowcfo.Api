@@ -4,6 +4,7 @@ using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
+using Nowcfo.Domain.Models.Enums;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -49,8 +50,11 @@ namespace Nowcfo.Application.Repository
                                         PayType = o.PayType,
                                         Pay = o.Pay,
                                         EmployeeType=o.EmployeeType,
+                                        //StatusName= GetNameByIdEnum(o.Status),
                                         OverTimeRate = o.OverTimeRate,
                                         IsSupervisor = o.IsSupervisor,
+                                        //Status = o.Status,
+
                                         SuperVisorId = o.SupervisorId,
                                     }).FirstOrDefaultAsync();
 
@@ -83,6 +87,9 @@ namespace Nowcfo.Application.Repository
                                       OrganizationName = os.OrganizationName,
                                       OrganizationId = os.OrganizationId,
                                       PayType = o.PayType,
+
+                                     // Status = o.Status,
+                                      //StatusName = GetNameByIdEnum(o.Status),
                                       Pay = o.Pay,
                                       OverTimeRate = o.OverTimeRate,
                                       IsSupervisor = o.IsSupervisor,
@@ -96,6 +103,26 @@ namespace Nowcfo.Application.Repository
                 throw;
             }
         }
+
+        public string GetNameByEnum(EmployeeStatusType responseType)
+        {
+            switch (responseType)
+            {
+                case EmployeeStatusType.Active:
+                    return EmployeeStatusType.Active.ToString();
+
+                case EmployeeStatusType.InActive:
+                    return EmployeeStatusType.InActive.ToString();
+
+                case EmployeeStatusType.Terminated:
+                    return EmployeeStatusType.Terminated.ToString();
+
+                default:
+                    return null;
+            }
+        }
+
+
         public async Task<PagedList<EmployeeInfoDto>> GetPagedListAsync(Param param)
         {
             try
@@ -107,9 +134,10 @@ namespace Nowcfo.Application.Repository
 
                     var result = (
                                   from o in _dbContext.Organizations.IgnoreQueryFilters()
-                                  join e in  _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
+                                  join e in _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
                                   from e in eg.DefaultIfEmpty()
                                   join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
+
                                   select new EmployeeInfoDto
                                   {
                                       EmployeeId = e.EmployeeId,
@@ -129,10 +157,35 @@ namespace Nowcfo.Application.Repository
                                       DesignationId = ds.DesignationId,
                                       OrganizationName = o.OrganizationName,
                                       OrganizationId = o.OrganizationId,
-                                      
+                                      StatusType = (EmployeeStatusType)e.Status,
                                   });
 
-                    return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+
+                    var test = await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+                    var x = test.Select(q => new EmployeeInfoDto
+                        {
+
+                            EmployeeId = q.EmployeeId,
+                            EmployeeName = q.EmployeeName,
+                            Email = q.Email,
+                            Phone = q.Phone,
+                            Address = q.Address,
+                            City = q.City,
+                            ZipCode = q.ZipCode,
+                            State = q.State,
+                            PayType = q.PayType,
+                            Pay = q.Pay,
+                            OverTimeRate = q.OverTimeRate,
+                            IsSupervisor = q.IsSupervisor,
+                            SuperVisorId = q.SuperVisorId,
+                            DesignationName = q.DesignationName,
+                            DesignationId = q.DesignationId,
+                            OrganizationName = q.OrganizationName,
+                            OrganizationId = q.OrganizationId,
+                            StatusName = GetNameByEnum(q.StatusType)
+
+                        });
+                    return await PagedList<EmployeeInfoDto>.CreateAsync(x, param.PageNumber, param.PageSize);
 
                 }
                 else
@@ -162,6 +215,8 @@ namespace Nowcfo.Application.Repository
                                           OverTimeRate = o.OverTimeRate,
                                           IsSupervisor = o.IsSupervisor,
                                           SuperVisorId = o.SupervisorId,
+                                          //Status = o.Status,
+                                          //StatusName = GetNameByIdEnum(o.Status)
                                       }).Where(m=>m.EmployeeName == param.SearchValue);
 
                         return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
@@ -194,12 +249,13 @@ namespace Nowcfo.Application.Repository
                                           OverTimeRate = o.OverTimeRate,
                                           IsSupervisor = o.IsSupervisor,
                                           SuperVisorId = o.SupervisorId,
+                                          //Status = o.Status,
+                                          //StatusName = GetNameByIdEnum(o.Status),
                                       }).Where(m=>m.Email==param.SearchValue);
 
                         return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
                     }
-
 
                 }
             }
@@ -223,6 +279,21 @@ namespace Nowcfo.Application.Repository
                 throw;
             }
         }
+
+        //public string GetNameByIdEnum(int? status)
+        //{
+        //    try
+        //    {
+
+        //        return Enum.GetName(typeof(EmployeeStatusType), status);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //}
 
         public async Task CreateAsync(EmployeeInfoDto model)
         {
@@ -298,7 +369,11 @@ namespace Nowcfo.Application.Repository
             try
             {
                 var employee = _mapper.Map<EmployeeInfoDto, EmployeeInfo>(model);
-                _dbContext.EmployeeInfos.Remove(employee);
+                //employee.Status = 3;
+                _dbContext.EmployeeInfos.Update(employee);
+
+
+                //_dbContext.EmployeeInfos.Remove(employee);
             }
 
             catch (Exception ex)
@@ -407,5 +482,11 @@ namespace Nowcfo.Application.Repository
                 throw;
             }
         }
+    }
+
+    public class Test
+    {
+        public int Value { get; set; }
+        public string Name { get; set; }
     }
 }
