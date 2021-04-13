@@ -1,4 +1,6 @@
-﻿namespace Nowcfo.Application.Dtos
+﻿using Nowcfo.Domain.Models.Enums;
+
+namespace Nowcfo.Application.Dtos
 {
     public class EmployeeInfoDto
     {
@@ -17,6 +19,9 @@
         public bool? IsSupervisor { get; set; }
         public int? SuperVisorId { get; set; }
         public int? EmployeeType { get; set; }
+        public EmployeeStatusType StatusType { get; set; }
+        public int? Status { get; set; }
+        public string StatusName { get; set; }
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }

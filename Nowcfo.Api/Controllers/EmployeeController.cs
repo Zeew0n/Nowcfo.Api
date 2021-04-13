@@ -41,6 +41,28 @@ namespace Nowcfo.API.Controllers
             return Ok(emp);
         }
 
+
+        [HttpGet("GetEmployeeStatusTypes")]
+        //[AllowAnonymous]
+        public IActionResult GetEmployeeStatusType()
+        {
+
+            var enumVals = new List<object>();
+
+            foreach (var item in Enum.GetValues(typeof(EmployeeStatusType)))
+            {
+
+                enumVals.Add(new
+                {
+                    id = (int)item,
+                    name = item.ToString()
+                });
+            }
+
+            return Ok(enumVals);
+        }
+
+
         [HttpGet("GetEmployeeTypes")]
         public  IActionResult GetEmployeeType()
         {
