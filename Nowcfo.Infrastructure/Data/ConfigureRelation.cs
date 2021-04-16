@@ -29,12 +29,6 @@ namespace Nowcfo.Infrastructure.Data
                 .HasForeignKey(q => q.PermissionId);
         }
         
-        public static void ConfigureEmpOrgPermission(EntityTypeBuilder<EmployeeOrgPermission> builder)
-        {
-            builder.HasKey(q => q.EmployeeOrganizationPermissionId);
-            builder.Property(p => p.Employee_Id).IsRequired(false);
-            builder.Property(p => p.Organization_Id).IsRequired(false);
-        }
 
 
         public static void ConfigureAppUser(EntityTypeBuilder<AppUser> builder)
@@ -46,6 +40,7 @@ namespace Nowcfo.Infrastructure.Data
             builder.Property(p => p.ZipCode).IsRequired(false);
         }
 
+     
 
         public static void ConfigureEmployeeInfo(EntityTypeBuilder<EmployeeInfo> builder)
         {
@@ -55,7 +50,19 @@ namespace Nowcfo.Infrastructure.Data
                 .WithOne(e => e.Employee)
                 .HasForeignKey(e => e.SupervisorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(e => e.EmployeeType)
+                 .WithOne(e => e.Employee)
+                 .HasForeignKey<EmployeeInfo>(e => e.EmployeeTypeId);
+                 
+
+            builder.HasOne(e => e.EmployeeStatusType)
+                .WithOne(e => e.Employee)
+                .HasForeignKey<EmployeeInfo>(e => e.StatusId);
         }
+
+
+
 
         public static void ConfigureOrganization(EntityTypeBuilder<Organization> builder)
         {

@@ -20,6 +20,8 @@ namespace Nowcfo.Application.MappingProfile
             CreateMap<EmployeeInfo,EmployeeInfoDto>().ReverseMap();
             CreateMap<Designation,DesignationDto>().ReverseMap();
             CreateMap<Permission,PermissionDto>().ReverseMap();
+            CreateMap<EmployeeType, EmployeeTypeDto>().ReverseMap();
+            CreateMap<EmployeeStatusType,EmployeeStatusTypeDto>().ReverseMap();
             CreateMap<Menu,MenuDto>().ReverseMap();
             CreateMap<OrganizationNavDto, OrganizationNavTreeViewDto>().ReverseMap();
 

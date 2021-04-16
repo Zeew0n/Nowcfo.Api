@@ -17,9 +17,11 @@ namespace Nowcfo.Application.IRepository
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<EmployeeInfo> EmployeeInfos { get; set; }
-        public DbSet<EmployeeOrgPermission> EmployeeOrgPermissions { get; set; }
+        public DbSet<EmployeePermission> EmployeePermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Menu> Menus { get; set; }
+        public DbSet<EmployeeStatusType> EmployeeStatusTypes { get; set; }
+        public DbSet<EmployeeType> EmployeeTypes { get; set; }
     }
 
 }

@@ -53,7 +53,6 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<AppUser>(ConfigureAppUser);
             modelBuilder.Entity<RolePermission>(ConfigureRolePermission);
             modelBuilder.Entity<EmployeeInfo>(ConfigureEmployeeInfo);
-            modelBuilder.Entity<EmployeeOrgPermission>(ConfigureEmpOrgPermission);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
@@ -158,7 +157,9 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<RolePermission> RolePermissions { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<EmployeeInfo> EmployeeInfos { get; set; }
-        public DbSet<EmployeeOrgPermission> EmployeeOrgPermissions { get; set; }
+        public DbSet<EmployeeType> EmployeeTypes { get; set; }
+        public DbSet<EmployeeStatusType> EmployeeStatusTypes { get; set; }
+        public DbSet<EmployeePermission> EmployeePermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
 
     }

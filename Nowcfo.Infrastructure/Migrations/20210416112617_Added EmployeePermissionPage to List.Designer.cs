@@ -10,8 +10,8 @@ using Nowcfo.Infrastructure.Data;
 namespace Nowcfo.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210408051021_AddColumns_on_MenuTable")]
-    partial class AddColumns_on_MenuTable
+    [Migration("20210416112617_Added EmployeePermissionPage to List")]
+    partial class AddedEmployeePermissionPagetoList
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -410,7 +410,8 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("EmployeeType")
+                    b.Property<int?>("EmployeeTypeId")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -444,6 +445,9 @@ namespace Nowcfo.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StatusId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("SupervisorId")
                         .HasColumnType("int");
 
@@ -464,7 +468,14 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("EmployeeTypeId")
+                        .IsUnique();
+
                     b.HasIndex("OrganizationId");
+
+                    b.HasIndex("StatusId")
+                        .IsUnique()
+                        .HasFilter("[StatusId] IS NOT NULL");
 
                     b.HasIndex("SupervisorId");
 
@@ -474,34 +485,63 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.ToTable("EmployeeInfo");
                 });
 
-            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeOrgPermission", b =>
+            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeePermission", b =>
                 {
-                    b.Property<int>("EmployeeOrganizationPermissionId")
+                    b.Property<int>("PermissionId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Employee_Id")
+                    b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Organization_Id")
+                    b.Property<int>("LevelOne")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("UpdatedBy")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("LevelThree")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("LevelTwo")
+                        .HasColumnType("int");
 
-                    b.HasKey("EmployeeOrganizationPermissionId");
+                    b.Property<int>("ReferenceId")
+                        .HasColumnType("int");
 
-                    b.ToTable("EmployeeOrgPermissions");
+                    b.HasKey("PermissionId");
+
+                    b.ToTable("EmployeePermissions");
+                });
+
+            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeStatusType", b =>
+                {
+                    b.Property<int>("StatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StatusId");
+
+                    b.ToTable("EmployeeStatusType");
+                });
+
+            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeType", b =>
+                {
+                    b.Property<int>("EmployeeTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("EmployeeTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EmployeeTypeId");
+
+                    b.ToTable("EmployeeType");
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>
@@ -733,9 +773,20 @@ namespace Nowcfo.Infrastructure.Migrations
                         .HasForeignKey("DesignationId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Nowcfo.Domain.Models.EmployeeType", "EmployeeType")
+                        .WithOne("Employee")
+                        .HasForeignKey("Nowcfo.Domain.Models.EmployeeInfo", "EmployeeTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Nowcfo.Domain.Models.Organization", "Organization")
                         .WithMany("EmployeesInfo")
                         .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Nowcfo.Domain.Models.EmployeeStatusType", "EmployeeStatusType")
+                        .WithOne("Employee")
+                        .HasForeignKey("Nowcfo.Domain.Models.EmployeeInfo", "StatusId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Nowcfo.Domain.Models.EmployeeInfo", "Employee")
@@ -746,6 +797,10 @@ namespace Nowcfo.Infrastructure.Migrations
                     b.Navigation("Designation");
 
                     b.Navigation("Employee");
+
+                    b.Navigation("EmployeeStatusType");
+
+                    b.Navigation("EmployeeType");
 
                     b.Navigation("Organization");
                 });
@@ -784,6 +839,18 @@ namespace Nowcfo.Infrastructure.Migrations
             modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeInfo", b =>
                 {
                     b.Navigation("EmployeeInfos");
+                });
+
+            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeStatusType", b =>
+                {
+                    b.Navigation("Employee")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Nowcfo.Domain.Models.EmployeeType", b =>
+                {
+                    b.Navigation("Employee")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nowcfo.Domain.Models.Menu", b =>

@@ -1,6 +1,4 @@
-﻿using Nowcfo.Domain.Models.Enums;
-
-namespace Nowcfo.Application.Dtos
+﻿namespace Nowcfo.Application.Dtos
 {
     public class EmployeeInfoDto
     {
@@ -18,14 +16,13 @@ namespace Nowcfo.Application.Dtos
         public string DesignationName { get; set; }
         public bool? IsSupervisor { get; set; }
         public int? SuperVisorId { get; set; }
-        public int? EmployeeType { get; set; }
-        public EmployeeStatusType StatusType { get; set; }
-        public int? Status { get; set; }
+        public int? EmployeeTypeId { get; set; }
+        public string EmployeeTypeName { get; set; }
+        public int? StatusId { get; set; }
         public string StatusName { get; set; }
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
-        public int[] EmployeePermissions { get; set; }
     }
     
 }
