@@ -6,7 +6,6 @@ namespace Nowcfo.Domain.Models
     {
         [Key]
         public int PermissionId { get; set; }
-
         public int EmployeeId { get; set; }
         public int LevelOne { get; set; }
         public int LevelTwo { get; set; }

@@ -9,6 +9,7 @@ namespace Nowcfo.Application.IRepository
     {
         Task<OrganizationDto> GetByIdAsync(int id);
         Task<List<OrganizationDto>> GetAllAsync();
+        Task<List<OrganizationDto>> GetAllHeadOrganizationsAsync();
         Task<List<OrganizationNavTreeViewDto>> GetOrganizationTreeHierarchy();
         Task<EmployeesByOrganizationHierarchyDto> GetEmployeesByOrganizationHierarchy(int organizationId);
         Task CreateAsync(Organization model);

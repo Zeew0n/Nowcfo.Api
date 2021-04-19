@@ -64,6 +64,30 @@ namespace Nowcfo.Application.Repository
         }
 
 
+        public async Task<List<OrganizationDto>> GetAllHeadOrganizationsAsync()
+        {
+            try
+            {
+                var result = await (from o in _dbContext.Organizations.Where(m=>m.HasParent==false)
+                                    
+                                    select new OrganizationDto
+                                    {
+                                        OrganizationId = o.OrganizationId,
+                                        OrganizationName = o.OrganizationName
+                                    }).ToListAsync();
+
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
+
+
+
         public async Task CreateAsync(Organization model)
         {
             try

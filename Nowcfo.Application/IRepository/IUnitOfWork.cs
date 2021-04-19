@@ -14,7 +14,7 @@ namespace Nowcfo.Application.IRepository
         IUserClaimRepository UserClaimRepository { get; }
         IRolePermissionRepository RolePermissionRepository { get; }
         IMenuRepository MenuRepository { get;}
-
+        IEmployeePermissionRepository EmployeePermissionRepository { get; }
 
 
         void BeginTransaction();

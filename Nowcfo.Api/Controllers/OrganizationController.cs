@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Nowcfo.API.Controllers.Base;
+using Nowcfo.Application.Dtos;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using System;
 using System.Threading.Tasks;
-using Nowcfo.API.Controllers.Base;
-using Nowcfo.Application.Dtos;
 
 namespace Nowcfo.API.Controllers
 {
@@ -19,6 +19,12 @@ namespace Nowcfo.API.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+        [HttpGet("GetHeadOrganizations")]
+        public async Task<IActionResult> GetHeadOrganizations()
+        {
+            var org = await _unitOfWork.OrganizationRepository.GetAllHeadOrganizationsAsync();
+            return Ok(org);
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetOrganizations()
@@ -26,6 +32,7 @@ namespace Nowcfo.API.Controllers
             var org = await _unitOfWork.OrganizationRepository.GetAllAsync();
             return Ok(org);
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOrganization(int id)

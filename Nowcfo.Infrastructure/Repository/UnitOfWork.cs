@@ -22,6 +22,7 @@ namespace Nowcfo.Infrastructure.Repository
         public IUserClaimRepository UserClaimRepository { get; }
         public IRolePermissionRepository RolePermissionRepository { get; }
         public IMenuRepository MenuRepository { get; }
+        public IEmployeePermissionRepository EmployeePermissionRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context,IMapper mapper )
@@ -33,6 +34,7 @@ namespace Nowcfo.Infrastructure.Repository
             EmployeeRepository = new EmployeeRepository(context, mapper);
             RolePermissionRepository = new RolePermissionRepository(context, mapper);
             MenuRepository =new MenuRepository(context,mapper);
+            EmployeePermissionRepository = new EmployeePermissionRepository(context, mapper);
 
         }
 
@@ -93,9 +95,6 @@ namespace Nowcfo.Infrastructure.Repository
             GC.SuppressFinalize(this);
         }
 
-        //public int SaveChanges() => _dbContext.SaveChanges();
-
-        //public Task<int> SaveChangesAsync() => _dbContext.SaveChangesAsync();
         public async Task<bool> SaveChangesAsync() => await _dbContext.SaveChangesAsync()>=0;
     }
 }
