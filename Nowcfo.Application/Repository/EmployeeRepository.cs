@@ -185,7 +185,7 @@ namespace Nowcfo.Application.Repository
                             StatusName = GetNameByEnum(q.StatusType)
 
                         });
-                    return await PagedList<EmployeeInfoDto>.CreateAsync(x, param.PageNumber, param.PageSize);
+                    return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
                 }
                 else

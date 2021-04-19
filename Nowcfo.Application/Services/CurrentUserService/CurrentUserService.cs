@@ -14,7 +14,7 @@ namespace Nowcfo.Application.Services.CurrentUserService
             _context = context;
         }
 
-        public Guid GetUser()
+        public Guid GetUserId()
         {
             var userId = _context.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == AuthConstants.JwtId)?.Value;
             return userId == null ? Guid.Empty : Guid.Parse(userId);
