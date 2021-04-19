@@ -123,13 +123,13 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        [HttpGet("menus")]
+        [HttpGet("ParentMenusForPermission")]
         //[Permission(CrudPermission.DeleteRole)]
-        public async Task<IActionResult> GetAllMenus()
+        public async Task<IActionResult> GetAllParentMenus()
         {
             try
             {
-                var permissions = await _roleService.GetAllMenus();
+                var permissions = await _roleService.GetParentMenusForPermission();
                 return Ok(permissions);
             }
             catch (Exception ex)

@@ -232,7 +232,7 @@ namespace Nowcfo.Application.Services.UserService
         {
             appUser.UserName = appUser.UserName.ToLower();
             appUser.IsAdmin = role.ToUpper() == DesignationAndRoleConstants.Admin;
-            appUser.CreatedBy = _currentUserService.GetUser();
+            appUser.CreatedBy = _currentUserService.GetUserId();
             appUser.CreatedDate = DateTime.Now;
             appUser.Password = CreatePassword(8);
             var userResult = await _userManager.CreateAsync(appUser,appUser.Password);
@@ -289,7 +289,7 @@ namespace Nowcfo.Application.Services.UserService
             oldUser.LastName = userRegiterDto.LastName.Trim();
             oldUser.Email = userRegiterDto.Email.Trim();
             oldUser.PhoneNumber = userRegiterDto.PhoneNumber;
-            oldUser.UpdatedBy = _currentUserService.GetUser();
+            oldUser.UpdatedBy = _currentUserService.GetUserId();
             oldUser.UpdatedDate = DateTime.Now;
             oldUser.IsAdmin = roleName.ToUpper() == DesignationAndRoleConstants.Admin;
             var userResult = await _userManager.UpdateAsync(oldUser);
@@ -325,7 +325,7 @@ namespace Nowcfo.Application.Services.UserService
                     throw new ApiException("Provided user doesn't exists.");
                 }
 
-                userDetail.UpdatedBy = _currentUserService.GetUser();
+                userDetail.UpdatedBy = _currentUserService.GetUserId();
                 userDetail.UpdatedDate = DateTime.Now;
                 var result = await _userManager.DeleteAsync(userDetail);
                 if (result.Succeeded) return true;

@@ -258,11 +258,11 @@ namespace Nowcfo.Application.Services.RoleService
                 throw;
             }
         }
-        public async Task<List<MenuDto>> GetAllMenus()
+        public async Task<List<MenuDto>> GetParentMenusForPermission()
         {
             try
             {
-                var menus = await _dbContext.Menus.ToListAsync();
+                var menus = await _dbContext.Menus.Where(x=>x.MenuLevel==1).ToListAsync();
                 return _mapper.Map<List<MenuDto>>(menus);
             }
             catch (Exception ex)

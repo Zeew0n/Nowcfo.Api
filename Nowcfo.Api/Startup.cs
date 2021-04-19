@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.MappingProfile;
 using Nowcfo.Application.Repository;
@@ -26,7 +27,7 @@ using Nowcfo.Infrastructure.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.OpenApi.Models;
+using System.Text.Json;
 
 namespace Nowcfo.API
 {
@@ -50,7 +51,11 @@ namespace Nowcfo.API
 
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(connectionString).EnableSensitiveDataLogging(), ServiceLifetime.Transient);
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+                });
             //services.AddControllers().AddNewtonsoftJson(options =>
             //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             //);

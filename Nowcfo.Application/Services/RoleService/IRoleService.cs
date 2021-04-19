@@ -25,7 +25,7 @@ namespace Nowcfo.Application.Services.RoleService
         Task<bool> DeleteAsync(Guid Id);
         Task<List<RoleDto>> GetAllAsync(Guid? id = null);
         Task<RoleDto> GetByIdAsync(Guid id);
-        Task<List<MenuDto>> GetAllMenus();
+        Task<List<MenuDto>> GetParentMenusForPermission();
         Task AddRolePermission(RolePermissionDto dto);
         Task EditRolePermission(RolePermissionDto dto);
     }
