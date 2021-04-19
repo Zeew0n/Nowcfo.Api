@@ -15,13 +15,13 @@ namespace Nowcfo.Infrastructure.Repository
 
         public IOrganizationRepository OrganizationRepository { get; }
         public IDesignationRepository DesignationRepository { get; set; }
-
         public IEmployeeRepository EmployeeRepository { get; }
         public IUserRepository UserRepository { get; }
         public IRoleRepository RoleRepository { get; }
         public IUserRoleRepository UserRoleRepository { get; }
         public IUserClaimRepository UserClaimRepository { get; }
         public IRolePermissionRepository RolePermissionRepository { get; }
+        public IMenuRepository MenuRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context,IMapper mapper )
@@ -32,6 +32,7 @@ namespace Nowcfo.Infrastructure.Repository
             DesignationRepository = new DesignationRepository(context, mapper);
             EmployeeRepository = new EmployeeRepository(context, mapper);
             RolePermissionRepository = new RolePermissionRepository(context, mapper);
+            MenuRepository =new MenuRepository(context,mapper);
 
         }
 

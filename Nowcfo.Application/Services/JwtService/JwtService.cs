@@ -71,7 +71,7 @@ namespace Nowcfo.Application.Services.JwtService
                 {
                     JwtToken = authToken,
                     RoleName = roles[0],
-                    ExpiresIn = (int)_jwtOptions.ValidFor.TotalSeconds,
+                    ExpiresIn = (int)_jwtOptions.ValidFor.TotalMinutes,
                     UserName = appuser.UserName
 
                 };

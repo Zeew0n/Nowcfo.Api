@@ -65,7 +65,7 @@ namespace Nowcfo.Infrastructure.Data
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             DateTime currentDateTime = DateTime.Now;
-            var currentUser = _currentUserService.GetUser();
+            var currentUser = _currentUserService.GetUserId();
             bool isAuthenticateRequest = IsAuthenticatedRequest(currentUser);
             foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {
@@ -108,7 +108,7 @@ namespace Nowcfo.Infrastructure.Data
         public  int SaveChange()
         {
             DateTime currentDateTime = DateTime.Now;
-            var currentUser = _currentUserService.GetUser();
+            var currentUser = _currentUserService.GetUserId();
             bool isAuthenticateRequest = IsAuthenticatedRequest(currentUser);
             foreach (var entry in ChangeTracker.Entries<BaseEntity>())
             {
