@@ -4,7 +4,6 @@ using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
-using Nowcfo.Domain.Models.Enums;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -32,7 +31,9 @@ namespace Nowcfo.Application.Repository
                 return  await (from o in _dbContext.EmployeeInfos
                                     join os in _dbContext.Organizations.IgnoreQueryFilters() on o.OrganizationId equals os.OrganizationId
                                     join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
-                                    where o.EmployeeId == id
+                                    join et in _dbContext.EmployeeTypes on o.EmployeeTypeId equals et.EmployeeTypeId
+                                    join es in _dbContext.EmployeeStatusTypes on o.StatusId equals es.StatusId
+                               where o.EmployeeId == id
                                     select new EmployeeInfoDto
                                     {
                                         EmployeeId = o.EmployeeId,
@@ -49,13 +50,13 @@ namespace Nowcfo.Application.Repository
                                         OrganizationId = os.OrganizationId,
                                         PayType = o.PayType,
                                         Pay = o.Pay,
-                                        EmployeeType=o.EmployeeType,
-                                        //StatusName= GetNameByIdEnum(o.Status),
                                         OverTimeRate = o.OverTimeRate,
                                         IsSupervisor = o.IsSupervisor,
-                                        //Status = o.Status,
-
                                         SuperVisorId = o.SupervisorId,
+                                        EmployeeTypeId=o.EmployeeTypeId,
+                                        EmployeeTypeName=et.EmployeeTypeName,
+                                        StatusId= es.StatusId,
+                                        StatusName=es.StatusName
                                     }).FirstOrDefaultAsync();
 
             }
@@ -72,7 +73,9 @@ namespace Nowcfo.Application.Repository
                 return  await (from o in _dbContext.EmployeeInfos
                                   join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
                                   join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
-                                  select new EmployeeInfoDto
+                               join et in _dbContext.EmployeeTypes on o.EmployeeTypeId equals et.EmployeeTypeId
+                               join es in _dbContext.EmployeeStatusTypes on o.StatusId equals es.StatusId
+                               select new EmployeeInfoDto
                                   {
                                       EmployeeId = o.EmployeeId,
                                       EmployeeName = o.EmployeeName,
@@ -87,14 +90,15 @@ namespace Nowcfo.Application.Repository
                                       OrganizationName = os.OrganizationName,
                                       OrganizationId = os.OrganizationId,
                                       PayType = o.PayType,
-
-                                     // Status = o.Status,
-                                      //StatusName = GetNameByIdEnum(o.Status),
                                       Pay = o.Pay,
                                       OverTimeRate = o.OverTimeRate,
                                       IsSupervisor = o.IsSupervisor,
                                       SuperVisorId = o.SupervisorId,
-                                  }).ToListAsync();
+                                      EmployeeTypeId = o.EmployeeTypeId,
+                                      EmployeeTypeName = et.EmployeeTypeName,
+                                      StatusId = o.StatusId,
+                                      StatusName = es.StatusName
+                                  }).Where(e=>e.StatusId!=3).ToListAsync();
 
             }
             catch (Exception e)
@@ -104,23 +108,7 @@ namespace Nowcfo.Application.Repository
             }
         }
 
-        public string GetNameByEnum(EmployeeStatusType responseType)
-        {
-            switch (responseType)
-            {
-                case EmployeeStatusType.Active:
-                    return EmployeeStatusType.Active.ToString();
 
-                case EmployeeStatusType.InActive:
-                    return EmployeeStatusType.InActive.ToString();
-
-                case EmployeeStatusType.Terminated:
-                    return EmployeeStatusType.Terminated.ToString();
-
-                default:
-                    return null;
-            }
-        }
 
 
         public async Task<PagedList<EmployeeInfoDto>> GetPagedListAsync(Param param)
@@ -137,6 +125,8 @@ namespace Nowcfo.Application.Repository
                                   join e in _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
                                   from e in eg.DefaultIfEmpty()
                                   join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
+                                  join et in _dbContext.EmployeeTypes on e.EmployeeTypeId equals et.EmployeeTypeId
+                                  join es in _dbContext.EmployeeStatusTypes on e.StatusId equals es.StatusId
 
                                   select new EmployeeInfoDto
                                   {
@@ -157,34 +147,14 @@ namespace Nowcfo.Application.Repository
                                       DesignationId = ds.DesignationId,
                                       OrganizationName = o.OrganizationName,
                                       OrganizationId = o.OrganizationId,
-                                      StatusType = (EmployeeStatusType)e.Status,
-                                  });
+                                      EmployeeTypeId = e.EmployeeTypeId,
+                                      EmployeeTypeName = et.EmployeeTypeName,
+                                      StatusId = e.StatusId,
+                                      StatusName = es.StatusName
+                                  }).Where(e => e.StatusId != 3);
 
 
-                    var test = await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
-                    var x = test.Select(q => new EmployeeInfoDto
-                        {
-
-                            EmployeeId = q.EmployeeId,
-                            EmployeeName = q.EmployeeName,
-                            Email = q.Email,
-                            Phone = q.Phone,
-                            Address = q.Address,
-                            City = q.City,
-                            ZipCode = q.ZipCode,
-                            State = q.State,
-                            PayType = q.PayType,
-                            Pay = q.Pay,
-                            OverTimeRate = q.OverTimeRate,
-                            IsSupervisor = q.IsSupervisor,
-                            SuperVisorId = q.SuperVisorId,
-                            DesignationName = q.DesignationName,
-                            DesignationId = q.DesignationId,
-                            OrganizationName = q.OrganizationName,
-                            OrganizationId = q.OrganizationId,
-                            StatusName = GetNameByEnum(q.StatusType)
-
-                        });
+           
                     return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
                 }
@@ -196,6 +166,8 @@ namespace Nowcfo.Application.Repository
                         var result = (from o in _dbContext.EmployeeInfos
                                       join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
                                       join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
+                                      join et in _dbContext.EmployeeTypes on o.EmployeeTypeId equals et.EmployeeTypeId
+                                      join es in _dbContext.EmployeeStatusTypes on o.StatusId equals es.StatusId
                                       select new EmployeeInfoDto
                                       {
                                           EmployeeId = o.EmployeeId,
@@ -215,9 +187,11 @@ namespace Nowcfo.Application.Repository
                                           OverTimeRate = o.OverTimeRate,
                                           IsSupervisor = o.IsSupervisor,
                                           SuperVisorId = o.SupervisorId,
-                                          //Status = o.Status,
-                                          //StatusName = GetNameByIdEnum(o.Status)
-                                      }).Where(m=>m.EmployeeName == param.SearchValue);
+                                          EmployeeTypeId = o.EmployeeTypeId,
+                                          EmployeeTypeName = et.EmployeeTypeName,
+                                          StatusId = o.StatusId,
+                                          StatusName = es.StatusName
+                                      }).Where(m=>m.EmployeeName == param.SearchValue && m.StatusId!=3 );
 
                         return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -230,6 +204,8 @@ namespace Nowcfo.Application.Repository
                         var result = (from o in _dbContext.EmployeeInfos
                                       join os in _dbContext.Organizations on o.OrganizationId equals os.OrganizationId
                                       join ds in _dbContext.Designations on o.DesignationId equals ds.DesignationId
+                                      join et in _dbContext.EmployeeTypes on o.EmployeeTypeId equals et.EmployeeTypeId
+                                      join es in _dbContext.EmployeeStatusTypes on o.StatusId equals es.StatusId
                                       select new EmployeeInfoDto
                                       {
                                           EmployeeId = o.EmployeeId,
@@ -249,9 +225,11 @@ namespace Nowcfo.Application.Repository
                                           OverTimeRate = o.OverTimeRate,
                                           IsSupervisor = o.IsSupervisor,
                                           SuperVisorId = o.SupervisorId,
-                                          //Status = o.Status,
-                                          //StatusName = GetNameByIdEnum(o.Status),
-                                      }).Where(m=>m.Email==param.SearchValue);
+                                          EmployeeTypeId = o.EmployeeTypeId,
+                                          EmployeeTypeName = et.EmployeeTypeName,
+                                          StatusId = o.StatusId,
+                                          StatusName = es.StatusName
+                                      }).Where(m=>m.Email==param.SearchValue && m.StatusId != 3);
 
                         return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -280,43 +258,43 @@ namespace Nowcfo.Application.Repository
             }
         }
 
-        //public string GetNameByIdEnum(int? status)
-        //{
-        //    try
-        //    {
 
-        //        return Enum.GetName(typeof(EmployeeStatusType), status);
+        public async Task<List<EmployeeStatusTypeDto>> GetAllEmployeeStatus()
+        {
+            try
+            {
+                var status = await _dbContext.EmployeeStatusTypes.ToListAsync();
+                return _mapper.Map<List<EmployeeStatusTypeDto>>(status);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
 
-        //}
+        public async Task<List<EmployeeTypeDto>> GetAllEmployeeTypes()
+        {
+            try
+            {
+                var employeetypes = await _dbContext.EmployeeTypes.ToListAsync();
+                return _mapper.Map<List<EmployeeTypeDto>>(employeetypes);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
+
 
         public async Task CreateAsync(EmployeeInfoDto model)
         {
             try
             {
-                var empOrg = new List<EmployeeOrgPermission>();
                 var employee = _mapper.Map<EmployeeInfoDto, EmployeeInfo>(model);
-
                 await _dbContext.EmployeeInfos.AddAsync(employee);
-                var y = _dbContext.SaveChange();
-                var x = employee.EmployeeId;
-
-
-                foreach (var permisson in model.EmployeePermissions)
-                {
-                    var model1 = new EmployeeOrgPermission
-                    {
-                        Employee_Id = x,
-                        Organization_Id = permisson
-                    };
-                    empOrg.Add(model1);
-                }
-                _dbContext.EmployeeOrgPermissions.AddRange(empOrg);
                 _dbContext.SaveChange();
             }
             catch (Exception e)
@@ -330,30 +308,10 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var empOrg = new List<EmployeeOrgPermission>();
                 var employee = _mapper.Map<EmployeeInfoDto, EmployeeInfo>(model);
-                
-
                 _dbContext.EmployeeInfos.Update(employee);
-                var y = _dbContext.SaveChange();
-                var x = employee.EmployeeId;
-
-                if (model.EmployeePermissions!=null)
-                {
-                    var permissions = _dbContext.EmployeeOrgPermissions.Where(z => z.Employee_Id == x).ToList();
-                    _dbContext.EmployeeOrgPermissions.RemoveRange(permissions);
-                    foreach (var employees in model.EmployeePermissions)
-                    {
-                        var model1 = new EmployeeOrgPermission
-                        {
-                            Employee_Id = x,
-                            Organization_Id = employees
-                        };
-                        empOrg.Add(model1);
-                    }
-                    _dbContext.EmployeeOrgPermissions.UpdateRange(empOrg);
-                    _dbContext.SaveChange();
-                }
+                _dbContext.SaveChange();
+                
 
             }
             catch (Exception e)
@@ -369,11 +327,7 @@ namespace Nowcfo.Application.Repository
             try
             {
                 var employee = _mapper.Map<EmployeeInfoDto, EmployeeInfo>(model);
-                //employee.Status = 3;
                 _dbContext.EmployeeInfos.Update(employee);
-
-
-                //_dbContext.EmployeeInfos.Remove(employee);
             }
 
             catch (Exception ex)
@@ -401,92 +355,88 @@ namespace Nowcfo.Application.Repository
         }
 
 
-        //
-        public async Task<List<SyncfusionListDto>> GetSyncFusionOrganizations()
-        {
-            try
-            {
+        ////
+        //public async Task<List<SyncfusionListDto>> GetSyncFusionOrganizations()
+        //{
+        //    try
+        //    {
 
-                var organizationList = await (from os in _dbContext.Organizations
-
-
-                                              select new SyncfusionListDto
-                                              {
-                                                  id = os.OrganizationId,
-                                                  pid = os.ParentOrganizationId,
-                                                  name = os.OrganizationName,
-                                                  hasChild = _dbContext.Organizations.Count(x => x.ParentOrganizationId == os.OrganizationId) > 0,
-                                                  expanded = os.ParentOrganizationId == null,
-                                                  isChecked = false,
-                                              }).ToListAsync();
+        //        var organizationList = await (from os in _dbContext.Organizations
 
 
-                return _mapper.Map<List<SyncfusionListDto>>(organizationList);
+        //                                      select new SyncfusionListDto
+        //                                      {
+        //                                          id = os.OrganizationId,
+        //                                          pid = os.ParentOrganizationId,
+        //                                          name = os.OrganizationName,
+        //                                          hasChild = _dbContext.Organizations.Count(x => x.ParentOrganizationId == os.OrganizationId) > 0,
+        //                                          expanded = os.ParentOrganizationId == null,
+        //                                          isChecked = false,
+        //                                      }).ToListAsync();
 
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
-                throw;
-            }
-        }
 
-        public async Task<List<UserPermissionDto>> GetCheckedPermissions(int employeeId)
-        {
-            try
-            {
+        //        return _mapper.Map<List<SyncfusionListDto>>(organizationList);
 
-                var emppermissionList = await (from op in _dbContext.EmployeeOrgPermissions.Where(x => x.Employee_Id == employeeId)
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+        //        throw;
+        //    }
+        //}
 
-                                               select new UserPermissionDto
+        //public async Task<List<UserPermissionDto>> GetCheckedPermissions(int employeeId)
+        //{
+        //    try
+        //    {
 
-                                               {
-                                                   OrgId = op.Organization_Id,
-                                               }).ToListAsync();
+        //        var emppermissionList = await (from op in _dbContext.EmployeeOrgPermissions.Where(x => x.Employee_Id == employeeId)
 
-                return _mapper.Map<List<UserPermissionDto>>(emppermissionList);
+        //                                       select new UserPermissionDto
 
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
-                throw;
-            }
-        }
+        //                                       {
+        //                                           OrgId = op.Organization_Id,
+        //                                       }).ToListAsync();
 
-        public async Task<List<SyncfusionListDto>> GetEmployeePermissionHierarchy(int employeeId)
-        {
-            try
-            {
+        //        return _mapper.Map<List<UserPermissionDto>>(emppermissionList);
 
-                var permissionList = await (from os in _dbContext.Organizations
-                                            join o in _dbContext.EmployeeOrgPermissions.Where(x => x.Employee_Id == employeeId) on os.OrganizationId equals o.Organization_Id into p
-                                            from q in p.DefaultIfEmpty()
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+        //        throw;
+        //    }
+        //}
 
-                                            select new SyncfusionListDto
-                                            {
-                                                id = q != null ? (int)q.Organization_Id : os.OrganizationId,
-                                                name = os.OrganizationName,
-                                                isChecked = q != null,
-                                                hasChild = _dbContext.Organizations.Count(x => x.ParentOrganizationId == os.OrganizationId) > 0,
-                                                expanded = os.ParentOrganizationId == null,
-                                                pid = os.ParentOrganizationId
-                                            }).ToListAsync();
+        //public async Task<List<SyncfusionListDto>> GetEmployeePermissionHierarchy(int employeeId)
+        //{
+        //    try
+        //    {
 
-                return _mapper.Map<List<SyncfusionListDto>>(permissionList);
+        //        var permissionList = await (from os in _dbContext.Organizations
+        //                                    join o in _dbContext.EmployeeOrgPermissions.Where(x => x.Employee_Id == employeeId) on os.OrganizationId equals o.Organization_Id into p
+        //                                    from q in p.DefaultIfEmpty()
 
-            }
-            catch (Exception e)
-            {
-                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
-                throw;
-            }
-        }
+        //                                    select new SyncfusionListDto
+        //                                    {
+        //                                        id = q != null ? (int)q.Organization_Id : os.OrganizationId,
+        //                                        name = os.OrganizationName,
+        //                                        isChecked = q != null,
+        //                                        hasChild = _dbContext.Organizations.Count(x => x.ParentOrganizationId == os.OrganizationId) > 0,
+        //                                        expanded = os.ParentOrganizationId == null,
+        //                                        pid = os.ParentOrganizationId
+        //                                    }).ToListAsync();
+
+        //        return _mapper.Map<List<SyncfusionListDto>>(permissionList);
+
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+        //        throw;
+        //    }
+        //}
     }
 
-    public class Test
-    {
-        public int Value { get; set; }
-        public string Name { get; set; }
-    }
+
 }

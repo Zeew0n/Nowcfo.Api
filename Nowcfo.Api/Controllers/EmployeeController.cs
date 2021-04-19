@@ -5,9 +5,7 @@ using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Extensions;
 using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
-using Nowcfo.Domain.Models.Enums;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
@@ -42,44 +40,10 @@ namespace Nowcfo.API.Controllers
         }
 
 
-        [HttpGet("GetEmployeeStatusTypes")]
-        //[AllowAnonymous]
-        public IActionResult GetEmployeeStatusType()
-        {
-
-            var enumVals = new List<object>();
-
-            foreach (var item in Enum.GetValues(typeof(EmployeeStatusType)))
-            {
-
-                enumVals.Add(new
-                {
-                    id = (int)item,
-                    name = item.ToString()
-                });
-            }
-
-            return Ok(enumVals);
-        }
 
 
-        [HttpGet("GetEmployeeTypes")]
-        public  IActionResult GetEmployeeType()
-        {
-            var enumVals = new List<object>();
 
-            foreach (var item in Enum.GetValues(typeof(EmployeeType)))
-            {
-
-                enumVals.Add(new 
-                {
-                    employeeType = (int)item,
-                    name= EnumService.GetEnumDescription((EmployeeType)(int)item)
-                });
-            }
-
-            return Ok(enumVals);
-        }
+   
 
 
         [HttpGet("listallsupervisors")]
@@ -88,6 +52,24 @@ namespace Nowcfo.API.Controllers
             var emp = await _unitOfWork.EmployeeRepository.GetAllSuperVisors();
             return Ok(emp);
         }
+
+
+
+        [HttpGet("GetEmployeeTypes")]
+        public async Task<IActionResult> GetEmployeeStatus()
+        {
+            var emp = await _unitOfWork.EmployeeRepository.GetAllEmployeeTypes();
+            return Ok(emp);
+        }
+
+
+        [HttpGet("GetEmployeeStatusTypes")]
+        public async Task<IActionResult> GetEmployeeTypes()
+        {
+            var emp = await _unitOfWork.EmployeeRepository.GetAllEmployeeStatus();
+            return Ok(emp);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetEmployee(int id)
@@ -216,47 +198,47 @@ namespace Nowcfo.API.Controllers
         }
 
         //
-        [HttpGet("SyncHierarchy")]
-        public async Task<IActionResult> GetSyncHierarchy()
-        {
-            try
-            {
-                var organization = await _unitOfWork.EmployeeRepository.GetSyncFusionOrganizations();
-                return Ok(organization);
-            }
-            catch (Exception e)
-            {
-                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
-            }
-        }
+        //[HttpGet("SyncHierarchy")]
+        //public async Task<IActionResult> GetSyncHierarchy()
+        //{
+        //    try
+        //    {
+        //        var organization = await _unitOfWork.EmployeeRepository.GetSyncFusionOrganizations();
+        //        return Ok(organization);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+        //    }
+        //}
 
-        [HttpGet("EmployeePermission/{employeeId}")]
-        public async Task<IActionResult> GetEmployeePermissionHierarchy(int employeeId)
-        {
-            try
-            {
-                var permissionTree = await _unitOfWork.EmployeeRepository.GetEmployeePermissionHierarchy(employeeId);
-                return Ok(permissionTree);
-            }
-            catch (Exception e)
-            {
-                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
-            }
-        }
+        //[HttpGet("EmployeePermission/{employeeId}")]
+        //public async Task<IActionResult> GetEmployeePermissionHierarchy(int employeeId)
+        //{
+        //    try
+        //    {
+        //        var permissionTree = await _unitOfWork.EmployeeRepository.GetEmployeePermissionHierarchy(employeeId);
+        //        return Ok(permissionTree);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+        //    }
+        //}
 
 
-        [HttpGet("CheckedPermission/{employeeId}")]
-        public async Task<IActionResult> GetCheckedPermissions(int employeeId)
-        {
-            try
-            {
-                var permissionTree = await _unitOfWork.EmployeeRepository.GetCheckedPermissions(employeeId);
-                return Ok(permissionTree);
-            }
-            catch (Exception e)
-            {
-                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
-            }
-        }
+        //[HttpGet("CheckedPermission/{employeeId}")]
+        //public async Task<IActionResult> GetCheckedPermissions(int employeeId)
+        //{
+        //    try
+        //    {
+        //        var permissionTree = await _unitOfWork.EmployeeRepository.GetCheckedPermissions(employeeId);
+        //        return Ok(permissionTree);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+        //    }
+        //}
     }
 }

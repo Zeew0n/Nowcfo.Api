@@ -1,6 +1,5 @@
 namespace Nowcfo.Domain.Models
 {
-    using Nowcfo.Domain.Models.Enums;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -35,16 +34,18 @@ namespace Nowcfo.Domain.Models
         public bool? IsSupervisor { get; set; }
 
         public int? SupervisorId { get; set; }
-        public int? EmployeeType { get; set; }
-        public EmployeeStatusType Status { get; set; }
+        public int? EmployeeTypeId { get; set; }
+
+        public int? StatusId { get; set; }
+
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
         public Designation Designation { get; set; }
 
         public Organization Organization { get; set; }
-
-
+        public EmployeeType EmployeeType { get; set; }
+        public EmployeeStatusType EmployeeStatusType { get; set; }
         public ICollection<EmployeeInfo> EmployeeInfos { get; set; }
 
 

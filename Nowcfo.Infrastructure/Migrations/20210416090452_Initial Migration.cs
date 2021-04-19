@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Nowcfo.Infrastructure.Migrations
 {
@@ -91,9 +91,6 @@ namespace Nowcfo.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Employee_Id = table.Column<int>(type: "int", nullable: true),
                     Organization_Id = table.Column<int>(type: "int", nullable: true),
-                    DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -105,11 +102,40 @@ namespace Nowcfo.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmployeeStatusType",
+                columns: table => new
+                {
+                    StatusId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StatusName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeStatusType", x => x.StatusId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeType",
+                columns: table => new
+                {
+                    EmployeeTypeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeTypeName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeType", x => x.EmployeeTypeId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Menu",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MenuName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    UnderMenuId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    NavigateUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MenuLevel = table.Column<int>(type: "int", nullable: true, defaultValue: 1),
                     Icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DisplayOrder = table.Column<int>(type: "int", nullable: true),
                     DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -325,10 +351,11 @@ namespace Nowcfo.Infrastructure.Migrations
                     DesignationId = table.Column<int>(type: "int", nullable: true),
                     IsSupervisor = table.Column<bool>(type: "bit", nullable: true),
                     SupervisorId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeTypeId = table.Column<int>(type: "int", nullable: false),
+                    StatusId = table.Column<int>(type: "int", nullable: true),
                     PayType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Pay = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OverTimeRate = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     DeletedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
@@ -352,6 +379,18 @@ namespace Nowcfo.Infrastructure.Migrations
                         principalTable: "EmployeeInfo",
                         principalColumn: "EmployeeId",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_EmployeeInfo_EmployeeStatusType_StatusId",
+                        column: x => x.StatusId,
+                        principalTable: "EmployeeStatusType",
+                        principalColumn: "StatusId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EmployeeInfo_EmployeeType_EmployeeTypeId",
+                        column: x => x.EmployeeTypeId,
+                        principalTable: "EmployeeType",
+                        principalColumn: "EmployeeTypeId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_EmployeeInfo_Organization_OrganizationId",
                         column: x => x.OrganizationId,
@@ -441,9 +480,22 @@ namespace Nowcfo.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_EmployeeInfo_EmployeeTypeId",
+                table: "EmployeeInfo",
+                column: "EmployeeTypeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeInfo_OrganizationId",
                 table: "EmployeeInfo",
                 column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeInfo_StatusId",
+                table: "EmployeeInfo",
+                column: "StatusId",
+                unique: true,
+                filter: "[StatusId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeInfo_SupervisorId",
@@ -502,6 +554,12 @@ namespace Nowcfo.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Designation");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeStatusType");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeType");
 
             migrationBuilder.DropTable(
                 name: "Organization");
