@@ -161,6 +161,7 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<EmployeeStatusType> EmployeeStatusTypes { get; set; }
         public DbSet<EmployeePermission> EmployeePermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<DynamicFilterField> DynamicFilterFields { get; set; }
 
     }
 }

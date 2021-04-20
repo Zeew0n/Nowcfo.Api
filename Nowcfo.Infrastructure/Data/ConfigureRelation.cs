@@ -52,13 +52,19 @@ namespace Nowcfo.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(e => e.EmployeeType)
-                 .WithOne(e => e.Employee)
-                 .HasForeignKey<EmployeeInfo>(e => e.EmployeeTypeId);
-                 
+                 .WithMany(e => e.Employees)
+                 .HasForeignKey(e => e.EmployeeTypeId);
+
 
             builder.HasOne(e => e.EmployeeStatusType)
-                .WithOne(e => e.Employee)
-                .HasForeignKey<EmployeeInfo>(e => e.StatusId);
+                .WithMany(e => e.Employees)
+                .HasForeignKey(e => e.StatusId);
+
+            builder.Property(p => p.EmployeeTypeId)
+                .HasDefaultValue(1);
+
+            builder.Property(p => p.StatusId)
+                .HasDefaultValue(1);
         }
 
 

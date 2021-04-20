@@ -22,6 +22,7 @@ namespace Nowcfo.Application.IRepository
         public DbSet<Menu> Menus { get; set; }
         public DbSet<EmployeeStatusType> EmployeeStatusTypes { get; set; }
         public DbSet<EmployeeType> EmployeeTypes { get; set; }
+        public DbSet<DynamicFilterField> DynamicFilterFields { get; set; }
     }
 
 }

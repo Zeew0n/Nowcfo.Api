@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Services.CurrentUserService;
@@ -13,9 +14,8 @@ using System.Threading.Tasks;
 
 namespace Nowcfo.API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class MenuController : ControllerBase
+
+    public class MenuController : BaseController
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
