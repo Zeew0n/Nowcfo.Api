@@ -135,7 +135,7 @@ namespace Nowcfo.Application.Services.JwtService
             yield return new Claim(AuthConstants.UserName, claimDto.UserName);
             yield return new Claim(AuthConstants.RoleId, claimDto.RoleId.ToString());
             yield return new Claim(ClaimTypes.Role, claimDto.Role);
-            yield return new Claim(AuthConstants.Menus, claimDto.Menus);
+            //yield return new Claim(AuthConstants.Menus, claimDto.Menus);
             yield return new Claim(AuthConstants.Permissions, claimDto.Permissions);
         }
 

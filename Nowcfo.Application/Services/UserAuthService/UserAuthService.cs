@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MoreLinq.Extensions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Dtos.User.Request;
 using Nowcfo.Application.Dtos.User.Response;
 using Nowcfo.Application.Exceptions;
@@ -15,7 +13,6 @@ using Nowcfo.Application.Services.UserService;
 using Nowcfo.Domain.Models.AppUserModels;
 using Serilog;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Cryptography;
@@ -157,12 +154,12 @@ namespace Nowcfo.Application.Services.UserAuthService
                     RoleId = userDetails.RoleId,
                     Role = userDetails.RoleName,
                     IsAdmin = userDetails.IsAdmin,
-                    Menus = JsonConvert.SerializeObject(
-                        userDetails.AssignedMenus,
-                        new JsonSerializerSettings
-                        {
-                            ContractResolver = new CamelCasePropertyNamesContractResolver()
-                        }),
+                    //Menus = JsonConvert.SerializeObject(
+                    //    userDetails.AssignedMenus,
+                    //    new JsonSerializerSettings
+                    //    {
+                    //        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    //    }),
                     Permissions = JsonConvert.SerializeObject(userDetails.Permissions)
                 };
                 userDetails.ClaimsIdentity = await Task.FromResult(_jwtService.GenerateClaimsIdentity(claimDto));
@@ -183,8 +180,8 @@ namespace Nowcfo.Application.Services.UserAuthService
                                      join perm in _dbContext.Permissions on rolePermission.PermissionId equals perm.Id into per
                                      from permission in per.DefaultIfEmpty()
 
-                                     join men in _dbContext.Menus on permission.MenuId equals men.Id into menus
-                                     from menu in menus.DefaultIfEmpty()
+                                     //join men in _dbContext.Menus on permission.MenuId equals men.Id into menus
+                                     //from menu in menus.DefaultIfEmpty()
 
                                      join refToken in _dbContext.RefreshTokens on user.Id equals refToken.UserId into rt
                                      from refreshToken in rt.DefaultIfEmpty()
@@ -200,7 +197,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.IsAdmin,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
-                                         Menu = menu,
+                                         //Menu = menu,
                                          Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
                                      }).OrderBy(t => t.Permission).ToListAsync();
@@ -219,15 +216,15 @@ namespace Nowcfo.Application.Services.UserAuthService
                         RoleId = q.Key,
                         RoleName = q.Select(t => t.RoleName).FirstOrDefault(),
                         Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).Distinct().ToList(),
-                        AssignedMenus = _mapper.Map<List<MenuDto>>(q.Where(t=>t.Menu !=null).Select(x => x.Menu).DistinctBy(x => x.MenuName).OrderBy(x => x.DisplayOrder)),
+                        //AssignedMenus = _mapper.Map<List<MenuDto>>(q.Where(t=>t.Menu !=null).Select(x => x.Menu).DistinctBy(x => x.MenuName).OrderBy(x => x.DisplayOrder)),
 
                         RefreshToken = refreshToken?.MapToRefreshTokenResponseDTO(),
                     };
                 }).FirstOrDefault();
 
-                if (userDto != null && userDto.IsAdmin)
-                    userDto.AssignedMenus = _mapper.Map<List<MenuDto>>(_dbContext.Menus.Where(m => m.MenuLevel == 1)
-                        .OrderBy(x => x.DisplayOrder).ToList());
+                //if (userDto != null && userDto.IsAdmin)
+                //    userDto.AssignedMenus = _mapper.Map<List<MenuDto>>(_dbContext.Menus.Where(m => m.MenuLevel == 1)
+                //        .OrderBy(x => x.DisplayOrder).ToList());
                 return userDto;
         }
 
@@ -334,12 +331,12 @@ namespace Nowcfo.Application.Services.UserAuthService
                 RoleId = userDetails.RoleId,
                 Role = userDetails.RoleName,
                 IsAdmin = userDetails.IsAdmin,
-                Menus=JsonConvert.SerializeObject(
-                    userDetails.AssignedMenus,
-                new JsonSerializerSettings
-                {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                }),
+                //Menus=JsonConvert.SerializeObject(
+                //    userDetails.AssignedMenus,
+                //new JsonSerializerSettings
+                //{
+                //    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                //}),
            
                 Permissions = JsonConvert.SerializeObject(userDetails.Permissions)
             };
@@ -374,7 +371,7 @@ namespace Nowcfo.Application.Services.UserAuthService
                                          user.Email,
                                          RoleId = role.Id,
                                          RoleName = role.Name,
-                                         Menu = menu,
+                                         //Menu = menu,
                                          Permission = permission == null ? null : permission.Slug,
                                          RefreshToken = refreshToken
                                      }).ToListAsync();
@@ -393,12 +390,12 @@ namespace Nowcfo.Application.Services.UserAuthService
                          RefreshToken = refreshToken.MapToRefreshTokenResponseDTO(),
                          IsAdmin = q.Select(t=>t.IsAdmin).FirstOrDefault(),
                          Permissions = q.Where(t => t.Permission != null).Select(t => t.Permission).Distinct().ToList(),
-                         AssignedMenus = _mapper.Map<List<MenuDto>>(q.Where(t => t.Menu != null).Select(x => x.Menu).DistinctBy(x => x.MenuName).OrderBy(x => x.DisplayOrder)),
+                         //AssignedMenus = _mapper.Map<List<MenuDto>>(q.Where(t => t.Menu != null).Select(x => x.Menu).DistinctBy(x => x.MenuName).OrderBy(x => x.DisplayOrder)),
                      };
                  }).FirstOrDefault();
-            if (userDto != null && userDto.IsAdmin)
-                userDto.AssignedMenus = _mapper.Map<List<MenuDto>>(_dbContext.Menus.Where(m => m.MenuLevel == 1)
-                    .OrderBy(x => x.DisplayOrder).ToList());
+            //if (userDto != null && userDto.IsAdmin)
+            //    userDto.AssignedMenus = _mapper.Map<List<MenuDto>>(_dbContext.Menus.Where(m => m.MenuLevel == 1)
+            //        .OrderBy(x => x.DisplayOrder).ToList());
             return userDto;
         }
 

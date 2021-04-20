@@ -84,21 +84,20 @@ namespace Nowcfo.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EmployeeOrgPermissions",
+                name: "EmployeePermissions",
                 columns: table => new
                 {
-                    EmployeeOrganizationPermissionId = table.Column<int>(type: "int", nullable: false)
+                    PermissionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Employee_Id = table.Column<int>(type: "int", nullable: true),
-                    Organization_Id = table.Column<int>(type: "int", nullable: true),
-                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    LevelOne = table.Column<int>(type: "int", nullable: false),
+                    LevelTwo = table.Column<int>(type: "int", nullable: false),
+                    LevelThree = table.Column<int>(type: "int", nullable: false),
+                    ReferenceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EmployeeOrgPermissions", x => x.EmployeeOrganizationPermissionId);
+                    table.PrimaryKey("PK_EmployeePermissions", x => x.PermissionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -350,9 +349,9 @@ namespace Nowcfo.Infrastructure.Migrations
                     OrganizationId = table.Column<int>(type: "int", nullable: true),
                     DesignationId = table.Column<int>(type: "int", nullable: true),
                     IsSupervisor = table.Column<bool>(type: "bit", nullable: true),
-                    SupervisorId = table.Column<int>(type: "int", nullable: true),
-                    EmployeeTypeId = table.Column<int>(type: "int", nullable: false),
-                    StatusId = table.Column<int>(type: "int", nullable: true),
+                    SupervisorId = table.Column<int>(type: "int", nullable: true, defaultValue: 0),
+                    EmployeeTypeId = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
+                    StatusId = table.Column<int>(type: "int", nullable: true, defaultValue: 1),
                     PayType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Pay = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OverTimeRate = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -482,8 +481,7 @@ namespace Nowcfo.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeInfo_EmployeeTypeId",
                 table: "EmployeeInfo",
-                column: "EmployeeTypeId",
-                unique: true);
+                column: "EmployeeTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeInfo_OrganizationId",
@@ -493,9 +491,7 @@ namespace Nowcfo.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeInfo_StatusId",
                 table: "EmployeeInfo",
-                column: "StatusId",
-                unique: true,
-                filter: "[StatusId] IS NOT NULL");
+                column: "StatusId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeInfo_SupervisorId",
@@ -544,7 +540,7 @@ namespace Nowcfo.Infrastructure.Migrations
                 name: "EmployeeInfo");
 
             migrationBuilder.DropTable(
-                name: "EmployeeOrgPermissions");
+                name: "EmployeePermissions");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
