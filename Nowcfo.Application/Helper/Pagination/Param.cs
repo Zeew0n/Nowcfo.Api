@@ -15,9 +15,11 @@ namespace Nowcfo.Application.Helper.Pagination
         }
 
         public Guid Id { get; set; }
-        
+        public string SearchOrg { get; set; }
+        public string SearchStatus { get; set; }
         public string SearchType { get; set; }
         public string SearchValue { get; set; }
+     
 
     }
 }
