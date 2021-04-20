@@ -120,42 +120,135 @@ namespace Nowcfo.Application.Repository
              if(param.SearchType == "null" || param.SearchValue == "null")
              {
 
-                    var result = (
-                                  from o in _dbContext.Organizations.IgnoreQueryFilters()
-                                  join e in _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
-                                  from e in eg.DefaultIfEmpty()
-                                  join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
-                                  join et in _dbContext.EmployeeTypes on e.EmployeeTypeId equals et.EmployeeTypeId
-                                  join es in _dbContext.EmployeeStatusTypes on e.StatusId equals es.StatusId
-
-                                  select new EmployeeInfoDto
-                                  {
-                                      EmployeeId = e.EmployeeId,
-                                      EmployeeName = e.EmployeeName,
-                                      Email = e.Email,
-                                      Phone = e.Phone,
-                                      Address = e.Address,
-                                      City = e.City,
-                                      ZipCode = e.ZipCode,
-                                      State = e.State,
-                                      PayType = e.PayType,
-                                      Pay = e.Pay,
-                                      OverTimeRate = e.OverTimeRate,
-                                      IsSupervisor = e.IsSupervisor,
-                                      SuperVisorId = e.SupervisorId,
-                                      DesignationName = ds.DesignationName,
-                                      DesignationId = ds.DesignationId,
-                                      OrganizationName = o.OrganizationName,
-                                      OrganizationId = o.OrganizationId,
-                                      EmployeeTypeId = e.EmployeeTypeId,
-                                      EmployeeTypeName = et.EmployeeTypeName,
-                                      StatusId = e.StatusId,
-                                      StatusName = es.StatusName
-                                  }).Where(e => e.StatusId != 3);
+                    if(param.SearchOrg != "null" && param.SearchStatus != "null")
+                    {
 
 
-           
-                    return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+                        var result = (
+                                      from o in _dbContext.Organizations.IgnoreQueryFilters()
+                                      join e in _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
+                                      from e in eg.DefaultIfEmpty()
+                                      join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
+                                      join et in _dbContext.EmployeeTypes on e.EmployeeTypeId equals et.EmployeeTypeId
+                                      join es in _dbContext.EmployeeStatusTypes on e.StatusId equals es.StatusId
+
+                                      select new EmployeeInfoDto
+                                      {
+                                          EmployeeId = e.EmployeeId,
+                                          EmployeeName = e.EmployeeName,
+                                          Email = e.Email,
+                                          Phone = e.Phone,
+                                          Address = e.Address,
+                                          City = e.City,
+                                          ZipCode = e.ZipCode,
+                                          State = e.State,
+                                          PayType = e.PayType,
+                                          Pay = e.Pay,
+                                          OverTimeRate = e.OverTimeRate,
+                                          IsSupervisor = e.IsSupervisor,
+                                          SuperVisorId = e.SupervisorId,
+                                          DesignationName = ds.DesignationName,
+                                          DesignationId = ds.DesignationId,
+                                          OrganizationName = o.OrganizationName,
+                                          OrganizationId = o.OrganizationId,
+                                          EmployeeTypeId = e.EmployeeTypeId,
+                                          EmployeeTypeName = et.EmployeeTypeName,
+                                          StatusId = e.StatusId,
+                                          StatusName = es.StatusName
+                                      }).Where(e => e.StatusId != 3).Where(e => e.OrganizationId.ToString() == param.SearchOrg && e.StatusId.ToString() == param.SearchStatus);
+
+
+
+                        return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+
+                    }
+                    else if (param.SearchOrg != "null" && param.SearchStatus == "null")
+                    {
+
+
+                        var result = (
+                                      from o in _dbContext.Organizations.IgnoreQueryFilters()
+                                      join e in _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
+                                      from e in eg.DefaultIfEmpty()
+                                      join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
+                                      join et in _dbContext.EmployeeTypes on e.EmployeeTypeId equals et.EmployeeTypeId
+                                      join es in _dbContext.EmployeeStatusTypes on e.StatusId equals es.StatusId
+
+                                      select new EmployeeInfoDto
+                                      {
+                                          EmployeeId = e.EmployeeId,
+                                          EmployeeName = e.EmployeeName,
+                                          Email = e.Email,
+                                          Phone = e.Phone,
+                                          Address = e.Address,
+                                          City = e.City,
+                                          ZipCode = e.ZipCode,
+                                          State = e.State,
+                                          PayType = e.PayType,
+                                          Pay = e.Pay,
+                                          OverTimeRate = e.OverTimeRate,
+                                          IsSupervisor = e.IsSupervisor,
+                                          SuperVisorId = e.SupervisorId,
+                                          DesignationName = ds.DesignationName,
+                                          DesignationId = ds.DesignationId,
+                                          OrganizationName = o.OrganizationName,
+                                          OrganizationId = o.OrganizationId,
+                                          EmployeeTypeId = e.EmployeeTypeId,
+                                          EmployeeTypeName = et.EmployeeTypeName,
+                                          StatusId = e.StatusId,
+                                          StatusName = es.StatusName
+                                      }).Where(e => e.StatusId != 3).Where(e => e.OrganizationId.ToString() == param.SearchOrg);
+
+
+
+                        return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+
+
+
+
+                    }
+                    else
+                    {
+
+
+
+                        var result = (
+                                      from o in _dbContext.Organizations.IgnoreQueryFilters()
+                                      join e in _dbContext.EmployeeInfos on o.OrganizationId equals e.OrganizationId into eg
+                                      from e in eg.DefaultIfEmpty()
+                                      join ds in _dbContext.Designations on e.DesignationId equals ds.DesignationId
+                                      join et in _dbContext.EmployeeTypes on e.EmployeeTypeId equals et.EmployeeTypeId
+                                      join es in _dbContext.EmployeeStatusTypes on e.StatusId equals es.StatusId
+
+                                      select new EmployeeInfoDto
+                                      {
+                                          EmployeeId = e.EmployeeId,
+                                          EmployeeName = e.EmployeeName,
+                                          Email = e.Email,
+                                          Phone = e.Phone,
+                                          Address = e.Address,
+                                          City = e.City,
+                                          ZipCode = e.ZipCode,
+                                          State = e.State,
+                                          PayType = e.PayType,
+                                          Pay = e.Pay,
+                                          OverTimeRate = e.OverTimeRate,
+                                          IsSupervisor = e.IsSupervisor,
+                                          SuperVisorId = e.SupervisorId,
+                                          DesignationName = ds.DesignationName,
+                                          DesignationId = ds.DesignationId,
+                                          OrganizationName = o.OrganizationName,
+                                          OrganizationId = o.OrganizationId,
+                                          EmployeeTypeId = e.EmployeeTypeId,
+                                          EmployeeTypeName = et.EmployeeTypeName,
+                                          StatusId = e.StatusId,
+                                          StatusName = es.StatusName
+                                      }).Where(e => e.StatusId != 3);
+
+
+
+                        return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
+                    }
 
                 }
                 else
@@ -191,7 +284,7 @@ namespace Nowcfo.Application.Repository
                                           EmployeeTypeName = et.EmployeeTypeName,
                                           StatusId = o.StatusId,
                                           StatusName = es.StatusName
-                                      }).Where(m=>m.EmployeeName == param.SearchValue && m.StatusId!=3 );
+                                      }).Where(m=>m.EmployeeName.Contains(param.SearchValue) && m.StatusId!=3 ).Where(m=>m.OrganizationId.ToString()==param.SearchOrg).Where(m => m.StatusId.ToString() == param.SearchStatus);
 
                         return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -229,7 +322,7 @@ namespace Nowcfo.Application.Repository
                                           EmployeeTypeName = et.EmployeeTypeName,
                                           StatusId = o.StatusId,
                                           StatusName = es.StatusName
-                                      }).Where(m=>m.Email==param.SearchValue && m.StatusId != 3);
+                                      }).Where(m => m.Email.Contains(param.SearchValue) && m.StatusId != 3).Where(m => m.OrganizationId.ToString() == param.SearchOrg).Where(m => m.StatusId.ToString() == param.SearchStatus);
 
                         return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
