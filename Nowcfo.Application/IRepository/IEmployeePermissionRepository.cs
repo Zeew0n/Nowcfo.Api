@@ -10,6 +10,9 @@ namespace Nowcfo.Application.IRepository
         Task<List<EmployeePermissionDto>> GetAllAsync();
         Task CreateAsync(EmployeePermissionDto model);
         void Update(EmployeePermissionDto model);
+        void Delete(EmployeePermissionDto model);
+
+
 
         Task<List<OrganizationDto>> GetLevelOrganizations(int organizationId);
 

@@ -66,6 +66,7 @@ namespace Nowcfo.Application.Repository
                               where o.PermissionId == id
                               select new EmployeePermissionDto
                               {
+                                  PermissionId= o.PermissionId,
                                   EmployeeId=o.EmployeeId,
                                   LevelOne= o.LevelOne,
                                   LevelTwo= o.LevelTwo,
@@ -102,7 +103,8 @@ namespace Nowcfo.Application.Repository
                               {
                                   PermissionId=o.PermissionId,
                                   EmployeeId = o.EmployeeId,
-                                  EmployeeName=e.EmployeeName,
+                                  EmployeeName=ep.EmployeeName,
+                                  Email= ep.Email,
                                   LevelOne = o.LevelOne,
                                   OrganizationName=os.OrganizationName,
                                   LevelTwo = o.LevelTwo,
@@ -110,8 +112,8 @@ namespace Nowcfo.Application.Repository
                                   LevelThree = o.LevelThree,
                                   MarketName=os2.OrganizationName,
                                   ReferenceId=o.ReferenceId,
-                                  ReferenceName=ep.EmployeeName,
-                                  ReferenceEmail=ep.Email
+                                  ReferenceName=e.EmployeeName,
+                                  ReferenceEmail=e.Email
 
 
                               }).ToListAsync();
@@ -157,6 +159,22 @@ namespace Nowcfo.Application.Repository
             catch (Exception e)
             {
                 Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
+
+
+        public void Delete(EmployeePermissionDto model)
+        {
+            try
+            {
+                var employeePermission = _mapper.Map<EmployeePermissionDto, EmployeePermission>(model);
+                _dbContext.EmployeePermissions.Remove(employeePermission);
+            }
+
+            catch (Exception ex)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", ex.Message, ex.StackTrace);
                 throw;
             }
         }
