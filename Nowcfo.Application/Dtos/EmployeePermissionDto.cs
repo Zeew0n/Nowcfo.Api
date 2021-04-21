@@ -5,6 +5,7 @@
         public int PermissionId { get; set; }
         public int EmployeeId { get; set; }
         public string EmployeeName { get; set; }
+        public string Email { get; set; }
         public int LevelOne { get; set; }
         public string OrganizationName { get; set; }
         public int LevelTwo { get; set; }

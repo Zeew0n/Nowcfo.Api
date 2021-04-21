@@ -79,12 +79,33 @@ namespace Nowcfo.API.Controllers
             }
         }
 
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployeePermission(int id)
+        {
+            try
+            {
+                var existingEmployeePermission = await _unitOfWork.EmployeePermissionRepository.GetByIdAsync(id);
+                if (existingEmployeePermission == null)
+                    return NotFound($"Could not find Employee Permission with id {id}");
+                _unitOfWork.EmployeePermissionRepository.Delete(existingEmployeePermission);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEmployee([FromRoute] int id, [FromBody] EmployeePermissionDto dto)
         {
             try
             {
-                dto.EmployeeId = id;
+                dto.PermissionId = id;
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
