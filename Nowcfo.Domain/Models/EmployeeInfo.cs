@@ -1,5 +1,6 @@
 namespace Nowcfo.Domain.Models
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
@@ -15,7 +16,6 @@ namespace Nowcfo.Domain.Models
 
         [Key] 
         public int EmployeeId { get; set; }
-
         [Required] 
         [StringLength(100)] 
         public string EmployeeName { get; set; }
@@ -41,6 +41,8 @@ namespace Nowcfo.Domain.Models
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime TerminationDate { get; set; }
         public Designation Designation { get; set; }
 
         public Organization Organization { get; set; }

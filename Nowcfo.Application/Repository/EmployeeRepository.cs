@@ -56,7 +56,9 @@ namespace Nowcfo.Application.Repository
                                         EmployeeTypeId=o.EmployeeTypeId,
                                         EmployeeTypeName=et.EmployeeTypeName,
                                         StatusId= es.StatusId,
-                                        StatusName=es.StatusName
+                                        StatusName=es.StatusName,
+                                        StartDate=o.StartDate.ToString(),
+                                        TerminationDate=o.TerminationDate.ToString()
                                     }).FirstOrDefaultAsync();
 
             }
