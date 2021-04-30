@@ -56,7 +56,7 @@ namespace Nowcfo.API.Controllers
 
 
         [HttpGet("GetEmployeeTypes")]
-        public async Task<IActionResult> GetEmployeeStatus()
+        public async Task<IActionResult> GetEmployeeTypes()
         {
             var emp = await _unitOfWork.EmployeeRepository.GetAllEmployeeTypes();
             return Ok(emp);
@@ -64,7 +64,7 @@ namespace Nowcfo.API.Controllers
 
 
         [HttpGet("GetEmployeeStatusTypes")]
-        public async Task<IActionResult> GetEmployeeTypes()
+        public async Task<IActionResult> GetEmployeeStatus()
         {
             var emp = await _unitOfWork.EmployeeRepository.GetAllEmployeeStatus();
             return Ok(emp);

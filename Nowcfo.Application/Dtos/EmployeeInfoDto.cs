@@ -23,6 +23,8 @@
         public string PayType { get; set; }
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
+        public string StartDate { get; set; }
+        public string TerminationDate { get; set; }
     }
-    
+
 }
