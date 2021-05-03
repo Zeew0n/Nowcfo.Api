@@ -56,6 +56,8 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<Organization>(ConfigureOrganization);
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
+            modelBuilder.Entity<MarketMaster>(ConfigureMarketAllocation);
+
 
             //modelBuilder.SeedAdminUser();
 
@@ -162,6 +164,11 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<EmployeePermission> EmployeePermissions { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<DynamicFilterField> DynamicFilterFields { get; set; }
+        public DbSet<MarketMaster> MarketMasters { get; set; }
+        public DbSet<MarketAllocation> MarketAllocations { get; set; }
+        public DbSet<AllocationType> AllocationTypes { get; set; }
+        public DbSet<OtherType> OtherTypes { get; set; }
+        public DbSet<CogsType> CogsTypes { get; set; }
 
     }
 }

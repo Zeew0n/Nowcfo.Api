@@ -23,6 +23,11 @@ namespace Nowcfo.Application.IRepository
         public DbSet<EmployeeStatusType> EmployeeStatusTypes { get; set; }
         public DbSet<EmployeeType> EmployeeTypes { get; set; }
         public DbSet<DynamicFilterField> DynamicFilterFields { get; set; }
+        public DbSet<MarketMaster> MarketMasters { get; set; }
+        public DbSet<MarketAllocation> MarketAllocations { get; set; }
+        public DbSet<AllocationType> AllocationTypes { get; set; }
+        public DbSet<OtherType> OtherTypes { get; set; }
+        public DbSet<CogsType> CogsTypes { get; set; }
     }
 
 }

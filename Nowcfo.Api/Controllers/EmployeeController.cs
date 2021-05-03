@@ -162,7 +162,7 @@ namespace Nowcfo.API.Controllers
         }
 
         [HttpGet("EmployeesAutocomplete/{searchText}")]
-        public async Task<IActionResult> GetEmployeesAutocomplete(  string searchText)
+        public async Task<IActionResult> GetEmployeesAutocomplete(string searchText)
         {
             try
             {
