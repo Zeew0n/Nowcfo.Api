@@ -25,6 +25,28 @@ namespace Nowcfo.Application.Repository
             {
                 var market = _mapper.Map<MarketMasterDto, MarketMaster>(model);
                 await _dbContext.MarketMasters.AddAsync(market);
+                var m= _dbContext.SaveChange();
+                var n = market.Id;
+
+                foreach(var  marketAllocation  in model.MarketAllocationDto)
+                {
+                    var marketModel = new MarketAllocation
+                    {
+                        MasterId = n,
+                        MarketId=marketAllocation.MarketId,
+                        Revenue=marketAllocation.Revenue,
+                        COGS=marketAllocation.COGS,
+                        CogsTypeId=marketAllocation.CogsTypeId,
+                        SE=marketAllocation.SE,
+                        EE= marketAllocation.EE,
+                        GA=marketAllocation.GA,
+                        Other=marketAllocation.Other,
+                        OtherTypeId=marketAllocation.OtherTypeId
+                    };
+                    await _dbContext.MarketAllocations.AddAsync(marketModel);
+                    _dbContext.SaveChange();
+
+                }
             }
             catch (Exception e)
             {
