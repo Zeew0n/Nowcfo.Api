@@ -55,6 +55,7 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<EmployeeInfo>(ConfigureEmployeeInfo);
             modelBuilder.Entity<Organization>(ConfigureOrganization);
             modelBuilder.Entity<Menu>(ConfigureMenu);
+            modelBuilder.Entity<MarketMaster>(ConfigureMarketAllocation);
             modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
             modelBuilder.Entity<EmployeePermission>()
                 .HasIndex(e => new { e.EmployeeId, e.LevelOne,e.LevelTwo,e.LevelThree,e.ReferenceId }).IsUnique();
