@@ -88,5 +88,13 @@ namespace Nowcfo.Infrastructure.Data
             builder.Property(p => p.MenuLevel)
                 .HasDefaultValue(1);
         }
+
+        public static void ConfigureMarketAllocation(EntityTypeBuilder<MarketMaster> builder)
+        {
+            builder.HasMany(q => q.MarketAllocations)
+                .WithOne(q => q.MarketMaster)
+                .HasForeignKey(q => q.MasterId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

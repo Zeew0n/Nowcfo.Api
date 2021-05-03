@@ -23,6 +23,7 @@ namespace Nowcfo.Infrastructure.Repository
         public IRolePermissionRepository RolePermissionRepository { get; }
         public IMenuRepository MenuRepository { get; }
         public IEmployeePermissionRepository EmployeePermissionRepository { get; }
+        public IMarketAllocationRepository MarketAllocationRepository { get; }
 
 
         public UnitOfWork(ApplicationDbContext context,IMapper mapper )
@@ -35,6 +36,7 @@ namespace Nowcfo.Infrastructure.Repository
             RolePermissionRepository = new RolePermissionRepository(context, mapper);
             MenuRepository =new MenuRepository(context,mapper);
             EmployeePermissionRepository = new EmployeePermissionRepository(context, mapper);
+            MarketAllocationRepository = new MarketAllocationRepository(context, mapper);
 
         }
 

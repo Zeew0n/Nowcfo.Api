@@ -15,6 +15,7 @@ namespace Nowcfo.Application.IRepository
         IRolePermissionRepository RolePermissionRepository { get; }
         IMenuRepository MenuRepository { get;}
         IEmployeePermissionRepository EmployeePermissionRepository { get; }
+        IMarketAllocationRepository MarketAllocationRepository { get; }
 
 
         void BeginTransaction();
