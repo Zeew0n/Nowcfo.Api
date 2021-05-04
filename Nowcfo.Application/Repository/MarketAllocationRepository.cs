@@ -28,13 +28,14 @@ namespace Nowcfo.Application.Repository
             try
             {
                 return await (from o in _dbContext.MarketMasters
-                              
+                              join at in _dbContext.AllocationTypes on o.AllocationTypeId equals at.Id
                               where o.Id == id
                               select new MarketMasterDto
                               {
                                   Id = o.Id,
                                   AllocationTypeId = o.AllocationTypeId,
-                                  PayPeriod = o.PayPeriod,
+                                  AllocationName=at.Name,
+                                  PayPeriod = o.PayPeriod.ToShortDateString(),
                                   OrganizationId = o.OrganizationId,
 
                               }).FirstOrDefaultAsync();
@@ -108,14 +109,15 @@ namespace Nowcfo.Application.Repository
             try
             {
 
-                var marketList = await (from op in _dbContext.MarketMasters.Where(x => x.Id == id)
-
+                var marketList = await (from op in _dbContext.MarketMasters.Where(x => x.OrganizationId == id)
+                                        join at in _dbContext.AllocationTypes on op.AllocationTypeId equals at.Id
                                         select new MarketMasterDto
 
                                         {
                                             Id = op.Id,
                                             AllocationTypeId = op.AllocationTypeId,
-                                            PayPeriod = op.PayPeriod
+                                            AllocationName = at.Name,
+                                            PayPeriod = op.PayPeriod.ToShortDateString(),
                                         }).ToListAsync();
 
                 return _mapper.Map<List<MarketMasterDto>>(marketList);
@@ -128,6 +130,7 @@ namespace Nowcfo.Application.Repository
             }
         }
         //GetAllMarketsByOrgId
+        //Use Left Join to bring new record in case of update in Child Org if any
 
         public async Task<List<MarketAllocationDto>> GetAllMarketsByOrgId(int orgId)
         {
@@ -198,6 +201,50 @@ namespace Nowcfo.Application.Repository
         }
 
 
+
+        public async Task<List<AllocationTypeDto>> GetAllocationTypes()
+        {
+            try
+            {
+                var allocations = await _dbContext.AllocationTypes.ToListAsync();
+                return _mapper.Map<List<AllocationTypeDto>>(allocations);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
+
+
+        public async Task<List<CogsTypeDto>> GetCogsTypes()
+        {
+            try
+            {
+                var cogs = await _dbContext.CogsTypes.ToListAsync();
+                return _mapper.Map<List<CogsTypeDto>>(cogs);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
+
+
+        public async Task<List<OtherTypeDto>> GetOtherTypes()
+        {
+            try
+            {
+                var others = await _dbContext.CogsTypes.ToListAsync();
+                return _mapper.Map<List<OtherTypeDto>>(others);
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
 
         public void Delete(MarketMasterDto model)
         {
