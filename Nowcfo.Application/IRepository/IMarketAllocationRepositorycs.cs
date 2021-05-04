@@ -1,4 +1,5 @@
 ﻿using Nowcfo.Application.Dtos;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Nowcfo.Application.IRepository
@@ -6,14 +7,18 @@ namespace Nowcfo.Application.IRepository
     public interface IMarketAllocationRepository
     {
         //List Market Allocation List
-        //Task<MarketMasterDto> GetByOrganizationIdAsync(int id);
 
-        //To Load Bottom Level Children based on Create/Update
-        //Task<MarketAllocationDto> GetByMasterId(int id, string type);
-
+        //To Load Bottom Level Children based on Create/Update for data change, what to do in case of change of data
+        Task<List<MarketAllocationDto>> GetAllAllocationsById(int masterId, string payPeriod, int id, int allocationTypeId);
+        Task<List<MarketAllocationDto>> GetAllMarketsByOrgId(int orgId);
+        Task<MarketMasterDto> GetByIdAsync(int id);
         Task CreateAsync(MarketMasterDto model);
-        void Update(MarketMasterDto model);
+        Task Update(MarketMasterDto model);
         void Delete(MarketMasterDto model);
+        Task<List<OrganizationDto>> GetAllOrganizations();
+        Task<List<MarketMasterDto>> GetAllMarketList(int id);
+
+
 
     }
 }

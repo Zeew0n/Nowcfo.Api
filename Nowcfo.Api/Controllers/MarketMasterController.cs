@@ -21,57 +21,102 @@ namespace Nowcfo.API.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/MarketMaster
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<MarketMaster>>> GetMarketMasters()
-        //{
-        //    return await _context.MarketMasters.ToListAsync();
-        //}
 
-        // GET: api/MarketMaster/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<MarketMaster>> GetMarketMaster(int id)
-        //{
-        //    var marketMaster = await _context.MarketMasters.FindAsync(id);
 
-        //    if (marketMaster == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpGet("listallorganizations")]
+        public async Task<IActionResult> GetAllOrganizations()
+        {
+            var emp = await _unitOfWork.MarketAllocationRepository.GetAllOrganizations();
+            return Ok(emp);
+        }
 
-        //    return marketMaster;
-        //}
 
-        // PUT: api/MarketMaster/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutMarketMaster(int id, MarketMaster marketMaster)
-        //{
-        //    if (id != marketMaster.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        [HttpGet("GetMarketAllocationList/{id}")]
+        public async Task<IActionResult> GetMarketAllocationList(int id)
+        {
+            try
+            {
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketList(id);
+                return Ok(allocations);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
 
-        //    _context.Entry(marketMaster).State = EntityState.Modified;
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!MarketMasterExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+        [HttpGet("GetMarketAllocationListByOrgId/{orgId}")]
+        public async Task<IActionResult> GetAllMarketsByOrgId(int orgId)
+        {
+            try
+            {
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgId(orgId);
+                return Ok(allocations);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
 
-        //    return NoContent();
-        //}
+
+
+        [HttpGet("GetMarketAllocationList/{masterId}/{payPeriod}/{id}/{allocationTypeId}")]
+        public async Task<IActionResult> GetAllAllocationsById(int masterId, string payPeriod, int id, int allocationTypeId)
+        {
+            try
+            {
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllAllocationsById(masterId,payPeriod,id,allocationTypeId);
+                return Ok(allocations);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.InnerException != null ? e.InnerException?.Message : e.Message);
+            }
+        }
+
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetMarketMaster(int id)
+        {
+            try
+            {
+                var allocation = await _unitOfWork.MarketAllocationRepository.GetByIdAsync(id);
+                if (allocation == null) return NotFound($"Could not find Master Allocation with id {id}");
+                return Ok(allocation);
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMarketMaster([FromRoute] int id, [FromBody] MarketMasterDto dto)
+        {
+            try
+            {
+                dto.Id = id;
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var existingMaster = await _unitOfWork.MarketAllocationRepository.GetByIdAsync(id);
+                if (existingMaster == null)
+                    return NotFound($"Could not find Employee with id {id}");
+
+
+                _unitOfWork.MarketAllocationRepository.Update(dto);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
+
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
 
 
         [HttpPost]
@@ -95,25 +140,27 @@ namespace Nowcfo.API.Controllers
             }
         }
 
-        // DELETE: api/MarketMaster/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteMarketMaster(int id)
-        //{
-        //    var marketMaster = await _context.MarketMasters.FindAsync(id);
-        //    if (marketMaster == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    _context.MarketMasters.Remove(marketMaster);
-        //    await _context.SaveChangesAsync();
 
-        //    return NoContent();
-        //}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteMarketMaster(int id)
+        {
+            try
+            {
+                var existingAllocation = await _unitOfWork.MarketAllocationRepository.GetByIdAsync(id);
+                if (existingAllocation == null)
+                    return NotFound($"Could not find Master Allocation with id {id}");
+                _unitOfWork.MarketAllocationRepository.Delete(existingAllocation);
+                if (await _unitOfWork.SaveChangesAsync())
+                    return NoContent();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
 
-        //private bool MarketMasterExists(int id)
-        //{
-        //    return _context.MarketMasters.Any(e => e.Id == id);
-        //}
+
     }
 }
