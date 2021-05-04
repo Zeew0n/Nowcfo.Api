@@ -17,6 +17,12 @@ namespace Nowcfo.Application.IRepository
         void Delete(MarketMasterDto model);
         Task<List<OrganizationDto>> GetAllOrganizations();
         Task<List<MarketMasterDto>> GetAllMarketList(int id);
+        Task<List<AllocationTypeDto>> GetAllocationTypes();
+
+        Task<List<CogsTypeDto>> GetCogsTypes();
+
+        Task<List<OtherTypeDto>> GetOtherTypes();
+
 
 
 

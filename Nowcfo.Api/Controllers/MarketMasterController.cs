@@ -36,7 +36,7 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketList(id);
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgId(id);
                 return Ok(allocations);
             }
             catch (Exception e)
@@ -46,12 +46,36 @@ namespace Nowcfo.API.Controllers
         }
 
 
+
+        [HttpGet("GetAllocationTypes")]
+        public async Task<IActionResult> GetAllocationTypes()
+        {
+            var emp = await _unitOfWork.MarketAllocationRepository.GetAllocationTypes();
+            return Ok(emp);
+        }
+
+        [HttpGet("GetCogsTypes")]
+        public async Task<IActionResult> GetCogsTypes()
+        {
+            var emp = await _unitOfWork.MarketAllocationRepository.GetCogsTypes();
+            return Ok(emp);
+        }
+
+        [HttpGet("GetOtherTypes")]
+        public async Task<IActionResult> GetOtherTypes()
+        {
+            var emp = await _unitOfWork.MarketAllocationRepository.GetOtherTypes();
+            return Ok(emp);
+        }
+
+
+
         [HttpGet("GetMarketAllocationListByOrgId/{orgId}")]
         public async Task<IActionResult> GetAllMarketsByOrgId(int orgId)
         {
             try
             {
-                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgId(orgId);
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketList(orgId);
                 return Ok(allocations);
             }
             catch (Exception e)

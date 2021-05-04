@@ -27,6 +27,10 @@ namespace Nowcfo.Application.MappingProfile
             CreateMap<OrganizationNavDto, OrganizationNavTreeViewDto>().ReverseMap();
             CreateMap<MarketAllocation, MarketAllocationDto>().ReverseMap();
             CreateMap<MarketMaster, MarketMasterDto>().ReverseMap();
+            CreateMap<AllocationType, AllocationTypeDto>().ReverseMap();
+            CreateMap<CogsType, CogsTypeDto>().ReverseMap();
+            CreateMap<OtherType, OtherTypeDto>().ReverseMap();
+
 
 
 
