@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
+using Nowcfo.Application.Extensions;
+using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using System;
 using System.Threading.Tasks;
@@ -21,6 +23,17 @@ namespace Nowcfo.API.Controllers
             _mapper = mapper;
         }
 
+
+
+        [HttpGet("PaginatedAllocation")]
+        public async Task<IActionResult> GetPaginatedAllocation([FromQuery] ParamMarket param)
+        {
+            var emp = await _unitOfWork.MarketAllocationRepository.GetPagedListAsync(param);
+            Response.AddPagination(emp.CurrentPage, emp.PageSize,
+              emp.TotalCount, emp.TotalPages);
+
+            return Ok(emp);
+        }
 
 
         [HttpGet("listallorganizations")]

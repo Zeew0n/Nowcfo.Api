@@ -1,4 +1,5 @@
 ﻿using Nowcfo.Application.Dtos;
+using Nowcfo.Application.Helper.Pagination;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,6 +8,8 @@ namespace Nowcfo.Application.IRepository
     public interface IMarketAllocationRepository
     {
         //List Market Allocation List
+        Task<PagedList<MarketMasterDto>> GetPagedListAsync(ParamMarket param);
+
 
         //To Load Bottom Level Children based on Create/Update for data change, what to do in case of change of data
         Task<List<MarketAllocationDto>> GetAllAllocationsById(int masterId, string payPeriod, int id, int allocationTypeId);

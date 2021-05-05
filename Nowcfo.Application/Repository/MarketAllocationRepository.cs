@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Nowcfo.Application.Dtos;
+using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Domain.Models;
 using Serilog;
@@ -20,6 +21,34 @@ namespace Nowcfo.Application.Repository
         {
             _dbContext = context;
             _mapper = mapper;
+        }
+
+
+        public async Task<PagedList<MarketMasterDto>> GetPagedListAsync(ParamMarket param)
+        {
+            try
+            {
+
+                var marketList = (from op in _dbContext.MarketMasters.Where(x => x.OrganizationId==param.SearchOrg)
+                                        join at in _dbContext.AllocationTypes on op.AllocationTypeId equals at.Id
+                                        select new MarketMasterDto
+
+                                        {
+                                            Id = op.Id,
+                                            AllocationTypeId = op.AllocationTypeId,
+                                            AllocationName = at.Name,
+                                            PayPeriod = op.PayPeriod.ToShortDateString(),
+                                        });
+
+                return await PagedList<MarketMasterDto>.CreateAsync(marketList, param.PageNumber, param.PageSize);
+
+                       
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
         }
 
 
