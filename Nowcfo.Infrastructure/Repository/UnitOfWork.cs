@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Configuration;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Repository;
 using Nowcfo.Infrastructure.Data;
@@ -11,8 +12,9 @@ namespace Nowcfo.Infrastructure.Repository
     public class UnitOfWork : IUnitOfWork
     {
         private IDbContextTransaction _transaction;
-        private readonly ApplicationDbContext _dbContext;
+        //private readonly IConfiguration _config;
 
+        private readonly ApplicationDbContext _dbContext;
         public IOrganizationRepository OrganizationRepository { get; }
         public IDesignationRepository DesignationRepository { get; set; }
         public IEmployeeRepository EmployeeRepository { get; }
@@ -24,9 +26,10 @@ namespace Nowcfo.Infrastructure.Repository
         public IMenuRepository MenuRepository { get; }
         public IEmployeePermissionRepository EmployeePermissionRepository { get; }
         public IMarketAllocationRepository MarketAllocationRepository { get; }
+        public IDapperRepository DapperRepository { get; }
 
 
-        public UnitOfWork(ApplicationDbContext context,IMapper mapper )
+        public UnitOfWork(ApplicationDbContext context,IDapperRepository dapper,IConfiguration config, IMapper mapper )
         {
             _dbContext = context;
             OrganizationRepository = new OrganizationRepository(context,mapper);
@@ -36,7 +39,8 @@ namespace Nowcfo.Infrastructure.Repository
             RolePermissionRepository = new RolePermissionRepository(context, mapper);
             MenuRepository =new MenuRepository(context,mapper);
             EmployeePermissionRepository = new EmployeePermissionRepository(context, mapper);
-            MarketAllocationRepository = new MarketAllocationRepository(context, mapper);
+            MarketAllocationRepository = new MarketAllocationRepository(context, mapper,dapper);
+            DapperRepository = new DapperRepository(config);
 
         }
 

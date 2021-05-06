@@ -144,6 +144,8 @@ namespace Nowcfo.API
            
             services.AddTransient<IMailService, SendGridMailService>();
             services.AddTransient<IOrganizationRepository, OrganizationRepository>();
+            services.AddScoped<IDapperRepository, DapperRepository>();
+
 
 
             //Mapper

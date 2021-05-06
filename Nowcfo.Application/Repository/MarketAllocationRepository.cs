@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Helper.Pagination;
@@ -7,7 +8,6 @@ using Nowcfo.Domain.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,13 +15,15 @@ namespace Nowcfo.Application.Repository
 {
     public class MarketAllocationRepository : IMarketAllocationRepository
     {
+        private readonly IDapperRepository _dapper;
         private readonly IApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public MarketAllocationRepository(IApplicationDbContext context, IMapper mapper)
+        public MarketAllocationRepository(IApplicationDbContext context, IMapper mapper,IDapperRepository dapper)
         {
             _dbContext = context;
             _mapper = mapper;
+            _dapper = dapper;
         }
 
 
@@ -159,34 +161,16 @@ namespace Nowcfo.Application.Repository
                 throw;
             }
         }
-        //GetAllMarketsByOrgId
-        //Use Left Join to bring new record in case of update in Child Org if any
+        
 
         public async Task<List<MarketAllocationDto>> GetAllMarketsByOrgId(int orgId)
         {
             try
             {
-                var passwordParam = new SqlParameter("@OrgId", orgId);
-                var students = _dbContext.MarketAllocations.FromSqlRaw("exec GetAllMarkets @OrgId", orgId);
-
-
-                var allocationList = await (from os in _dbContext.Organizations.Where(x => x.ParentOrganizationId == orgId)
-                                            select new MarketAllocationDto
-                                            {
-                                                //newly created in this case
-                                                //MasterId = 0,
-                                                MarketId =os.OrganizationId,
-                                                Revenue = 0,
-                                                COGS = 0,
-                                                CogsTypeId = 1,
-                                                SE = 0,
-                                                EE = 0,
-                                                GA = 0,
-                                                Other = 0,
-                                                OtherTypeId = 1
-                                            }).ToListAsync();
-
-                return _mapper.Map<List<MarketAllocationDto>>(allocationList);
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@OrgId", orgId);
+                var result = await _dapper.GetAllAsync<MarketAllocationDto>("GetAllMarkets", param);
+                return result;
 
             }
             catch (Exception e)
@@ -203,29 +187,14 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@OrgId", masterId);
+                param.Add("@payperiod", payPeriod);
+                param.Add("@allocationtypeid", allocationTypeId);
+                param.Add("@id", id);
 
-                     
-
-                var allocationList = await (from op in _dbContext.MarketMasters.Where(x => x.Id == id).Where(x => x.OrganizationId == masterId).Where(x => x.PayPeriod.ToString() == payPeriod).Where(x => x.AllocationTypeId == allocationTypeId)
-                                            join os in _dbContext.Organizations on op.OrganizationId equals os.OrganizationId
-                                            join ma in _dbContext.MarketAllocations on op.Id equals ma.MarketId
-
-                                               select new MarketAllocationDto
-
-                                               {
-                                                   MasterId = op.Id,
-                                                   MarketId = op.OrganizationId,
-                                                   Revenue = 0,
-                                                   COGS = 0,
-                                                   CogsTypeId = 1,
-                                                   SE = 0,
-                                                   EE = 0,
-                                                   GA = 0,
-                                                   Other = 0,
-                                                   OtherTypeId = 1
-                                               }).ToListAsync();
-
-                return _mapper.Map<List<MarketAllocationDto>>(allocationList);
+                var result = await _dapper.GetAllAsync<MarketAllocationDto>("GetAllMarketsByParamas", param);
+                return result;
 
             }
             catch (Exception e)
