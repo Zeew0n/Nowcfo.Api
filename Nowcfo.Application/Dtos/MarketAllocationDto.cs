@@ -6,6 +6,8 @@ namespace Nowcfo.Application.Dtos
     {
         public int Id { get; set; }
         public int MarketId { get; set; }
+        public string MarketName { get; set; }
+        public int OrgId { get; set; }
         public int MasterId { get; set; }
         public Decimal Revenue { get; set; }
         public Decimal COGS { get; set; }
