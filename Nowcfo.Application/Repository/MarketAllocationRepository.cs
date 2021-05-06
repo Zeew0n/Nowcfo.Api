@@ -7,6 +7,7 @@ using Nowcfo.Domain.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -165,6 +166,9 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
+                var passwordParam = new SqlParameter("@OrgId", orgId);
+                var students = _dbContext.MarketAllocations.FromSqlRaw("exec GetAllMarkets @OrgId", orgId);
+
 
                 var allocationList = await (from os in _dbContext.Organizations.Where(x => x.ParentOrganizationId == orgId)
                                             select new MarketAllocationDto
@@ -199,6 +203,8 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
+
+                     
 
                 var allocationList = await (from op in _dbContext.MarketMasters.Where(x => x.Id == id).Where(x => x.OrganizationId == masterId).Where(x => x.PayPeriod.ToString() == payPeriod).Where(x => x.AllocationTypeId == allocationTypeId)
                                             join os in _dbContext.Organizations on op.OrganizationId equals os.OrganizationId
