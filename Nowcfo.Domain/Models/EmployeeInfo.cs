@@ -42,7 +42,7 @@ namespace Nowcfo.Domain.Models
         public string Pay { get; set; }
         public string OverTimeRate { get; set; }
         public DateTime StartDate { get; set; }
-        public DateTime TerminationDate { get; set; }
+        public DateTime? TerminationDate { get; set; }
         public Designation Designation { get; set; }
 
         public Organization Organization { get; set; }
@@ -50,7 +50,7 @@ namespace Nowcfo.Domain.Models
         public EmployeeStatusType EmployeeStatusType { get; set; }
         public ICollection<EmployeeInfo> EmployeeInfos { get; set; }
 
-
         public EmployeeInfo Employee { get; set; }
+
     }
 }

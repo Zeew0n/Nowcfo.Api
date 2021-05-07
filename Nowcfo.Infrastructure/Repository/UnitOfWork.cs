@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Nowcfo.Application.IRepository;
 using Nowcfo.Application.Repository;
+using Nowcfo.Application.Services.CurrentUserService;
 using Nowcfo.Infrastructure.Data;
 using System;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace Nowcfo.Infrastructure.Repository
     {
         private IDbContextTransaction _transaction;
         //private readonly IConfiguration _config;
+        private readonly ICurrentUserService _currentUserService;
+
 
         private readonly ApplicationDbContext _dbContext;
         public IOrganizationRepository OrganizationRepository { get; }
@@ -29,13 +32,13 @@ namespace Nowcfo.Infrastructure.Repository
         public IDapperRepository DapperRepository { get; }
 
 
-        public UnitOfWork(ApplicationDbContext context,IDapperRepository dapper,IConfiguration config, IMapper mapper )
+        public UnitOfWork(ApplicationDbContext context,IDapperRepository dapper,IConfiguration config, IMapper mapper,ICurrentUserService currentUserService )
         {
             _dbContext = context;
             OrganizationRepository = new OrganizationRepository(context,mapper);
             UserRepository = new UserRepository(context,mapper);
             DesignationRepository = new DesignationRepository(context, mapper);
-            EmployeeRepository = new EmployeeRepository(context, mapper);
+            EmployeeRepository = new EmployeeRepository(context, mapper, currentUserService);
             RolePermissionRepository = new RolePermissionRepository(context, mapper);
             MenuRepository =new MenuRepository(context,mapper);
             EmployeePermissionRepository = new EmployeePermissionRepository(context, mapper);

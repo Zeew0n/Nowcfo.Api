@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Nowcfo.Application.Dtos;
 using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
+using Nowcfo.Application.Services.CurrentUserService;
 using Nowcfo.Domain.Models;
 using Serilog;
 using System;
@@ -16,12 +17,16 @@ namespace Nowcfo.Application.Repository
     {
     
         private readonly IApplicationDbContext _dbContext;
+        private readonly ICurrentUserService _currentUserService;
+
+
         private readonly IMapper _mapper;
 
-        public EmployeeRepository(IApplicationDbContext context, IMapper mapper)
+        public EmployeeRepository(IApplicationDbContext context, IMapper mapper, ICurrentUserService currentUserService)
         {
             _dbContext = context;
             _mapper = mapper;
+            _currentUserService = currentUserService;
         }
 
         public async Task<EmployeeInfoDto> GetByIdAsync(int id)
@@ -590,9 +595,54 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
+                DateTime currentDateTime = DateTime.Now;
+                var currentUser = _currentUserService.GetUserId();
                 var employee = _mapper.Map<EmployeeInfoDto, EmployeeInfo>(model);
                 await _dbContext.EmployeeInfos.AddAsync(employee);
-                _dbContext.SaveChange();
+                var m = _dbContext.SaveChange();
+                var n = employee.EmployeeId;
+
+                var compensationModal = new CompensationHistoricalDto
+                {
+                    EmployeeId = n,
+                    OverTimeRate = model.OverTimeRate,
+                    Pay = model.Pay,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var payTypeModal = new PayTypeHistoricalDto
+                {
+                    EmployeeId = n,
+                    PayType = model.PayType,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var jobRoleModal = new JobRoleHistoricalDto
+                {
+                    EmployeeId = n,
+                    RoleId = (int)model.DesignationId,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var statusModal = new EmployeeStatusHistoricalDto
+                {
+                    EmployeeId = n,
+                    StatusId = (int)model.StatusId,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var compensation = _mapper.Map<CompensationHistoricalDto, CompensationHistorical>(compensationModal);
+                var payType = _mapper.Map<PayTypeHistoricalDto, PayTypeHistorical>(payTypeModal);
+                var jobRole = _mapper.Map<JobRoleHistoricalDto, JobRoleHistorical>(jobRoleModal);
+                var employeeStatus = _mapper.Map<EmployeeStatusHistoricalDto, EmployeeStatusHistorical>(statusModal);
+                await _dbContext.CompensationHistoricals.AddAsync(compensation);
+                await _dbContext.PayTypeHistoricals.AddAsync(payType);
+                await _dbContext.JobRoleHistoricals.AddAsync(jobRole);
+                await _dbContext.EmployeeStatusHistoricals.AddAsync(employeeStatus);
             }
             catch (Exception e)
             {
@@ -601,14 +651,94 @@ namespace Nowcfo.Application.Repository
             }
         }
 
-        public void Update(EmployeeInfoDto model)
+        public async Task Update(EmployeeInfoDto model)
         {
             try
             {
+                DateTime currentDateTime = DateTime.Now;
+                var currentUser = _currentUserService.GetUserId();
+                var existingEmployee = await GetByIdAsync(model.EmployeeId);
                 var employee = _mapper.Map<EmployeeInfoDto, EmployeeInfo>(model);
                 _dbContext.EmployeeInfos.Update(employee);
-                _dbContext.SaveChange();
+
+                var y = _dbContext.SaveChange();
+                var x = employee.EmployeeId;
+
+                var compensationModal = new CompensationHistoricalDto
+                {
+                    EmployeeId = x,
+                    OverTimeRate = model.OverTimeRate,
+                    Pay = model.Pay,
+                    CreatedBy=currentUser,
+                    CreatedDate=currentDateTime
+                };
+
+                var payTypeModal = new PayTypeHistoricalDto
+                {
+                    EmployeeId = x,
+                    PayType = model.PayType,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var jobRoleModal = new JobRoleHistoricalDto
+                {
+                    EmployeeId = x,
+                    RoleId = (int)model.DesignationId,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var statusModal = new EmployeeStatusHistoricalDto
+                {
+                    EmployeeId = x,
+                    StatusId = (int)model.StatusId,
+                    CreatedBy = currentUser,
+                    CreatedDate = currentDateTime
+                };
+
+                var compensation = _mapper.Map<CompensationHistoricalDto, CompensationHistorical>(compensationModal);
+                var payType = _mapper.Map<PayTypeHistoricalDto, PayTypeHistorical>(payTypeModal);
+                var jobRole = _mapper.Map<JobRoleHistoricalDto, JobRoleHistorical>(jobRoleModal);
+                var employeeStatus = _mapper.Map<EmployeeStatusHistoricalDto, EmployeeStatusHistorical>(statusModal);
                 
+                var existingPayType = existingEmployee.PayType;
+                var existingJobRole = existingEmployee.DesignationId;
+                var existingStatus = existingEmployee.StatusId;
+                var existingPay = existingEmployee.Pay;
+                var existingOverTime = existingEmployee.OverTimeRate;
+
+                if (existingPayType != payType.PayType)
+                {
+                   await _dbContext.PayTypeHistoricals.AddAsync(payType);
+
+                }
+                if (existingJobRole != jobRole.RoleId)
+                {
+                   await _dbContext.JobRoleHistoricals.AddAsync(jobRole);
+
+                }
+                if (existingStatus != employeeStatus.StatusId)
+                {
+                   await _dbContext.EmployeeStatusHistoricals.AddAsync(employeeStatus);
+
+                }
+                if (existingPay != compensation.Pay && existingOverTime != compensation.OverTimeRate)
+                {
+                   await _dbContext.CompensationHistoricals.AddAsync(compensation);
+
+                }
+                else if (existingPay == compensation.Pay && existingOverTime != compensation.OverTimeRate)
+                    {
+                        await _dbContext.CompensationHistoricals.AddAsync(compensation);
+
+                    }
+                else if(existingPay != compensation.Pay && existingOverTime == compensation.OverTimeRate)
+                {
+
+                    await _dbContext.CompensationHistoricals.AddAsync(compensation);
+
+                }
 
             }
             catch (Exception e)
@@ -652,87 +782,7 @@ namespace Nowcfo.Application.Repository
         }
 
 
-        ////
-        //public async Task<List<SyncfusionListDto>> GetSyncFusionOrganizations()
-        //{
-        //    try
-        //    {
-
-        //        var organizationList = await (from os in _dbContext.Organizations
-
-
-        //                                      select new SyncfusionListDto
-        //                                      {
-        //                                          id = os.OrganizationId,
-        //                                          pid = os.ParentOrganizationId,
-        //                                          name = os.OrganizationName,
-        //                                          hasChild = _dbContext.Organizations.Count(x => x.ParentOrganizationId == os.OrganizationId) > 0,
-        //                                          expanded = os.ParentOrganizationId == null,
-        //                                          isChecked = false,
-        //                                      }).ToListAsync();
-
-
-        //        return _mapper.Map<List<SyncfusionListDto>>(organizationList);
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
-        //        throw;
-        //    }
-        //}
-
-        //public async Task<List<UserPermissionDto>> GetCheckedPermissions(int employeeId)
-        //{
-        //    try
-        //    {
-
-        //        var emppermissionList = await (from op in _dbContext.EmployeeOrgPermissions.Where(x => x.Employee_Id == employeeId)
-
-        //                                       select new UserPermissionDto
-
-        //                                       {
-        //                                           OrgId = op.Organization_Id,
-        //                                       }).ToListAsync();
-
-        //        return _mapper.Map<List<UserPermissionDto>>(emppermissionList);
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
-        //        throw;
-        //    }
-        //}
-
-        //public async Task<List<SyncfusionListDto>> GetEmployeePermissionHierarchy(int employeeId)
-        //{
-        //    try
-        //    {
-
-        //        var permissionList = await (from os in _dbContext.Organizations
-        //                                    join o in _dbContext.EmployeeOrgPermissions.Where(x => x.Employee_Id == employeeId) on os.OrganizationId equals o.Organization_Id into p
-        //                                    from q in p.DefaultIfEmpty()
-
-        //                                    select new SyncfusionListDto
-        //                                    {
-        //                                        id = q != null ? (int)q.Organization_Id : os.OrganizationId,
-        //                                        name = os.OrganizationName,
-        //                                        isChecked = q != null,
-        //                                        hasChild = _dbContext.Organizations.Count(x => x.ParentOrganizationId == os.OrganizationId) > 0,
-        //                                        expanded = os.ParentOrganizationId == null,
-        //                                        pid = os.ParentOrganizationId
-        //                                    }).ToListAsync();
-
-        //        return _mapper.Map<List<SyncfusionListDto>>(permissionList);
-
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
-        //        throw;
-        //    }
-        //}
+     
     }
 
 

@@ -28,6 +28,10 @@ namespace Nowcfo.Application.IRepository
         public DbSet<AllocationType> AllocationTypes { get; set; }
         public DbSet<OtherType> OtherTypes { get; set; }
         public DbSet<CogsType> CogsTypes { get; set; }
+        public DbSet<CompensationHistorical> CompensationHistoricals { get; set; }
+        public DbSet<PayTypeHistorical> PayTypeHistoricals { get; set; }
+        public DbSet<JobRoleHistorical> JobRoleHistoricals { get; set; }
+        public DbSet<EmployeeStatusHistorical> EmployeeStatusHistoricals { get; set; }
     }
 
 }
