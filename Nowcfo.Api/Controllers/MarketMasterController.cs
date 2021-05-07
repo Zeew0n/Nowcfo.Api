@@ -81,14 +81,12 @@ namespace Nowcfo.API.Controllers
             return Ok(emp);
         }
 
-
-
-        [HttpGet("GetMarketAllocationListByOrgId/{orgId}")]
-        public async Task<IActionResult> GetAllMarketsByOrgId(int orgId)
+        [HttpGet("GetMarketAllocationListByOrgId/{id}")]
+        public async Task<IActionResult> GetAllMarketsByOrgId(int id)
         {
             try
             {
-                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketList(orgId);
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketList(id);
                 return Ok(allocations);
             }
             catch (Exception e)
@@ -163,12 +161,10 @@ namespace Nowcfo.API.Controllers
             {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
                 await _unitOfWork.MarketAllocationRepository.CreateAsync(dto);
-
                 if (await _unitOfWork.SaveChangesAsync())
                     return Ok();
-                    //return CreatedAtAction("GetMarketAllocation", new { id = dto.Id }, dto);
+                //return CreatedAtAction("GetMarketAllocation", new { id = dto.Id }, dto);
                 return BadRequest();
             }
             catch (Exception e)
