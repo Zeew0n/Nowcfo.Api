@@ -25,6 +25,8 @@
         public string OverTimeRate { get; set; }
         public string StartDate { get; set; }
         public string TerminationDate { get; set; }
+
+
     }
 
 }

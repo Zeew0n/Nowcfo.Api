@@ -10,20 +10,13 @@ namespace Nowcfo.Application.IRepository
         Task<EmployeeInfoDto> GetByIdAsync(int id);
         Task<List<EmployeeInfoDto>> GetAllAsync();
         Task<PagedList<EmployeeInfoDto>> GetPagedListAsync(Param param);
-
         Task<List<EmployeeStatusTypeDto>> GetAllEmployeeStatus();
         Task<List<EmployeeTypeDto>> GetAllEmployeeTypes();
-
         Task<List<EmployeeInfoDto>> GetAllSuperVisors();
-
         Task CreateAsync(EmployeeInfoDto model);
-        void Update(EmployeeInfoDto model);
+        Task  Update(EmployeeInfoDto model);
         void Delete(EmployeeInfoDto model);
         Task<List<EmployeeInfoDto>> GetEmployeesAutocompleteAsync(string searchText);
 
-        //
-        //Task<List<SyncfusionListDto>> GetEmployeePermissionHierarchy(int employeeId);
-        //Task<List<SyncfusionListDto>> GetSyncFusionOrganizations();
-        //Task<List<UserPermissionDto>> GetCheckedPermissions(int employeeId);
     }
 }

@@ -30,6 +30,11 @@ namespace Nowcfo.Application.MappingProfile
             CreateMap<AllocationType, AllocationTypeDto>().ReverseMap();
             CreateMap<CogsType, CogsTypeDto>().ReverseMap();
             CreateMap<OtherType, OtherTypeDto>().ReverseMap();
+            CreateMap<CompensationHistorical, CompensationHistoricalDto>().ReverseMap();
+            CreateMap<JobRoleHistorical, JobRoleHistoricalDto>().ReverseMap();
+            CreateMap<PayTypeHistorical, PayTypeHistoricalDto>().ReverseMap();
+            CreateMap<EmployeeStatusHistorical, EmployeeStatusHistoricalDto>().ReverseMap();
+
 
 
 

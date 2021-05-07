@@ -119,10 +119,7 @@ namespace Nowcfo.API.Controllers
                 var existingEmployee = await _unitOfWork.EmployeeRepository.GetByIdAsync(id);
                 if (existingEmployee == null)
                     return NotFound($"Could not find Employee with id {id}");
-
-                // _mapper.Map(dto, existingEmployee);
-
-                _unitOfWork.EmployeeRepository.Update(dto);
+                await _unitOfWork.EmployeeRepository.Update(dto);
                 if (await _unitOfWork.SaveChangesAsync())
                     return NoContent();
                 return BadRequest();
