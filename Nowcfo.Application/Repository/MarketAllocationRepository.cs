@@ -86,11 +86,11 @@ namespace Nowcfo.Application.Repository
             try
             {
                 var market = _mapper.Map<MarketMasterDto, MarketMaster>(model);
-                await _dbContext.MarketMasters.AddAsync(market);
+                _dbContext.MarketMasters.Add(market);
                 var m= _dbContext.SaveChange();
                 var n = market.Id;
 
-                foreach(var  marketAllocation  in model.MarketAllocationDto)
+                foreach(var  marketAllocation  in model.MarketAllocations)
                 {
                     var marketModel = new MarketAllocation
                     {
@@ -106,8 +106,6 @@ namespace Nowcfo.Application.Repository
                         OtherTypeId=marketAllocation.OtherTypeId
                     };
                     await _dbContext.MarketAllocations.AddAsync(marketModel);
-                    _dbContext.SaveChange();
-
                 }
             }
             catch (Exception e)
@@ -140,19 +138,33 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
+                var marketList = await (from m in _dbContext.MarketMasters.Include(x=>x.MarketAllocations).Where(x => x.OrganizationId == id)
+                    join o in _dbContext.Organizations on m.OrganizationId equals o.OrganizationId
+                    select new MarketMasterDto
 
-                var marketList = await (from op in _dbContext.MarketMasters.Where(x => x.OrganizationId == id)
-                                        join at in _dbContext.AllocationTypes on op.AllocationTypeId equals at.Id
-                                        select new MarketMasterDto
+                    {
+                        OrganizationId=id,
+                        OrganizationName = o.OrganizationName,
+                        PayPeriod = m.PayPeriod.ToShortDateString(),
+                        AllocationTypeId = m.AllocationTypeId,
+                        MarketAllocations = _mapper.Map<List<MarketAllocationDto>>(m.MarketAllocations)
+                    }).ToListAsync();
 
-                                        {
-                                            Id = op.Id,
-                                            AllocationTypeId = op.AllocationTypeId,
-                                            AllocationName = at.Name,
-                                            PayPeriod = op.PayPeriod.ToShortDateString(),
-                                        }).ToListAsync();
+                return marketList;
 
-                return _mapper.Map<List<MarketMasterDto>>(marketList);
+
+                //var marketList = await (from op in _dbContext.MarketMasters.Where(x => x.OrganizationId == id)
+                //                        join at in _dbContext.AllocationTypes on op.AllocationTypeId equals at.Id
+                //                        select new MarketMasterDto
+
+                //                        {
+                //                            Id = op.Id,
+                //                            AllocationTypeId = op.AllocationTypeId,
+                //                            AllocationName = at.Name,
+                //                            PayPeriod = op.PayPeriod.ToShortDateString(),
+                //                        }).ToListAsync();
+
+                //return _mapper.Map<List<MarketMasterDto>>(marketList);
 
             }
             catch (Exception e)
@@ -240,7 +252,7 @@ namespace Nowcfo.Application.Repository
         {
             try
             {
-                var others = await _dbContext.CogsTypes.ToListAsync();
+                var others = await _dbContext.OtherTypes.ToListAsync();
                 return _mapper.Map<List<OtherTypeDto>>(others);
             }
             catch (Exception e)
@@ -282,7 +294,7 @@ namespace Nowcfo.Application.Repository
                 _dbContext.SaveChange();
 
 
-                foreach (var marketAllocation in model.MarketAllocationDto)
+                foreach (var marketAllocation in model.MarketAllocations)
                 {
                     var marketModel = new MarketAllocation
                     {

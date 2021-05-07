@@ -10,7 +10,7 @@ namespace Nowcfo.Application.Dtos
         public string PayPeriod { get; set; }
         public int AllocationTypeId { get; set; }
         public string AllocationName { get; set; }
-        public List<MarketAllocationDto> MarketAllocationDto { get; set; }
+        public List<MarketAllocationDto> MarketAllocations { get; set; }
 
 
     }
