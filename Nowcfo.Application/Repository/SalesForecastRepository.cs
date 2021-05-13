@@ -6,6 +6,7 @@ using Nowcfo.Domain.Models;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace Nowcfo.Application.Repository
                 return await _dbContext.SalesForecasts.AsNoTracking().Select(t => new SalesForecastDto()
                 {
                     Id = t.Id,
-                    PayPeriod=t.PayPeriod.ToShortDateString(),
+                    PayPeriod=t.PayPeriod.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
                     BillRate=t.BillRate,
                     BillHours=t.BillHours,
                     Placements=t.Placements,
@@ -63,8 +64,9 @@ namespace Nowcfo.Application.Repository
                 return  await _dbContext.SalesForecasts.Select(t => new SalesForecastDto() {
 
                     Id = t.Id,
-                    PayPeriod = t.PayPeriod.ToShortDateString(),
-                    BillRate = t.BillRate,
+                    PayPeriod = t.PayPeriod.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+                    BillRateCurrency = string.Format("{0:c0}", t.BillRate),
+                    BillRate= t.BillRate,
                     BillHours = t.BillHours,
                     Placements = t.Placements,
                     BuyOuts = t.BuyOuts,
