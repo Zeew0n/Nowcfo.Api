@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Nowcfo.API.Controllers.Base;
 using Nowcfo.Application.Dtos;
+using Nowcfo.Application.Extensions;
+using Nowcfo.Application.Helper.Pagination;
 using Nowcfo.Application.IRepository;
 using System;
 using System.Threading.Tasks;
@@ -19,6 +21,16 @@ namespace Nowcfo.API.Controllers
         {
             _unitOfWork = unitOfWork;
 
+        }
+
+
+        [HttpGet("PaginatedForecasts")]
+        public async Task<IActionResult> GetPaginatedForecasts([FromQuery] Param param)
+        {
+            var forcast = await _unitOfWork.SalesForecastRepository.GetPagedListAsync(param);
+            Response.AddPagination(forcast.CurrentPage, forcast.PageSize,
+              forcast.TotalCount, forcast.TotalPages);
+            return Ok(forcast);
         }
 
 
