@@ -40,12 +40,6 @@ namespace Nowcfo.API.Controllers
         }
 
 
-
-
-
-   
-
-
         [HttpGet("listallsupervisors")]
         public async Task<IActionResult> GetSuperVisors()
         {

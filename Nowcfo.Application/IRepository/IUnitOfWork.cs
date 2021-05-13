@@ -17,6 +17,8 @@ namespace Nowcfo.Application.IRepository
         IEmployeePermissionRepository EmployeePermissionRepository { get; }
         IMarketAllocationRepository MarketAllocationRepository { get; }
         IDapperRepository DapperRepository { get; }
+        ISalesForecastRepository SalesForecastRepository { get; }
+
 
 
         void BeginTransaction();
@@ -26,8 +28,5 @@ namespace Nowcfo.Application.IRepository
         void RollBack();
         Task<bool> SaveChangesAsync();
 
-        //int SaveChanges();
-
-        //Task<int> SaveChangesAsync();
     }
 }

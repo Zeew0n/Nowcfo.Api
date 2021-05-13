@@ -57,6 +57,8 @@ namespace Nowcfo.Infrastructure.Data
             modelBuilder.Entity<Menu>(ConfigureMenu);
             modelBuilder.Entity<MarketMaster>(ConfigureMarketAllocation);
             modelBuilder.Entity<EmployeeInfo>().HasIndex(e => e.Email).IsUnique();
+            modelBuilder.Entity<SalesForecast>().HasIndex(e => e.PayPeriod).IsUnique();
+
             modelBuilder.Entity<EmployeePermission>()
                 .HasIndex(e => new { e.EmployeeId, e.LevelOne,e.LevelTwo,e.LevelThree,e.ReferenceId }).IsUnique();
 
@@ -173,6 +175,8 @@ namespace Nowcfo.Infrastructure.Data
         public DbSet<PayTypeHistorical> PayTypeHistoricals { get; set; }
         public DbSet<JobRoleHistorical> JobRoleHistoricals { get; set; }
         public DbSet<EmployeeStatusHistorical> EmployeeStatusHistoricals { get; set; }
+        public DbSet<SalesForecast> SalesForecasts { get; set; }
+
 
 
     }
