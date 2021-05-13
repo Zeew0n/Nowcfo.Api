@@ -7,6 +7,7 @@ namespace Nowcfo.Application.Dtos
         public int Id { get; set; }
         public string PayPeriod { get; set; }
         public Decimal BillRate { get; set; }
+        public string BillRateCurrency { get; set; }
         public Decimal BillHours { get; set; }
         public Decimal Placements { get; set; }
         public Decimal BuyOuts { get; set; }
