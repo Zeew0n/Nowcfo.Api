@@ -32,6 +32,8 @@ namespace Nowcfo.Application.IRepository
         public DbSet<PayTypeHistorical> PayTypeHistoricals { get; set; }
         public DbSet<JobRoleHistorical> JobRoleHistoricals { get; set; }
         public DbSet<EmployeeStatusHistorical> EmployeeStatusHistoricals { get; set; }
+        public DbSet<SalesForecast> SalesForecasts { get; set; }
+
     }
 
 }

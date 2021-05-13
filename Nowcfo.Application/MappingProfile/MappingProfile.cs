@@ -34,6 +34,8 @@ namespace Nowcfo.Application.MappingProfile
             CreateMap<JobRoleHistorical, JobRoleHistoricalDto>().ReverseMap();
             CreateMap<PayTypeHistorical, PayTypeHistoricalDto>().ReverseMap();
             CreateMap<EmployeeStatusHistorical, EmployeeStatusHistoricalDto>().ReverseMap();
+            CreateMap<SalesForecast, SalesForecastDto>().ReverseMap();
+
 
 
 

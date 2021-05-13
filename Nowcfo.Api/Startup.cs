@@ -56,11 +56,6 @@ namespace Nowcfo.API
                 {
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
                 });
-            //services.AddControllers().AddNewtonsoftJson(options =>
-            //    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            //);
-            //services.AddControllers().AddJsonOptions(options =>
-            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
             var origins = Configuration["CorsUrl"].Split(",");
             services.AddCors(options =>
@@ -143,7 +138,7 @@ namespace Nowcfo.API
             services.AddTransient<IJwtService, JwtService>();
            
             services.AddTransient<IMailService, SendGridMailService>();
-            services.AddTransient<IOrganizationRepository, OrganizationRepository>();
+            //services.AddTransient<IOrganizationRepository, OrganizationRepository>();
             services.AddScoped<IDapperRepository, DapperRepository>();
 
 

@@ -30,6 +30,8 @@ namespace Nowcfo.Infrastructure.Repository
         public IEmployeePermissionRepository EmployeePermissionRepository { get; }
         public IMarketAllocationRepository MarketAllocationRepository { get; }
         public IDapperRepository DapperRepository { get; }
+        public ISalesForecastRepository SalesForecastRepository { get; }
+
 
 
         public UnitOfWork(ApplicationDbContext context,IDapperRepository dapper,IConfiguration config, IMapper mapper,ICurrentUserService currentUserService )
@@ -44,6 +46,8 @@ namespace Nowcfo.Infrastructure.Repository
             EmployeePermissionRepository = new EmployeePermissionRepository(context, mapper);
             MarketAllocationRepository = new MarketAllocationRepository(context, mapper,dapper);
             DapperRepository = new DapperRepository(config);
+            SalesForecastRepository = new SalesForecastRepository(context, mapper);
+
 
         }
 
