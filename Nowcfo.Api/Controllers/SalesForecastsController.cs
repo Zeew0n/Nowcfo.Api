@@ -95,6 +95,24 @@ namespace Nowcfo.API.Controllers
             }
         }
 
+
+        [HttpGet("CheckIfExists/{payPeriod}")]
+        public async  Task<IActionResult> CheckIfPayPeriodExists(string payPeriod)
+        {
+            try
+            {
+                var checkValue =  _unitOfWork.SalesForecastRepository.CheckIfPayPeriodExists(payPeriod);
+                if (checkValue)
+                    return Ok();
+               return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSalesForecasts(int id)
         {

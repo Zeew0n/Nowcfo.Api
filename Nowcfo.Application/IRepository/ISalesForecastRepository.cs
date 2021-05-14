@@ -13,6 +13,7 @@ namespace Nowcfo.Application.IRepository
         Task CreateAsync(SalesForecastDto model);
         Task Update(SalesForecastDto model);
         void Delete(SalesForecastDto model);
+        bool CheckIfPayPeriodExists(string payPeriod);
 
     }
 }

@@ -154,6 +154,16 @@ namespace Nowcfo.Application.Repository
             }
         }
 
+
+        
+
+        public bool CheckIfPayPeriodExists(string payPeriod)
+        {
+
+            var ifExists = _dbContext.SalesForecasts.Any(x => x.PayPeriod == Convert.ToDateTime(payPeriod));
+            return ifExists;
+        }
+
         public void Delete(SalesForecastDto model)
         {
             try
