@@ -13,6 +13,7 @@ namespace Nowcfo.Application.IRepository
 
         //To Load Bottom Level Children based on Create/Update for data change, what to do in case of change of data
         Task<List<MarketAllocationDto>> GetAllAllocationsById(int masterId, string payPeriod, int id, int allocationTypeId);
+        Task<List<MarketDto>> GetAllMarketsByOrgIdXXX(int orgId);
         Task<List<MarketAllocationDto>> GetAllMarketsByOrgId(int orgId);
         Task<MarketMasterDto> GetByIdAsync(int id);
         Task CreateAsync(MarketMasterDto model);

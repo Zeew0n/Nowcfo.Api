@@ -173,7 +173,23 @@ namespace Nowcfo.Application.Repository
                 throw;
             }
         }
-        
+
+        public async Task<List<MarketDto>> GetAllMarketsByOrgIdXXX(int orgId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@OrgId", orgId);
+                var result = await _dapper.GetAllAsync<MarketDto>("GetAllMarkets", param);
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                Log.Error("Error: { ErrorMessage},{ ErrorDetails}", e.Message, e.StackTrace);
+                throw;
+            }
+        }
 
         public async Task<List<MarketAllocationDto>> GetAllMarketsByOrgId(int orgId)
         {
