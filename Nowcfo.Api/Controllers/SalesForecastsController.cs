@@ -50,6 +50,8 @@ namespace Nowcfo.API.Controllers
         }
 
 
+        
+
         [HttpPost]
         public async Task<IActionResult> PostSalesForecasts(SalesForecastDto dto)
         {

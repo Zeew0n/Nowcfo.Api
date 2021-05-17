@@ -17,6 +17,8 @@ namespace Nowcfo.Application.IRepository
         Task  Update(EmployeeInfoDto model);
         void Delete(EmployeeInfoDto model);
         Task<List<EmployeeInfoDto>> GetEmployeesAutocompleteAsync(string searchText);
+        bool CheckIfEmailExists(string email);
+
 
     }
 }

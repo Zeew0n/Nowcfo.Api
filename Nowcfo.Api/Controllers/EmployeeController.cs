@@ -166,6 +166,24 @@ namespace Nowcfo.API.Controllers
             }
         }
 
+
+        [HttpGet("CheckIfExists/{email}")]
+        public async Task<IActionResult> CheckIfEmailExists(string email)
+        {
+            try
+            {
+                var checkValue = _unitOfWork.EmployeeRepository.CheckIfEmailExists(email);
+                if (checkValue)
+                    return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+
         [HttpPut("AssignEmployee")]
         public async Task<IActionResult> PutAssignEmployee([FromBody] AssignEmployeeDto dto)
         {
