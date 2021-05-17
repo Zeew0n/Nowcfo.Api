@@ -764,6 +764,15 @@ namespace Nowcfo.Application.Repository
             }
         }
 
+
+        public bool CheckIfEmailExists(string email)
+        {
+
+            var ifExists = _dbContext.EmployeeInfos.Any(x => x.Email == email);
+            return ifExists;
+        }
+
+
         public async Task<List<EmployeeInfoDto>> GetEmployeesAutocompleteAsync(string searchText)
         {
             try

@@ -316,6 +316,41 @@ namespace Nowcfo.API.Controllers
         }
 
 
+        [HttpGet("CheckIfUsernameExists/{userName}")]
+        public async Task<IActionResult> CheckIfUsernameExists(string userName)
+        {
+            try
+            {
+                var checkValue = await _userService.FindByNameAsync(userName);
+                if (checkValue!=null)
+                    return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+
+        [HttpGet("CheckIfEmailExists/{email}")]
+        public async Task<IActionResult> CheckIfEmailExists(string email)
+        {
+            try
+            {
+                var checkValue = await _userService.FindByEmailAsync(email);
+                if (checkValue!=null)
+                    return Ok();
+                return BadRequest();
+            }
+            catch (Exception e)
+            {
+                return ExceptionResponse(e.Message);
+            }
+        }
+
+
+
 
         #endregion Commands
 
