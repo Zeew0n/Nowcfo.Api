@@ -49,7 +49,7 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgId(id);
+                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgIdXXX(id);
                 return Ok(allocations);
             }
             catch (Exception e)
