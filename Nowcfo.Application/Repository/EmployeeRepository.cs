@@ -204,7 +204,7 @@ namespace Nowcfo.Application.Repository
                                           EmployeeTypeName = et.EmployeeTypeName,
                                           StatusId = e.StatusId,
                                           StatusName = es.StatusName
-                                      }).Where(e => e.StatusId != 3).Where(e => e.OrganizationId.ToString() == param.SearchOrg);
+                                      }).Where(e => e.OrganizationId.ToString() == param.SearchOrg);
 
 
 
@@ -250,7 +250,7 @@ namespace Nowcfo.Application.Repository
                                           EmployeeTypeName = et.EmployeeTypeName,
                                           StatusId = e.StatusId,
                                           StatusName = es.StatusName
-                                      }).Where(e => e.StatusId != 3).Where(e => e.StatusId.ToString() == param.SearchStatus);
+                                      }).Where(e => e.StatusId.ToString() == param.SearchStatus);
 
 
 
@@ -297,7 +297,7 @@ namespace Nowcfo.Application.Repository
                                           EmployeeTypeName = et.EmployeeTypeName,
                                           StatusId = e.StatusId,
                                           StatusName = es.StatusName
-                                      }).Where(e => e.StatusId != 3);
+                                      }).Where(m=>m.StatusId==1);
 
 
 
@@ -341,7 +341,7 @@ namespace Nowcfo.Application.Repository
                                               EmployeeTypeName = et.EmployeeTypeName,
                                               StatusId = o.StatusId,
                                               StatusName = es.StatusName
-                                          }).Where(m => m.EmployeeName.Contains(param.SearchValue) && m.StatusId != 3);
+                                          }).Where(m => m.EmployeeName.Contains(param.SearchValue));
 
                             return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -376,7 +376,7 @@ namespace Nowcfo.Application.Repository
                                               EmployeeTypeName = et.EmployeeTypeName,
                                               StatusId = o.StatusId,
                                               StatusName = es.StatusName
-                                          }).Where(m => m.EmployeeName.Contains(param.SearchValue) && m.StatusId != 3).Where(m => m.OrganizationId.ToString() == param.SearchOrg);
+                                          }).Where(m => m.EmployeeName.Contains(param.SearchValue)).Where(m => m.OrganizationId.ToString() == param.SearchOrg);
 
                             return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -412,7 +412,7 @@ namespace Nowcfo.Application.Repository
                                               EmployeeTypeName = et.EmployeeTypeName,
                                               StatusId = o.StatusId,
                                               StatusName = es.StatusName
-                                          }).Where(m => m.EmployeeName.Contains(param.SearchValue) && m.StatusId != 3).Where(m => m.StatusId.ToString() == param.SearchStatus);
+                                          }).Where(m => m.EmployeeName.Contains(param.SearchValue)).Where(m => m.StatusId.ToString() == param.SearchStatus);
 
                             return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -457,7 +457,7 @@ namespace Nowcfo.Application.Repository
                                               EmployeeTypeName = et.EmployeeTypeName,
                                               StatusId = o.StatusId,
                                               StatusName = es.StatusName
-                                          }).Where(m => m.Email.Contains(param.SearchValue) && m.StatusId != 3);
+                                          }).Where(m => m.Email.Contains(param.SearchValue));
 
                             return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -492,7 +492,7 @@ namespace Nowcfo.Application.Repository
                                               EmployeeTypeName = et.EmployeeTypeName,
                                               StatusId = o.StatusId,
                                               StatusName = es.StatusName
-                                          }).Where(m => m.Email.Contains(param.SearchValue) && m.StatusId != 3).Where(m => m.OrganizationId.ToString() == param.SearchOrg);
+                                          }).Where(m => m.Email.Contains(param.SearchValue)).Where(m => m.OrganizationId.ToString() == param.SearchOrg);
 
                             return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
 
@@ -528,11 +528,9 @@ namespace Nowcfo.Application.Repository
                                               EmployeeTypeName = et.EmployeeTypeName,
                                               StatusId = o.StatusId,
                                               StatusName = es.StatusName
-                                          }).Where(m => m.Email.Contains(param.SearchValue) && m.StatusId != 3).Where(m => m.StatusId.ToString() == param.SearchStatus);
+                                          }).Where(m => m.Email.Contains(param.SearchValue)).Where(m => m.StatusId.ToString() == param.SearchStatus);
 
                             return await PagedList<EmployeeInfoDto>.CreateAsync(result, param.PageNumber, param.PageSize);
-
-
                         }
 
                     }

@@ -522,7 +522,7 @@ namespace Nowcfo.Application.Services.UserService
                 {
                     To = appUser.Email,
                     Subject = SharedConstants.ResetSubject,
-                    Body = @$"Dear user, Click the link below to reset your password. This link will expire after 24 hours.<br/>
+                    Body = @$"Dear <b>{appUser.UserName}</b>, Click the link below to reset your password. This link will expire after 24 hours.<br/>
                               <a href={callBackUri}>Click Here</a>"
                 };
                 return emailMessage;
