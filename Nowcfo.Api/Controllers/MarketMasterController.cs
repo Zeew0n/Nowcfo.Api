@@ -49,8 +49,15 @@ namespace Nowcfo.API.Controllers
         {
             try
             {
-                var allocations = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgIdXXX(id);
-                return Ok(allocations);
+                var organization = await _unitOfWork.OrganizationRepository.GetByIdAsync(id);
+                var markets = await _unitOfWork.MarketAllocationRepository.GetAllMarketsByOrgIdXXX(id);
+                var returnValue = new OrganizationAllocationDto
+                {
+                    OrganizationName = organization.OrganizationName,
+                    Markets = markets
+                };
+
+                return Ok(returnValue);
             }
             catch (Exception e)
             {
@@ -141,7 +148,7 @@ namespace Nowcfo.API.Controllers
                     return NotFound($"Could not find Employee with id {id}");
 
 
-                _unitOfWork.MarketAllocationRepository.Update(dto);
+                await _unitOfWork.MarketAllocationRepository.Update(dto);
                 if (await _unitOfWork.SaveChangesAsync())
                     return NoContent();
                 return BadRequest();
@@ -162,10 +169,10 @@ namespace Nowcfo.API.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
                 await _unitOfWork.MarketAllocationRepository.CreateAsync(dto);
-                if (await _unitOfWork.SaveChangesAsync())
+                //if (await _unitOfWork.SaveChangesAsync())
                     return Ok();
                 //return CreatedAtAction("GetMarketAllocation", new { id = dto.Id }, dto);
-                return BadRequest();
+                //return BadRequest();
             }
             catch (Exception e)
             {

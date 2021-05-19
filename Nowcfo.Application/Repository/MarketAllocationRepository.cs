@@ -40,7 +40,7 @@ namespace Nowcfo.Application.Repository
                                             Id = op.Id,
                                             AllocationTypeId = op.AllocationTypeId,
                                             AllocationName = at.Name,
-                                            PayPeriod = op.PayPeriod.ToShortDateString(),
+                                            PayPeriod = op.PayPeriod,
                                         });
 
                 return await PagedList<MarketMasterDto>.CreateAsync(marketList, param.PageNumber, param.PageSize);
@@ -67,7 +67,7 @@ namespace Nowcfo.Application.Repository
                                   Id = o.Id,
                                   AllocationTypeId = o.AllocationTypeId,
                                   AllocationName=at.Name,
-                                  PayPeriod = o.PayPeriod.ToShortDateString(),
+                                  PayPeriod = o.PayPeriod,
                                   OrganizationId = o.OrganizationId,
 
                               }).FirstOrDefaultAsync();
@@ -86,15 +86,13 @@ namespace Nowcfo.Application.Repository
             try
             {
                 var market = _mapper.Map<MarketMasterDto, MarketMaster>(model);
-                _dbContext.MarketMasters.Add(market);
-                var m= _dbContext.SaveChange();
-                var n = market.Id;
-
+                 _dbContext.MarketMasters.Add(market);
+                _dbContext.SaveChange();
                 foreach(var  marketAllocation  in model.MarketAllocations)
                 {
                     var marketModel = new MarketAllocation
                     {
-                        MasterId = n,
+                        MasterId = market.Id,
                         MarketId=marketAllocation.MarketId,
                         Revenue=marketAllocation.Revenue,
                         COGS=marketAllocation.COGS,
@@ -105,7 +103,7 @@ namespace Nowcfo.Application.Repository
                         Other=marketAllocation.Other,
                         OtherTypeId=marketAllocation.OtherTypeId
                     };
-                    await _dbContext.MarketAllocations.AddAsync(marketModel);
+                     await _dbContext.MarketAllocations.AddAsync(marketModel);
                 }
             }
             catch (Exception e)
@@ -145,7 +143,7 @@ namespace Nowcfo.Application.Repository
                     {
                         OrganizationId=id,
                         OrganizationName = o.OrganizationName,
-                        PayPeriod = m.PayPeriod.ToShortDateString(),
+                        PayPeriod = m.PayPeriod,
                         AllocationTypeId = m.AllocationTypeId,
                         MarketAllocations = _mapper.Map<List<MarketAllocationDto>>(m.MarketAllocations)
                     }).ToListAsync();
